@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews - Hotel Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <svg class="navbar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                    </path>
+                </svg>
+                Hotel Manager
+            </a>
+            <a href="index.html" class="back-btn">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back to Home
+            </a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1 class="page-title">Reviews</h1>
+        <p class="page-subtitle">Guest feedback and ratings</p>
+
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search reviews..."
+                onkeyup="filterReviews()">
+        </div>
+
+        <div class="card-grid fade-in" id="reviewsGrid">
+        </div>
+    </main>
+
+    <script>
+        const reviews = [
+            { id: 1, guest: "Michael Anderson", hotel: "Grand Plaza Hotel", hotelId: 1, rating: 5, title: "Exceptional Stay!", comment: "The Grand Plaza exceeded all expectations. Impeccable service, luxurious rooms, and the location couldn't be better. The staff went above and beyond to make our anniversary special.", date: "2024-03-10", stayDate: "March 2024" },
+            { id: 2, guest: "Sarah Johnson", hotel: "Seaside Resort", hotelId: 2, rating: 4, title: "Beautiful Beach Views", comment: "Loved waking up to the ocean every morning. The beach access was perfect and the pool area was well maintained. Only minor issue was slow room service.", date: "2024-03-08", stayDate: "March 2024" },
+            { id: 3, guest: "David Wilson", hotel: "Mountain Lodge", hotelId: 3, rating: 5, title: "Perfect Mountain Getaway", comment: "Exactly what we needed for a family ski trip. Cozy rooms with fireplaces, great ski-in/ski-out access, and the restaurant served amazing comfort food.", date: "2024-03-05", stayDate: "February 2024" },
+            { id: 4, guest: "Emily Brown", hotel: "City Center Inn", hotelId: 4, rating: 3, title: "Good Location, Average Service", comment: "The location is fantastic for exploring downtown, but the room was smaller than expected and housekeeping missed a day. Decent value for the price.", date: "2024-03-02", stayDate: "February 2024" },
+            { id: 5, guest: "James Taylor", hotel: "Lakefront Hotel", hotelId: 5, rating: 5, title: "Absolutely Stunning", comment: "The views from our suite were breathtaking. Watching the sunset over the lake from our private balcony was magical. The spa treatments were world-class.", date: "2024-02-28", stayDate: "February 2024" },
+            { id: 6, guest: "Lisa Martinez", hotel: "Desert Oasis Resort", hotelId: 6, rating: 4, title: "Golf Paradise", comment: "The golf course is championship quality and the desert landscape is beautiful. The spa was relaxing after a day on the links. Would definitely return.", date: "2024-02-25", stayDate: "February 2024" },
+            { id: 7, guest: "Robert Garcia", hotel: "Grand Plaza Hotel", hotelId: 1, rating: 4, title: "Great for Business Travel", comment: "Excellent business amenities and the concierge helped arrange all my meetings. The executive lounge was a nice perk. Room was comfortable and quiet.", date: "2024-02-20", stayDate: "February 2024" },
+            { id: 8, guest: "Jennifer Lee", hotel: "Seaside Resort", hotelId: 2, rating: 5, title: "Family Paradise", comment: "Our kids had the time of their lives! The kids club was fantastic, and the family activities kept everyone entertained. Already planning our next visit.", date: "2024-02-15", stayDate: "February 2024" }
+        ];
+
+        function renderStars(rating) {
+            let stars = '';
+            for (let i = 0; i < 5; i++) {
+                if (i < rating) {
+                    stars += '<svg class="star star-filled" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+                } else {
+                    stars += '<svg class="star star-empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+                }
+            }
+            return stars;
+        }
+
+        function renderReviews(data) {
+            const grid = document.getElementById('reviewsGrid');
+            if (data.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><h3>No reviews found</h3><p>Try adjusting your search</p></div>';
+                return;
+            }
+            grid.innerHTML = data.map(review => `
+                <div class="review-card" onclick="location.href='reviewdetails.html?id=${review.id}'">
+                    <div class="review-header">
+                        <div>
+                            <h3 class="card-title">${review.title}</h3>
+                            <p class="review-hotel">${review.hotel}</p>
+                        </div>
+                        <div class="rating">
+                            ${renderStars(review.rating)}
+                        </div>
+                    </div>
+                    <p class="review-comment">"${review.comment.substring(0, 120)}..."</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f3f4f6;">
+                        <span style="font-size: 0.875rem; font-weight: 500; color: #111827;">${review.guest}</span>
+                        <span style="font-size: 0.75rem; color: #6b7280;">${review.stayDate}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterReviews() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = reviews.filter(r =>
+                r.guest.toLowerCase().includes(search) ||
+                r.hotel.toLowerCase().includes(search) ||
+                r.title.toLowerCase().includes(search) ||
+                r.comment.toLowerCase().includes(search)
+            );
+            renderReviews(filtered);
+        }
+
+        renderReviews(reviews);
+    </script>
+</body>
+
+</html>

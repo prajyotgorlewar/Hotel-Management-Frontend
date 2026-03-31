@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservations - Hotel Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <svg class="navbar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                    </path>
+                </svg>
+                Hotel Manager
+            </a>
+            <a href="index.html" class="back-btn">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back to Home
+            </a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1 class="page-title">Reservations</h1>
+        <p class="page-subtitle">Manage all booking reservations</p>
+
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search reservations..."
+                onkeyup="filterReservations()">
+        </div>
+
+        <div class="table-container fade-in">
+            <table class="data-table" id="reservationsTable">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Guest Name</th>
+                        <th>Hotel</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="reservationsBody">
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        const reservations = [
+            { id: "RES001", guest: "Michael Anderson", email: "michael@email.com", hotel: "Grand Plaza Hotel", hotelId: 1, room: "Deluxe Suite", checkIn: "2024-03-15", checkOut: "2024-03-20", status: "Confirmed", amount: 1250, guests: 2 },
+            { id: "RES002", guest: "Sarah Johnson", email: "sarah.j@email.com", hotel: "Seaside Resort", hotelId: 2, room: "Ocean View Room", checkIn: "2024-03-18", checkOut: "2024-03-22", status: "Pending", amount: 890, guests: 2 },
+            { id: "RES003", guest: "David Wilson", email: "dwilson@email.com", hotel: "Mountain Lodge", hotelId: 3, room: "Mountain Suite", checkIn: "2024-03-20", checkOut: "2024-03-25", status: "Confirmed", amount: 1100, guests: 4 },
+            { id: "RES004", guest: "Emily Brown", email: "emily.b@email.com", hotel: "City Center Inn", hotelId: 4, room: "Standard Room", checkIn: "2024-03-22", checkOut: "2024-03-24", status: "Cancelled", amount: 320, guests: 1 },
+            { id: "RES005", guest: "James Taylor", email: "jtaylor@email.com", hotel: "Lakefront Hotel", hotelId: 5, room: "Lake View Suite", checkIn: "2024-03-25", checkOut: "2024-03-30", status: "Confirmed", amount: 1575, guests: 2 },
+            { id: "RES006", guest: "Lisa Martinez", email: "lisa.m@email.com", hotel: "Desert Oasis Resort", hotelId: 6, room: "Golf Villa", checkIn: "2024-03-28", checkOut: "2024-04-02", status: "Pending", amount: 2100, guests: 3 },
+            { id: "RES007", guest: "Robert Garcia", email: "rgarcia@email.com", hotel: "Grand Plaza Hotel", hotelId: 1, room: "Executive Suite", checkIn: "2024-04-01", checkOut: "2024-04-05", status: "Confirmed", amount: 1800, guests: 2 },
+            { id: "RES008", guest: "Jennifer Lee", email: "jlee@email.com", hotel: "Seaside Resort", hotelId: 2, room: "Beachfront Bungalow", checkIn: "2024-04-05", checkOut: "2024-04-10", status: "Confirmed", amount: 1650, guests: 4 }
+        ];
+
+        function getStatusClass(status) {
+            switch (status.toLowerCase()) {
+                case 'confirmed': return 'status-confirmed';
+                case 'pending': return 'status-pending';
+                case 'cancelled': return 'status-cancelled';
+                default: return 'status-pending';
+            }
+        }
+
+        function renderReservations(data) {
+            const tbody = document.getElementById('reservationsBody');
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><h3>No reservations found</h3></td></tr>';
+                return;
+            }
+            tbody.innerHTML = data.map(res => `
+                <tr onclick="location.href='reservationdetails.html?id=${res.id}'">
+                    <td><strong>${res.id}</strong></td>
+                    <td>${res.guest}</td>
+                    <td>${res.hotel}</td>
+                    <td>${res.checkIn}</td>
+                    <td>${res.checkOut}</td>
+                    <td><span class="status-badge ${getStatusClass(res.status)}">${res.status}</span></td>
+                    <td><strong>$${res.amount.toLocaleString()}</strong></td>
+                </tr>
+            `).join('');
+        }
+
+        function filterReservations() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = reservations.filter(r =>
+                r.guest.toLowerCase().includes(search) ||
+                r.hotel.toLowerCase().includes(search) ||
+                r.id.toLowerCase().includes(search)
+            );
+            renderReservations(filtered);
+        }
+
+        renderReservations(reservations);
+    </script>
+</body>
+
+</html>

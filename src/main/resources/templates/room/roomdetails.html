@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Details - Hotel Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <svg class="navbar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                    </path>
+                </svg>
+                Hotel Manager
+            </a>
+            <a href="rooms.html" class="back-btn">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back to Rooms
+            </a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="detail-container fade-in" id="roomDetail">
+        </div>
+    </main>
+
+    <script>
+        const rooms = [
+            { id: 1, type: "Deluxe Suite", hotel: "Grand Plaza Hotel", hotelId: 1, roomNumber: "501", floor: 5, price: 450, capacity: 2, beds: "1 King", size: "550 sq ft", status: "Available", image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&h=400&fit=crop", amenities: ["WiFi", "Mini Bar", "Room Service", "City View", "Safe", "Air Conditioning", "Flat Screen TV", "Coffee Machine"], description: "Experience luxury in our spacious Deluxe Suite featuring panoramic city views, premium bedding, and elegant furnishings. Perfect for business travelers and couples seeking comfort." },
+            { id: 2, type: "Ocean View Room", hotel: "Seaside Resort", hotelId: 2, roomNumber: "302", floor: 3, price: 320, capacity: 2, beds: "1 Queen", size: "400 sq ft", status: "Occupied", image: "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&h=400&fit=crop", amenities: ["WiFi", "Ocean View", "Balcony", "Mini Bar", "Safe", "Air Conditioning", "Flat Screen TV"], description: "Wake up to stunning ocean views from your private balcony. This room offers the perfect blend of comfort and seaside charm with modern amenities." },
+            { id: 3, type: "Mountain Suite", hotel: "Mountain Lodge", hotelId: 3, roomNumber: "205", floor: 2, price: 380, capacity: 4, beds: "2 Queens", size: "650 sq ft", status: "Available", image: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=600&h=400&fit=crop", amenities: ["WiFi", "Fireplace", "Mountain View", "Kitchenette", "Safe", "Heating", "Flat Screen TV", "Coffee Machine"], description: "Cozy mountain retreat with a warm fireplace and breathtaking mountain views. Ideal for families or groups looking to enjoy nature in comfort." },
+            { id: 4, type: "Standard Room", hotel: "City Center Inn", hotelId: 4, roomNumber: "108", floor: 1, price: 150, capacity: 2, beds: "1 Queen", size: "280 sq ft", status: "Maintenance", image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&h=400&fit=crop", amenities: ["WiFi", "TV", "Coffee Maker", "Air Conditioning", "Work Desk"], description: "Comfortable and affordable room perfect for short stays. Features all essential amenities for a pleasant visit to the city center." },
+            { id: 5, type: "Lake View Suite", hotel: "Lakefront Hotel", hotelId: 5, roomNumber: "701", floor: 7, price: 520, capacity: 2, beds: "1 King", size: "700 sq ft", status: "Available", image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&h=400&fit=crop", amenities: ["WiFi", "Lake View", "Balcony", "Jacuzzi", "Mini Bar", "Safe", "Air Conditioning", "Flat Screen TV", "Coffee Machine", "Bathrobes"], description: "Luxurious suite with stunning lake views and a private jacuzzi on the balcony. The ultimate romantic getaway experience." },
+            { id: 6, type: "Golf Villa", hotel: "Desert Oasis Resort", hotelId: 6, roomNumber: "Villa 12", floor: 1, price: 680, capacity: 4, beds: "2 Kings", size: "1200 sq ft", status: "Occupied", image: "https://images.unsplash.com/photo-1602002418082-a4443e081dd1?w=600&h=400&fit=crop", amenities: ["WiFi", "Private Pool", "Golf Cart", "Kitchen", "Patio", "BBQ Grill", "Safe", "Air Conditioning", "Multiple TVs", "Washer/Dryer"], description: "Spacious villa with private pool and dedicated golf cart. Features a full kitchen, outdoor patio with BBQ, and direct access to the championship golf course." },
+            { id: 7, type: "Executive Suite", hotel: "Grand Plaza Hotel", hotelId: 1, roomNumber: "1201", floor: 12, price: 550, capacity: 2, beds: "1 King", size: "750 sq ft", status: "Available", image: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=600&h=400&fit=crop", amenities: ["WiFi", "Office Space", "Lounge Access", "City View", "Mini Bar", "Safe", "Air Conditioning", "Flat Screen TV", "Espresso Machine", "Printer"], description: "Designed for the discerning business traveler. Features a separate work area, executive lounge access, and all the amenities needed for productive stays." },
+            { id: 8, type: "Beachfront Bungalow", hotel: "Seaside Resort", hotelId: 2, roomNumber: "Bungalow 5", floor: 1, price: 480, capacity: 4, beds: "1 King + 2 Twins", size: "800 sq ft", status: "Available", image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&h=400&fit=crop", amenities: ["WiFi", "Beach Access", "Private Deck", "Outdoor Shower", "Mini Bar", "Safe", "Air Conditioning", "Flat Screen TV", "Coffee Machine", "Beach Chairs"], description: "Step directly onto the sand from your private bungalow. Features a spacious deck, outdoor shower, and everything you need for the perfect beach vacation." }
+        ];
+
+        function getStatusClass(status) {
+            switch (status.toLowerCase()) {
+                case 'available': return 'status-confirmed';
+                case 'occupied': return 'status-completed';
+                case 'maintenance': return 'status-pending';
+                default: return 'status-pending';
+            }
+        }
+
+        function getRoomId() {
+            const params = new URLSearchParams(window.location.search);
+            return parseInt(params.get('id')) || 1;
+        }
+
+        function renderRoomDetail() {
+            const id = getRoomId();
+            const room = rooms.find(r => r.id === id) || rooms[0];
+
+            document.getElementById('roomDetail').innerHTML = `
+                <div class="detail-header">
+                    <img src="${room.image}" alt="${room.type}" class="detail-image">
+                    <div class="detail-info">
+                        <h1 class="detail-title">${room.type}</h1>
+                        <p class="detail-subtitle">
+                            <a href="hoteldetails.html?id=${room.hotelId}" style="color: #3b82f6; text-decoration: none;">${room.hotel}</a>
+                            - Room ${room.roomNumber}
+                        </p>
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <span style="font-size: 1.5rem; font-weight: 700; color: #3b82f6;">$${room.price}</span>
+                            <span style="color: #6b7280;">/night</span>
+                        </div>
+                        <span class="status-badge ${getStatusClass(room.status)}">${room.status}</span>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3 class="detail-section-title">About This Room</h3>
+                    <p style="color: #4b5563; line-height: 1.7;">${room.description}</p>
+                </div>
+
+                <div class="detail-section">
+                    <h3 class="detail-section-title">Room Information</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Room Number</span>
+                        <span class="detail-value">${room.roomNumber}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Floor</span>
+                        <span class="detail-value">${room.floor}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Room Size</span>
+                        <span class="detail-value">${room.size}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Bed Configuration</span>
+                        <span class="detail-value">${room.beds}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Maximum Capacity</span>
+                        <span class="detail-value">${room.capacity} guests</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Price per Night</span>
+                        <span class="detail-value" style="color: #3b82f6; font-weight: 600;">$${room.price}</span>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3 class="detail-section-title">Amenities</h3>
+                    <div class="amenities-list">
+                        ${room.amenities.map(amenity => `
+                            <span class="amenity-tag">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                ${amenity}
+                            </span>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        renderRoomDetail();
+    </script>
+</body>
+
+</html>
