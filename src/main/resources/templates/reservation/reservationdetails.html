@@ -1,4 +1,48 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Reservation Details</title>
+</head>
+
+<body style="font-family: Arial; margin:20px;">
+
+    <h2>Reservation Details</h2>
+
+    <div style="border:1px solid #ccc; padding:20px; border-radius:10px;">
+
+        <p><b>ID:</b> <span th:text="${res.reservationId}"></span></p>
+        <p><b>Name:</b> <span th:text="${res.guestName}"></span></p>
+        <p><b>Email:</b> <span th:text="${res.guestEmail}"></span></p>
+
+        <p><b>Check-In:</b> <span th:text="${res.checkInDate}"></span></p>
+        <p><b>Check-Out:</b> <span th:text="${res.checkOutDate}"></span></p>
+
+        <hr>
+
+        <p><b>Room:</b> <span th:text="${res.roomNumber}"></span></p>
+        <p><b>Hotel:</b> <span th:text="${res.hotelName}"></span></p>
+        <p><b>Location:</b> <span th:text="${res.hotelLocation}"></span></p>
+
+        <hr>
+
+        <p><b>Payment:</b> ₹<span th:text="${res.paymentAmount}"></span></p>
+        <p><b>Status:</b> <span th:text="${res.paymentStatus}"></span></p>
+
+    </div>
+
+    <br>
+
+    <a href="/reservations"
+        style="padding:8px 15px; background:#007bff; color:white; text-decoration:none; border-radius:5px;">
+        Back
+    </a>
+
+</body>
+
+</html>
+
+<!-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -155,4 +199,4 @@
     </script>
 </body>
 
-</html>
+</html> -->
