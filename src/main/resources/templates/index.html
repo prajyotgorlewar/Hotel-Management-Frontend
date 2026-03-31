@@ -5,120 +5,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotel Management Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: "Cormorant Garamond", "Times New Roman", serif;
+        }
+
+        h2,
+        h3 {
+            font-family: "Playfair Display", "Times New Roman", serif;
+        }
+    </style>
 </head>
 
-<body>
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="index.html" class="navbar-brand">
-                <svg class="navbar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                    </path>
-                </svg>
-                Hotel Manager
-            </a>
-        </div>
-    </nav>
+<body class="relative min-h-screen bg-[url('/images/bg.jpg')] bg-cover bg-center bg-no-repeat text-[#f8f2e6]">
+    <div class="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/50"></div>
+    <main class="relative z-10 mx-auto max-w-6xl px-6 pb-20 pt-10">
 
-    <main class="main-content">
-        <h1 class="page-title">Welcome to Hotel Management</h1>
-        <p class="page-subtitle">Select a team member to access their module</p>
-
-        <div class="team-grid fade-in">
-            <div class="team-card" onclick="location.href='/hotels'">
-                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face"
-                    alt="John Doe" class="team-avatar">
-                <h3 class="team-name">John Doe</h3>
-                <p class="team-role">Senior Manager</p>
-                <span class="team-module">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                        </path>
-                    </svg>
-                    Hotels
+        <section class="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-start">
+            <div class="rounded-3xl border border-[#d2b387]/70 bg-[#1f140b]/60 p-8 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/20 backdrop-blur-sm">
+                <span
+                    class="inline-flex items-center rounded-full border border-[#d2b387]/70 bg-[#2a1b10]/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-[#f5e6cf] shadow-sm">
+                    Hotel Management
                 </span>
+                <h2 class="mt-6 text-xl font-semibold text-[#f8f2e6] sm:text-3xl">
+                    Streamline every stay with a unified hotel management hub for reservations, rooms, payments, and
+                    guest feedback.
+                </h2>
+            </div>
+        </section>
+
+        <section class="mt-8">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xl font-semibold text-[#f8f2e6]">Select Your Module</h3>
             </div>
 
-            <div class="team-card" onclick="location.href='reservations.html'">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face"
-                    alt="Jane Smith" class="team-avatar">
-                <h3 class="team-name">Jane Smith</h3>
-                <p class="team-role">Reservations Lead</p>
-                <span class="team-module">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                        </path>
-                    </svg>
-                    Reservations
-                </span>
-            </div>
+            <div class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="group flex cursor-pointer gap-4 rounded-3xl border border-[#d2b387]/70 bg-[#1f140b]/60 p-5 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/20 backdrop-blur-sm transition duration-300 hover:-translate-y-1"
+                    onclick="location.href='/hotels'">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face"
+                        alt="John Doe"
+                        class="w-16 self-stretch flex-shrink-0 rounded-2xl object-cover ring-2 ring-[#f1d9b3]/60">
+                    <div class="flex flex-col gap-2">
+                        <h3 class="text-base font-semibold text-[#f8f2e6]">Prajyot Gorlewar</h3>
+                        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-[#4a2c12]">
+                            Hotels
+                        </span>
+                    </div>
+                </div>
 
-            <div class="team-card" onclick="location.href='reviews.html'">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face"
-                    alt="Mike Johnson" class="team-avatar">
-                <h3 class="team-name">Mike Johnson</h3>
-                <p class="team-role">Quality Analyst</p>
-                <span class="team-module">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z">
-                        </path>
-                    </svg>
-                    Reviews
-                </span>
-            </div>
+                <div class="group flex cursor-pointer gap-4 rounded-3xl border border-[#d2b387]/70 bg-[#1f140b]/60 p-5 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/20 backdrop-blur-sm transition duration-300 hover:-translate-y-1"
+                    onclick="location.href='reservations.html'">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face"
+                        alt="Jane Smith"
+                        class="w-16 self-stretch flex-shrink-0 rounded-2xl object-cover ring-2 ring-[#f1d9b3]/60">
+                    <div class="flex flex-col gap-2">
+                        <h3 class="text-base font-semibold text-[#f8f2e6]">Tanvi Dhok</h3>
+                        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-[#4a2c12]">
+                            Reservations
+                        </span>
+                    </div>
+                </div>
 
-            <div class="team-card" onclick="location.href='rooms.html'">
-                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face"
-                    alt="Sarah Williams" class="team-avatar">
-                <h3 class="team-name">Sarah Williams</h3>
-                <p class="team-role">Room Coordinator</p>
-                <span class="team-module">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
-                        </path>
-                    </svg>
-                    Rooms
-                </span>
-            </div>
+                <div class="group flex cursor-pointer gap-4 rounded-3xl border border-[#d2b387]/70 bg-[#1f140b]/60 p-5 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/20 backdrop-blur-sm transition duration-300 hover:-translate-y-1"
+                    onclick="location.href='reviews.html'">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face"
+                        alt="Mike Johnson"
+                        class="w-16 self-stretch flex-shrink-0 rounded-2xl object-cover ring-2 ring-[#f1d9b3]/60">
+                    <div class="flex flex-col gap-2">
+                        <h3 class="text-base font-semibold text-[#f8f2e6]">Mohit Deo</h3>
+                        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-[#4a2c12]">
+                            Room Amenity
+                        </span>
+                    </div>
+                </div>
 
-            <div class="team-card" onclick="location.href='payments.html'">
-                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face"
-                    alt="Robert Brown" class="team-avatar">
-                <h3 class="team-name">Robert Brown</h3>
-                <p class="team-role">Finance Director</p>
-                <span class="team-module">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
-                        </path>
-                    </svg>
-                    Payments
-                </span>
-            </div>
+                <div class="group flex cursor-pointer gap-4 rounded-3xl border border-[#d2b387]/70 bg-[#1f140b]/60 p-5 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/20 backdrop-blur-sm transition duration-300 hover:-translate-y-1"
+                    onclick="location.href='rooms.html'">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face"
+                        alt="Sarah Williams"
+                        class="w-16 self-stretch flex-shrink-0 rounded-2xl object-cover ring-2 ring-[#f1d9b3]/60">
+                    <div class="flex flex-col gap-2">
+                        <h3 class="text-base font-semibold text-[#f8f2e6]">Harshal Borkar</h3>
+                        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-[#4a2c12]">
+                            Payments
+                        </span>
+                    </div>
+                </div>
 
-            <div class="team-card" onclick="location.href='index.html'">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face"
-                    alt="Emily Davis" class="team-avatar">
-                <h3 class="team-name">Emily Davis</h3>
-                <p class="team-role">Operations Manager</p>
-                <span class="team-module">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
-                        </path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                    Settings
-                </span>
+                <div class="group flex cursor-pointer gap-4 rounded-3xl border border-[#d2b387]/70 bg-[#1f140b]/60 p-5 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/20 backdrop-blur-sm transition duration-300 hover:-translate-y-1"
+                    onclick="location.href='payments.html'">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face"
+                        alt="Robert Brown"
+                        class="w-16 self-stretch flex-shrink-0 rounded-2xl object-cover ring-2 ring-[#f1d9b3]/60">
+                    <div class="flex flex-col gap-2">
+                        <h3 class="text-base font-semibold text-[#f8f2e6]">Zaid Syyed</h3>
+                        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-[#4a2c12]">
+                            Reviews
+                        </span>
+                    </div>
+                </div>
+
+                <div class="group flex cursor-pointer gap-4 rounded-3xl border border-[#d2b387]/70 bg-[#1f140b]/60 p-5 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/20 backdrop-blur-sm transition duration-300 hover:-translate-y-1"
+                    onclick="location.href='index.html'">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face"
+                        alt="Emily Davis"
+                        class="w-16 self-stretch flex-shrink-0 rounded-2xl object-cover ring-2 ring-[#f1d9b3]/60">
+                    <div class="flex flex-col gap-2">
+                        <h3 class="text-base font-semibold text-[#f8f2e6]">Nidhish Parke</h3>
+                        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-[#4a2c12]">
+                            Room Type
+                        </span>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
     </main>
 </body>
 
