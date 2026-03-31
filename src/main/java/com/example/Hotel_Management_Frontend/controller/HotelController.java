@@ -5,6 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HotelController {
     @GetMapping("/hotels")
     public String hotels() {
-        return "hotel/hotels";
+        return "hotels";
     }
 }
