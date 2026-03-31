@@ -1,9 +1,25 @@
 package com.example.Hotel_Management_Frontend.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Reservation {
-    private Long id;
+
+    @JsonProperty("reservation_id")
+    private int id;
+
     private String guestName;
-    private String checkIn;
-    private String checkOut;
+    private String guestEmail;
+
+    @JsonProperty("guest_phone")
+    private String phone;
+
+    private String checkInDate;
+    private String checkOutDate;
+
 }
+
