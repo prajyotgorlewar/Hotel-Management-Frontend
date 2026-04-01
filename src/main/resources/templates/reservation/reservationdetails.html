@@ -3,6 +3,148 @@
 
 <head>
     <title>Reservation Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #1a1208;
+            background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 10, 3, 0.72);
+            z-index: 0;
+        }
+
+        .glass {
+            background: rgba(30, 22, 8, 0.85);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(180, 140, 60, 0.18);
+        }
+
+        .glass-inner {
+            background: rgba(20, 14, 4, 0.5);
+            border: 1px solid rgba(180, 140, 60, 0.1);
+        }
+
+        h1,
+        h2,
+        h3,
+        .serif {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .divider {
+            border-color: rgba(180, 140, 60, 0.15);
+        }
+    </style>
+</head>
+
+<body class="relative py-12">
+    <div class="relative z-10 max-w-2xl mx-auto px-4">
+
+        <!-- Card -->
+        <div class="glass rounded-2xl shadow-2xl p-10">
+
+            <!-- Header -->
+            <div class="mb-8">
+                <p class="text-xs tracking-[0.25em] text-amber-400/70 uppercase mb-2 font-light">Hotel Management</p>
+                <h2 class="serif text-4xl font-semibold text-amber-100">Reservation Details</h2>
+                <div class="h-px w-16 bg-amber-600/40 mt-3"></div>
+            </div>
+
+            <!-- Guest Info Section -->
+            <div class="glass-inner rounded-xl p-6 mb-4">
+                <p class="text-xs tracking-[0.2em] uppercase text-amber-500/60 font-medium mb-4">Guest Information</p>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs tracking-wide uppercase text-amber-600/50">Reservation ID</span>
+                        <span class="text-amber-300/80 font-mono text-sm" th:text="${res.reservationId}"></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs tracking-wide uppercase text-amber-600/50">Name</span>
+                        <span class="text-amber-100 font-medium text-sm" th:text="${res.guestName}"></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs tracking-wide uppercase text-amber-600/50">Email</span>
+                        <span class="text-amber-200/70 text-sm" th:text="${res.guestEmail}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stay Details Section -->
+            <div class="glass-inner rounded-xl p-6 mb-4">
+                <p class="text-xs tracking-[0.2em] uppercase text-amber-500/60 font-medium mb-4">Stay Details</p>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs tracking-wide uppercase text-amber-600/50">Check-In</span>
+                        <span class="text-amber-100 text-sm" th:text="${res.checkInDate}"></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs tracking-wide uppercase text-amber-600/50">Check-Out</span>
+                        <span class="text-amber-100 text-sm" th:text="${res.checkOutDate}"></span>
+                    </div>
+                    <hr class="divider my-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs tracking-wide uppercase text-amber-600/50">Room</span>
+                        <span class="text-amber-200/80 text-sm" th:text="${res.roomNumber}"></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs tracking-wide uppercase text-amber-600/50">Hotel</span>
+                        <span class="text-amber-200/80 text-sm" th:text="${res.hotelName}"></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs tracking-wide uppercase text-amber-600/50">Location</span>
+                        <span class="text-amber-200/70 text-sm" th:text="${res.hotelLocation}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Section -->
+            <div class="glass-inner rounded-xl p-6 mb-8">
+                <p class="text-xs tracking-[0.2em] uppercase text-amber-500/60 font-medium mb-4">Payment Summary</p>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs tracking-wide uppercase text-amber-600/50">Amount</span>
+                        <span class="text-amber-300 font-semibold text-base serif">
+                            ₹<span th:text="${res.paymentAmount}"></span>
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs tracking-wide uppercase text-amber-600/50">Status</span>
+                        <span
+                            class="px-3 py-1 rounded-full text-xs tracking-wide border border-amber-600/30 text-amber-400"
+                            style="background: rgba(180,140,60,0.12);" th:text="${res.paymentStatus}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back Button -->
+            <a href="/reservations"
+                class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs tracking-[0.15em] uppercase font-medium text-amber-950 bg-amber-500 hover:bg-amber-400 transition-all duration-200 shadow-lg">
+                ⬅ Back to Reservations
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<!-- <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Reservation Details</title>
 </head>
 
 <body style="font-family: Arial; margin:20px;">
@@ -199,4 +341,4 @@
     </script>
 </body>
 
-</html> -->
+</html> --> -->

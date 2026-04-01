@@ -11,10 +11,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Reservation {
-
-    @JsonProperty("reservation_id")
-    private int id;
+public class CreateReservationDTO {
 
     private String guestName;
     private String guestEmail;
@@ -26,5 +23,5 @@ public class Reservation {
     private LocalDate checkOutDate;
 
     private RoomDTO room; 
+    
 }
-
