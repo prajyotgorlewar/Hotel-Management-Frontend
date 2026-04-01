@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Payment</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+    <style>
+        body { background-color: #f8f9fa; }
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .form-label { font-weight: 600; }
+        .btn-submit {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 8px;
+        }
+        .btn-submit:hover { opacity: 0.9; color: white; }
+        h2 { color: #1a1a2e; }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-plus-circle me-2"></i>Create Payment</h2>
+        <a th:href="@{/hotel-payments(hotelId=${hotelId})}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Back
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-card">
+                <form th:action="@{/hotel-payments/create(hotelId=${hotelId})}"
+                      th:object="${createPaymentDTO}"
+                      method="post">
+
+                    <!-- Amount -->
+                    <div class="mb-3">
+                        <label class="form-label">Amount (₹)</label>
+                        <input type="number" step="0.01" class="form-control"
+                               th:field="*{amount}" placeholder="Enter amount" required/>
+                    </div>
+
+                    <!-- Payment Date -->
+                    <div class="mb-3">
+                        <label class="form-label">Payment Date</label>
+                        <input type="date" class="form-control"
+                               th:field="*{paymentDate}" required/>
+                    </div>
+
+                    <!-- Payment Status -->
+                    <div class="mb-3">
+                        <label class="form-label">Payment Status</label>
+                        <select class="form-select" th:field="*{paymentStatus}" required>
+                            <option value="">-- Select Status --</option>
+                            <option value="Paid">Paid</option>
+                            <option value="Failed">Failed</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                    </div>
+
+                    <!-- Reservation ID -->
+                    <div class="mb-4">
+                        <label class="form-label">Reservation ID</label>
+                        <input type="number" class="form-control"
+                               name="reservationId" placeholder="Enter reservation ID" required/>
+                    </div>
+
+                    <button type="submit" class="btn btn-submit w-100">
+                        <i class="bi bi-save me-1"></i> Save Payment
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>View Payment</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+    <style>
+        body { background-color: #f8f9fa; }
+        .detail-card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+        .section-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        .card-header-custom {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            border-radius: 12px 12px 0 0;
+            padding: 20px 32px;
+        }
+        .info-block {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .info-block:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a onclick="history.back()" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+    </div>
+
+    <div class="col-md-8 mx-auto">
+        <!-- Card Header -->
+        <div class="card-header-custom d-flex justify-content-between align-items-center">
+            <div>
+                <div class="small opacity-75">Payment ID #<span th:text="${payment.paymentId}"></span></div>
+                <div class="fs-4 fw-bold" th:text="${payment.hotelName}"></div>
+                <div class="small opacity-75" th:text="${payment.hotelLocation}"></div>
+            </div>
+            <div>
+                <span class="badge fs-6"
+                      th:classappend="${payment.paymentStatus == 'Paid'} ? 'bg-success' : 'bg-danger'"
+                      th:text="${payment.paymentStatus}">
+                </span>
+            </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="detail-card" style="border-radius: 0 0 12px 12px;">
+
+            <!-- Guest Info -->
+            <h6 class="text-uppercase text-muted mb-3">
+                <i class="bi bi-person-circle me-1"></i> Guest Information
+            </h6>
+            <div class="row">
+                <div class="col-md-4 info-block">
+                    <div class="section-title">Guest Name</div>
+                    <div class="section-value" th:text="${payment.guestName}"></div>
+                </div>
+                <div class="col-md-4 info-block">
+                    <div class="section-title">Email</div>
+                    <div class="section-value" th:text="${payment.guestEmail}"></div>
+                </div>
+                <div class="col-md-4 info-block">
+                    <div class="section-title">Phone</div>
+                    <div class="section-value" th:text="${payment.guestPhone}"></div>
+                </div>
+            </div>
+
+            <hr/>
+
+            <!-- Reservation Info -->
+            <h6 class="text-uppercase text-muted mb-3">
+                <i class="bi bi-calendar-check me-1"></i> Reservation Details
+            </h6>
+            <div class="row">
+                <div class="col-md-4 info-block">
+                    <div class="section-title">Room Number</div>
+                    <div class="section-value" th:text="${payment.roomNumber}"></div>
+                </div>
+                <div class="col-md-4 info-block">
+                    <div class="section-title">Check-In</div>
+                    <div class="section-value" th:text="${payment.checkInDate}"></div>
+                </div>
+                <div class="col-md-4 info-block">
+                    <div class="section-title">Check-Out</div>
+                    <div class="section-value" th:text="${payment.checkOutDate}"></div>
+                </div>
+            </div>
+
+            <hr/>
+
+            <!-- Payment Info -->
+            <h6 class="text-uppercase text-muted mb-3">
+                <i class="bi bi-cash-stack me-1"></i> Payment Details
+            </h6>
+            <div class="row">
+                <div class="col-md-4 info-block">
+                    <div class="section-title">Amount</div>
+                    <div class="section-value" th:text="'₹' + ${payment.amount}"></div>
+                </div>
+                <div class="col-md-4 info-block">
+                    <div class="section-title">Payment Date</div>
+                    <div class="section-value" th:text="${payment.paymentDate}"></div>
+                </div>
+                <div class="col-md-4 info-block">
+                    <div class="section-title">Status</div>
+                    <div>
+                        <span class="badge"
+                              th:classappend="${payment.paymentStatus == 'Paid'} ? 'bg-success' : 'bg-danger'"
+                              th:text="${payment.paymentStatus}">
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
+```
+
+---
+
+## Flow:
+```
+Click View button → GET /hotel-payments/view?paymentId=1
+↓
+Controller → PaymentService
+↓
+GET http://172.16.160.110:8081/payments/search/by-payment-id?paymentId=1
+↓
+PaymentDetailDTO → Model → view.html
