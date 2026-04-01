@@ -7,7 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.Hotel_Management_Frontend.dto.Hotel;
 import com.example.Hotel_Management_Frontend.dto.HotelResponse;
@@ -70,5 +72,51 @@ public class HotelController {
         model.addAttribute("hotel", hotel);
 
         return "hotel/hotelDetail";
+    }
+
+    @PostMapping("/hotels/create")
+    public String createHotel(
+            @RequestParam("name") String name,
+            @RequestParam("location") String location,
+            @RequestParam("description") String description,
+            @RequestParam(name = "amenities", defaultValue = "") String amenities) {
+
+        java.util.List<String> amenityList = java.util.Arrays.stream(amenities.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
+
+        hotelService.createHotel(name, location, description, amenityList);
+        return "redirect:/hotels?toast=created";
+    }
+
+    @PostMapping("/hotels/update")
+    public String updateHotel(
+            @RequestParam("id") int id,
+            @RequestParam("name") String name,
+            @RequestParam("location") String location,
+            @RequestParam("description") String description,
+            @RequestParam(name = "amenities", defaultValue = "") String amenities) {
+
+        java.util.List<String> amenityList = java.util.Arrays.stream(amenities.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
+
+        hotelService.updateHotel(id, name, location, description, amenityList);
+        return "redirect:/hotels?toast=updated";
+    }
+
+    @PostMapping("/hotels/delete")
+    public String deleteHotel(@RequestParam("id") int id) {
+        hotelService.deleteHotel(id);
+        return "redirect:/hotels?toast=deleted";
+    }
+
+    @GetMapping("/hotels/{id}/amenities/json")
+    @ResponseBody
+    public java.util.List<com.example.Hotel_Management_Frontend.dto.Amenity> getHotelAmenitiesJson(
+            @PathVariable int id) {
+        return hotelService.getAmenitiesForHotel(id);
     }
 }
