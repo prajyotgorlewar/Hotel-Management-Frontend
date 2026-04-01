@@ -29,7 +29,7 @@ public class ReviewController {
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
           //  .registeredModules(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
 
-    @Value("${backend.base-url:http://172.16.160.110:8081}")
+    @Value("${backend.base-url}")
     private String backendUrl;
 
     private static final int PAGE_SIZE = 6;

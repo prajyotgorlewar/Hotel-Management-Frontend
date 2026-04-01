@@ -104,7 +104,7 @@ public class HotelService {
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setAccept(java.util.List.of(MediaType.APPLICATION_JSON));
             HttpEntity<java.util.Map<String, Object>> entity = new HttpEntity<>(payload, headers);
-            restTemplate.exchange(BASE_URL + "/hotels/" + hotelId, HttpMethod.PUT, entity, Void.class);
+            restTemplate.exchange(baseUrl + "/hotels/" + hotelId, HttpMethod.PUT, entity, Void.class);
 
             updateHotelAmenities(hotelId, amenityNames);
             return true;
