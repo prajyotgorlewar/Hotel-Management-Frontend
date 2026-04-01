@@ -1,110 +1,726 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reviews - Hotel Management</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Guest Reviews — The Grand</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <style>
+        :root {
+            --gold: #C9A84C;
+            --gold-light: #E8D5A3;
+            --gold-dark: #9A7A2E;
+            --charcoal: #1A1A1A;
+            --charcoal-mid: #2C2C2C;
+            --charcoal-soft: #3D3D3D;
+            --ivory: #F8F5EF;
+            --ivory-dark: #EDE8DF;
+            --stone: #9A9180;
+            --white: #FFFFFF;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--charcoal);
+            color: var(--ivory);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Noise texture overlay ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        /* ── Gold top bar ── */
+        .top-bar {
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+        }
+
+        /* ── Header ── */
+        header {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 4rem 2rem 3rem;
+            border-bottom: 1px solid rgba(201,168,76,0.2);
+        }
+
+        .hotel-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.8rem, 6vw, 5rem);
+            font-weight: 300;
+            letter-spacing: 0.25em;
+            color: var(--gold-light);
+            text-transform: uppercase;
+        }
+
+        .hotel-tagline {
+            font-size: 0.7rem;
+            letter-spacing: 0.4em;
+            color: var(--stone);
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.8rem, 3vw, 2.6rem);
+            font-weight: 300;
+            font-style: italic;
+            color: var(--ivory);
+            margin-top: 2.5rem;
+        }
+
+        .ornament {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0 0;
+        }
+        .ornament::before, .ornament::after {
+            content: '';
+            flex: 1;
+            max-width: 120px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold));
+        }
+        .ornament::after { background: linear-gradient(90deg, var(--gold), transparent); }
+        .ornament span { color: var(--gold); font-size: 1.1rem; }
+
+        /* ── Main layout ── */
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 2rem 5rem;
+        }
+
+        /* ── Action bar ── */
+        .action-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 2.5rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold-light);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 0.75rem 1.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--gold);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+            z-index: -1;
+        }
+        .btn-primary:hover { color: var(--charcoal); }
+        .btn-primary:hover::before { transform: scaleX(1); }
+
+        /* ── Reviews grid ── */
+        .reviews-grid {
+            display: grid;
+            gap: 1.5px;
+        }
+
+        /* ── Review card ── */
+        .review-card {
+            background: var(--charcoal-mid);
+            border-left: 1px solid rgba(201,168,76,0.15);
+            border-right: 1px solid rgba(201,168,76,0.05);
+            padding: 1.8rem 2.2rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto auto;
+            align-items: center;
+            gap: 2rem;
+            cursor: pointer;
+            transition: background 0.25s, border-left-color 0.25s;
+            position: relative;
+            text-decoration: none;
+            color: inherit;
+        }
+        .review-card:hover {
+            background: var(--charcoal-soft);
+            border-left-color: var(--gold);
+        }
+
+        .review-id {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 300;
+            color: rgba(201,168,76,0.25);
+            min-width: 3rem;
+            text-align: center;
+            line-height: 1;
+        }
+
+        .review-body { flex: 1; overflow: hidden; }
+
+        .review-comment {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--ivory);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 0.35rem;
+        }
+
+        .review-meta {
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--stone);
+        }
+
+        .review-rating {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .stars {
+            display: flex;
+            gap: 2px;
+        }
+        .star {
+            width: 12px;
+            height: 12px;
+        }
+        .star.filled { color: var(--gold); }
+        .star.empty { color: var(--charcoal-soft); }
+
+        .rating-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 400;
+            color: var(--gold-light);
+        }
+
+        /* ── Three-dot menu ── */
+        .dots-wrapper {
+            position: relative;
+        }
+
+        .dots-btn {
+            background: none;
+            border: none;
+            color: var(--stone);
+            cursor: pointer;
+            font-size: 1.3rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 3px;
+            transition: color 0.2s, background 0.2s;
+            line-height: 1;
+            letter-spacing: 2px;
+        }
+        .dots-btn:hover { color: var(--gold); background: rgba(201,168,76,0.08); }
+
+        .dots-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 110%;
+            background: var(--charcoal-mid);
+            border: 1px solid rgba(201,168,76,0.3);
+            min-width: 160px;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .dots-menu.open { display: block; }
+
+        .dots-menu a, .dots-menu button {
+            display: block;
+            width: 100%;
+            padding: 0.75rem 1.2rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--ivory);
+            text-decoration: none;
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .dots-menu a:hover, .dots-menu button:hover {
+            background: rgba(201,168,76,0.12);
+            color: var(--gold-light);
+        }
+
+        /* ── Modal ── */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10,10,10,0.8);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-backdrop.open { display: flex; }
+
+        .modal {
+            background: var(--charcoal-mid);
+            border: 1px solid rgba(201,168,76,0.3);
+            max-width: 520px;
+            width: 90%;
+            padding: 2.5rem;
+            position: relative;
+            animation: slideUp 0.35s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.2rem;
+            background: none;
+            border: none;
+            color: var(--stone);
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .modal-close:hover { color: var(--gold); }
+
+        .modal-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.7rem;
+            font-weight: 300;
+            font-style: italic;
+            color: var(--gold-light);
+            margin-bottom: 0.4rem;
+        }
+        .modal-subtitle {
+            font-size: 0.65rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--stone);
+            margin-bottom: 2rem;
+        }
+
+        .form-group { margin-bottom: 1.4rem; }
+
+        .form-label {
+            display: block;
+            font-size: 0.65rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--stone);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            background: var(--charcoal);
+            border: 1px solid rgba(201,168,76,0.2);
+            color: var(--ivory);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 300;
+            padding: 0.75rem 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+            border-radius: 0;
+        }
+        .form-input:focus, .form-textarea:focus { border-color: var(--gold); }
+        .form-textarea { resize: vertical; min-height: 90px; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        .btn-submit {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold-light);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            padding: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--gold);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s;
+            z-index: -1;
+        }
+        .btn-submit:hover { color: var(--charcoal); }
+        .btn-submit:hover::before { transform: scaleX(1); }
+
+        /* ── Pagination ── */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            margin-top: 3rem;
+        }
+
+        .page-btn {
+            width: 38px;
+            height: 38px;
+            background: none;
+            border: 1px solid rgba(201,168,76,0.2);
+            color: var(--stone);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .page-btn:hover, .page-btn.active {
+            border-color: var(--gold);
+            color: var(--gold-light);
+            background: rgba(201,168,76,0.08);
+        }
+        .page-btn.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* ── Star rating input ── */
+        .star-input { display: flex; gap: 6px; }
+        .star-input input[type="radio"] { display: none; }
+        .star-input label {
+            font-size: 1.4rem;
+            color: var(--charcoal-soft);
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+        .star-input label:hover,
+        .star-input label:hover ~ label,
+        .star-input input:checked ~ label { /* handled by JS */ }
+
+        /* ── Alert ── */
+        .alert {
+            padding: 0.9rem 1.4rem;
+            border-left: 3px solid var(--gold);
+            background: rgba(201,168,76,0.08);
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            margin-bottom: 2rem;
+            color: var(--gold-light);
+        }
+
+        /* ── Empty state ── */
+        .empty-state {
+            text-align: center;
+            padding: 5rem 2rem;
+            color: var(--stone);
+        }
+        .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.4; }
+        .empty-state p { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-style: italic; }
+
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(201,168,76,0.1);
+            font-size: 0.65rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--charcoal-soft);
+        }
+    </style>
 </head>
-
 <body>
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="index.html" class="navbar-brand">
-                <svg class="navbar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                    </path>
-                </svg>
-                Hotel Manager
-            </a>
-            <a href="index.html" class="back-btn">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                </svg>
-                Back to Home
-            </a>
-        </div>
-    </nav>
 
-    <main class="main-content">
-        <h1 class="page-title">Reviews</h1>
-        <p class="page-subtitle">Guest feedback and ratings</p>
+<div class="top-bar"></div>
 
-        <div class="search-container">
-            <input type="text" class="search-input" id="searchInput" placeholder="Search reviews..."
-                onkeyup="filterReviews()">
-        </div>
+<header>
+    <div class="hotel-name">The Grand</div>
+    <div class="hotel-tagline">Est. MDCCCXCII &nbsp;·&nbsp; Excellence in Hospitality</div>
+    <div class="section-title">Guest Testimonials</div>
+    <div class="ornament"><span>✦</span></div>
+</header>
 
-        <div class="card-grid fade-in" id="reviewsGrid">
-        </div>
-    </main>
+<main>
 
-    <script>
-        const reviews = [
-            { id: 1, guest: "Michael Anderson", hotel: "Grand Plaza Hotel", hotelId: 1, rating: 5, title: "Exceptional Stay!", comment: "The Grand Plaza exceeded all expectations. Impeccable service, luxurious rooms, and the location couldn't be better. The staff went above and beyond to make our anniversary special.", date: "2024-03-10", stayDate: "March 2024" },
-            { id: 2, guest: "Sarah Johnson", hotel: "Seaside Resort", hotelId: 2, rating: 4, title: "Beautiful Beach Views", comment: "Loved waking up to the ocean every morning. The beach access was perfect and the pool area was well maintained. Only minor issue was slow room service.", date: "2024-03-08", stayDate: "March 2024" },
-            { id: 3, guest: "David Wilson", hotel: "Mountain Lodge", hotelId: 3, rating: 5, title: "Perfect Mountain Getaway", comment: "Exactly what we needed for a family ski trip. Cozy rooms with fireplaces, great ski-in/ski-out access, and the restaurant served amazing comfort food.", date: "2024-03-05", stayDate: "February 2024" },
-            { id: 4, guest: "Emily Brown", hotel: "City Center Inn", hotelId: 4, rating: 3, title: "Good Location, Average Service", comment: "The location is fantastic for exploring downtown, but the room was smaller than expected and housekeeping missed a day. Decent value for the price.", date: "2024-03-02", stayDate: "February 2024" },
-            { id: 5, guest: "James Taylor", hotel: "Lakefront Hotel", hotelId: 5, rating: 5, title: "Absolutely Stunning", comment: "The views from our suite were breathtaking. Watching the sunset over the lake from our private balcony was magical. The spa treatments were world-class.", date: "2024-02-28", stayDate: "February 2024" },
-            { id: 6, guest: "Lisa Martinez", hotel: "Desert Oasis Resort", hotelId: 6, rating: 4, title: "Golf Paradise", comment: "The golf course is championship quality and the desert landscape is beautiful. The spa was relaxing after a day on the links. Would definitely return.", date: "2024-02-25", stayDate: "February 2024" },
-            { id: 7, guest: "Robert Garcia", hotel: "Grand Plaza Hotel", hotelId: 1, rating: 4, title: "Great for Business Travel", comment: "Excellent business amenities and the concierge helped arrange all my meetings. The executive lounge was a nice perk. Room was comfortable and quiet.", date: "2024-02-20", stayDate: "February 2024" },
-            { id: 8, guest: "Jennifer Lee", hotel: "Seaside Resort", hotelId: 2, rating: 5, title: "Family Paradise", comment: "Our kids had the time of their lives! The kids club was fantastic, and the family activities kept everyone entertained. Already planning our next visit.", date: "2024-02-15", stayDate: "February 2024" }
-        ];
+    <!-- Success / error alert -->
+    <div th:if="${message}" class="alert" th:text="${message}"></div>
 
-        function renderStars(rating) {
-            let stars = '';
-            for (let i = 0; i < 5; i++) {
-                if (i < rating) {
-                    stars += '<svg class="star star-filled" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
-                } else {
-                    stars += '<svg class="star star-empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
-                }
-            }
-            return stars;
-        }
+    <div class="action-bar" style="justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
 
-        function renderReviews(data) {
-            const grid = document.getElementById('reviewsGrid');
-            if (data.length === 0) {
-                grid.innerHTML = '<div class="empty-state"><h3>No reviews found</h3><p>Try adjusting your search</p></div>';
-                return;
-            }
-            grid.innerHTML = data.map(review => `
-                <div class="review-card" onclick="location.href='reviewdetails.html?id=${review.id}'">
-                    <div class="review-header">
-                        <div>
-                            <h3 class="card-title">${review.title}</h3>
-                            <p class="review-hotel">${review.hotel}</p>
-                        </div>
-                        <div class="rating">
-                            ${renderStars(review.rating)}
-                        </div>
-                    </div>
-                    <p class="review-comment">"${review.comment.substring(0, 120)}..."</p>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f3f4f6;">
-                        <span style="font-size: 0.875rem; font-weight: 500; color: #111827;">${review.guest}</span>
-                        <span style="font-size: 0.75rem; color: #6b7280;">${review.stayDate}</span>
-                    </div>
+        <!-- 🔍 SEARCH BAR -->
+        <form th:action="@{/reviews}" method="get" style="display: flex; gap: 0.6rem; align-items: center;">
+
+            <input type="hidden" name="hotelId" th:value="${hotelId}"/>
+
+            <!-- Dropdown -->
+            <select name="filterBy" class="form-input" style="width: 160px;">
+                <option value="comment">Comment</option>
+                <option value="rating">Rating</option>
+                <option value="date">Date</option>
+            </select>
+
+            <!-- Input -->
+            <input type="text" name="keyword" class="form-input" placeholder="Search..." required/>
+
+            <!-- Button -->
+            <button type="submit" class="btn-primary">
+                🔍 Search
+            </button>
+        </form>
+
+        <!-- ➕ ADD REVIEW -->
+        <button class="btn-primary" onclick="openInsertModal()">
+            <span>+</span> Leave a Review
+        </button>
+
+    </div>
+    <!-- Review list -->
+    <div class="reviews-grid" th:if="${reviews != null and !#lists.isEmpty(reviews)}">
+        <div th:each="r : ${reviews}" class="review-card" style="display:grid;"
+             onclick="goToDetail(event, this)"
+             th:attr="data-id=${r.review_id}, data-hotelid=${hotelId}">
+
+            <!-- Number -->
+            <div class="review-id" th:text="${r.review_id}">1</div>
+
+            <!-- Body -->
+            <div class="review-body">
+                <div class="review-comment" th:text="${r.shortComment}">Great experience this summer...</div>
+                <div class="review-meta" th:text="${r.review_date}">2023-05-15</div>
+            </div>
+
+            <!-- Stars -->
+            <div class="review-rating">
+                <div class="stars" th:data-rating="${r.rating}">
+                    <span th:each="i : ${#numbers.sequence(1,5)}"
+                          th:class="${i <= r.rating} ? 'star filled' : 'star empty'">
+                        <svg viewBox="0 0 12 12" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;">
+                            <path d="M6 0l1.35 4.15H11.7L8.18 6.72 9.53 10.87 6 8.3 2.47 10.87l1.35-4.15L0.3 4.15H4.65z"/>
+                        </svg>
+                    </span>
                 </div>
-            `).join('');
-        }
+                <div class="rating-num" th:text="${r.rating} + '/5'">4/5</div>
+            </div>
 
-        function filterReviews() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = reviews.filter(r =>
-                r.guest.toLowerCase().includes(search) ||
-                r.hotel.toLowerCase().includes(search) ||
-                r.title.toLowerCase().includes(search) ||
-                r.comment.toLowerCase().includes(search)
-            );
-            renderReviews(filtered);
-        }
+            <!-- Three-dot menu -->
+            <div class="dots-wrapper" onclick="event.stopPropagation()">
 
-        renderReviews(reviews);
-    </script>
+                <button class="dots-btn"
+                        th:attr="data-menu-id='menu-' + ${r.review_id}"
+                        onclick="toggleMenu(this)">
+                    ···
+                </button>
+
+                <div class="dots-menu" th:id="'menu-' + ${r.review_id}">
+
+                    <button
+                            th:attr="
+                data-id=${r.review_id},
+                data-comment=${r.comment},
+                data-rating=${r.rating},
+                data-date=${r.review_date}"
+                            onclick="openUpdateModalFromBtn(this)">
+                        ✎ &nbsp;Edit Review
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div th:if="${reviews == null or #lists.isEmpty(reviews)}" class="empty-state">
+        <div class="empty-state-icon">✦</div>
+        <p>No reviews have been recorded for this property.</p>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" th:if="${totalPages > 1}">
+        <a th:href="@{/reviews(hotelId=${hotelId}, page=${currentPage - 1})}"
+           th:class="${currentPage == 0} ? 'page-btn disabled' : 'page-btn'">‹</a>
+
+        <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+           th:href="@{/reviews(hotelId=${hotelId}, page=${i})}"
+           th:text="${i + 1}"
+           th:class="${i == currentPage} ? 'page-btn active' : 'page-btn'">1</a>
+
+        <a th:href="@{/reviews(hotelId=${hotelId}, page=${currentPage + 1})}"
+           th:class="${currentPage == totalPages - 1} ? 'page-btn disabled' : 'page-btn'">›</a>
+    </div>
+
+</main>
+
+<!-- ══════════════ INSERT MODAL ══════════════ -->
+<div class="modal-backdrop" id="insertModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('insertModal')">✕</button>
+        <div class="modal-title">Share Your Experience</div>
+        <div class="modal-subtitle">We value your honest impressions</div>
+        <form th:action="@{/reviews/create}" method="post">
+            <input type="hidden" name="hotelId" th:value="${hotelId}"/>
+            <div class="form-group">
+                <label class="form-label">Reservation ID</label>
+                <input type="number" name="reservationId" class="form-input" placeholder="e.g. 42" required/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Your Comment</label>
+                <textarea name="comment" class="form-textarea" placeholder="Describe your stay..." required></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Rating (0 – 5)</label>
+                    <input type="number" name="rating" class="form-input" min="0" max="5" placeholder="4" required/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Review Date</label>
+                    <input type="date" name="review_date" class="form-input" required/>
+                </div>
+            </div>
+            <button type="submit" class="btn-submit">Submit Review</button>
+        </form>
+    </div>
+</div>
+
+<!-- ══════════════ UPDATE MODAL ══════════════ -->
+<div class="modal-backdrop" id="updateModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('updateModal')">✕</button>
+        <div class="modal-title">Amend Your Review</div>
+        <div class="modal-subtitle">Update the details below</div>
+        <form id="updateForm" method="post">
+            <input type="hidden" name="_method" value="PUT"/>
+            <input type="hidden" name="hotelId" th:value="${hotelId}"/>
+            <input type="hidden" name="reviewId" id="updateReviewId"/>
+            <div class="form-group">
+                <label class="form-label">Your Comment</label>
+                <textarea name="comment" id="updateComment" class="form-textarea" required></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Rating (0 – 5)</label>
+                    <input type="number" name="rating" id="updateRating" class="form-input" min="0" max="5" required/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Review Date</label>
+                    <input type="date" name="review_date" id="updateDate" class="form-input" required/>
+                </div>
+            </div>
+            <button type="submit" class="btn-submit">Update Review</button>
+        </form>
+    </div>
+</div>
+
+<footer>The Grand Hotel &nbsp;·&nbsp; All Rights Reserved &nbsp;·&nbsp; MMXXVI</footer>
+
+<script th:inline="javascript">
+
+function toggleMenu(btn) {
+    const id = btn.getAttribute("data-menu-id");
+
+    document.querySelectorAll('.dots-menu').forEach(m => {
+        if (m.id !== id) m.classList.remove('open');
+    });
+
+    document.getElementById(id).classList.toggle('open');
+}
+
+document.addEventListener('click', () =>
+    document.querySelectorAll('.dots-menu').forEach(m => m.classList.remove('open'))
+);
+
+
+// ✅ FIXED UPDATE MODAL FUNCTION
+function openUpdateModalFromBtn(btn) {
+
+    const id = btn.getAttribute("data-id");
+    const comment = btn.getAttribute("data-comment");
+    const rating = btn.getAttribute("data-rating");
+    const date = btn.getAttribute("data-date");
+
+    document.getElementById('updateReviewId').value = id;
+    document.getElementById('updateComment').value = comment;
+    document.getElementById('updateRating').value = rating;
+    document.getElementById('updateDate').value = date;
+
+    document.getElementById('updateForm').action = '/reviews/' + id + '/update';
+    document.getElementById('updateModal').classList.add('open');
+}
+
+
+// Existing functions (keep these)
+function openInsertModal() {
+    document.getElementById('insertModal').classList.add('open');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+}
+
+document.querySelectorAll('.modal-backdrop').forEach(bd =>
+    bd.addEventListener('click', e => {
+        if (e.target === bd) bd.classList.remove('open');
+    })
+);
+function goToDetail(e, card) {
+    if (e.target.closest('.dots-wrapper')) return;
+
+    const id = card.getAttribute("data-id");
+    const hotelId = card.getAttribute("data-hotelid");
+
+    console.log("Navigating to:", id, hotelId); // debug
+
+    window.location.href = '/reviews/' + id + '?hotelId=' + hotelId;
+}
+</script>
 </body>
-
 </html>
