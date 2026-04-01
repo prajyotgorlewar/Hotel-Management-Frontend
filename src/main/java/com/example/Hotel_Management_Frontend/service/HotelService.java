@@ -3,23 +3,23 @@ package com.example.Hotel_Management_Frontend.service;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import com.example.Hotel_Management_Frontend.dto.Hotel;
-import com.example.Hotel_Management_Frontend.dto.HotelResponse;
-import com.example.Hotel_Management_Frontend.dto.Amenity;
-import com.example.Hotel_Management_Frontend.dto.AmenityResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.Hotel_Management_Frontend.dto.Amenity;
+import com.example.Hotel_Management_Frontend.dto.AmenityResponse;
+import com.example.Hotel_Management_Frontend.dto.Hotel;
+import com.example.Hotel_Management_Frontend.dto.HotelResponse;
 
 @Service
 public class HotelService {
 
-    private final String BASE_URL = "http://172.16.160.110:8081";
+    private final String BASE_URL = "http://localhost:8081";
     private final RestTemplate restTemplate = new RestTemplate();
 
     public HotelResponse getHotels(int page, int size, String name, String city) {
