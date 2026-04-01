@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Room Type Detail</title>
+<style>
+body{font-family:Arial;padding:20px}
+table{width:100%;border-collapse:collapse;margin-top:20px}
+th,td{border:1px solid #ccc;padding:8px;text-align:left}
+button{padding:6px 12px;margin-top:10px;cursor:pointer}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);justify-content:center;align-items:center}
+.modal-content{background:#fff;padding:20px;width:300px}
+</style>
+</head>
+
+<body>
+
+<a href="/room-types">← Back</a>
+
+<h2 id="typeName">—</h2>
+<p id="description">—</p>
+
+<p><b>Max Occupancy:</b> <span id="maxOcc"></span></p>
+<p><b>Price:</b> <span id="price"></span></p>
+
+<button onclick="openEdit()">Edit Description</button>
+
+<!-- Rooms -->
+<h3>Rooms (<span id="roomCount">0</span>)</h3>
+
+<input type="text" id="searchRoomNo" placeholder="Search room no"/>
+<input type="text" id="searchAvail" placeholder="yes/no"/>
+
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Room Number</th>
+<th>Availability</th>
+</tr>
+</thead>
+<tbody id="roomsBody">
+<tr><td colspan="3">Loading...</td></tr>
+</tbody>
+</table>
+
+<div id="pagination"></div>
+
+<!-- Modal -->
+<div class="modal" id="editModal">
+<div class="modal-content">
+<h3>Edit Description</h3>
+<textarea id="editDesc" style="width:100%"></textarea><br/>
+<button onclick="saveDesc()">Save</button>
+<button onclick="closeEdit()">Cancel</button>
+</div>
+</div>
+
+<script>
+const API = 'http://localhost:8082/api';
+const PAGE_SIZE=8;
+
+let roomTypeData=null;
+let allRooms=[],filteredRooms=[];
+let page=1;
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const id=new URLSearchParams(window.location.search).get('id');
+  if(!id)return location.href='/room-types';
+  loadData(id);
+
+  document.getElementById('searchRoomNo').addEventListener('input',filterRooms);
+  document.getElementById('searchAvail').addEventListener('input',filterRooms);
+});
+
+async function loadData(id){
+  const [rt,rooms]=await Promise.all([
+    fetch(`${API}/roomtypes/${id}`),
+    fetch(`${API}/rooms?size=5`)
+    
+  ]);
+
+  roomTypeData=await rt.json();
+  renderType();
+
+  const rjson=await rooms.json();
+  const key=Object.keys(rjson._embedded)[0];
+
+  allRooms=rjson._embedded[key].filter(r=>{
+    return r._links.roomType.href.includes(`/roomtypes/${id}`);
+  });
+
+  filterRooms();
+}
+
+function renderType(){
+  document.getElementById('typeName').textContent=roomTypeData.typeName;
+  document.getElementById('description').textContent=roomTypeData.description;
+  document.getElementById('maxOcc').textContent=roomTypeData.maxOccupancy;
+  document.getElementById('price').textContent='₹ '+roomTypeData.pricePerNight;
+}
+
+function filterRooms(){
+  const rn=document.getElementById('searchRoomNo').value.toLowerCase();
+  const av=document.getElementById('searchAvail').value.toLowerCase();
+
+  filteredRooms=allRooms.filter(r=>{
+    if(rn && !String(r.roomNumber).includes(rn))return false;
+    if(av==='yes' && !r.isAvailable)return false;
+    if(av==='no' && r.isAvailable)return false;
+    return true;
+  });
+
+  page=1;
+  renderRooms();
+}
+
+function renderRooms(){
+  const tbody=document.getElementById('roomsBody');
+  const start=(page-1)*PAGE_SIZE;
+  const slice=filteredRooms.slice(start,start+PAGE_SIZE);
+
+  document.getElementById('roomCount').textContent=filteredRooms.length;
+
+  if(slice.length===0){
+    tbody.innerHTML='<tr><td colspan="3">No rooms</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML=slice.map((r,i)=>`
+    <tr>
+      <td>${start+i+1}</td>
+      <td>${r.roomNumber}</td>
+      <td>${r.isAvailable?'Available':'Not Available'}</td>
+    </tr>
+  `).join('');
+
+  renderPagination();
+}
+
+function renderPagination(){
+  const pages=Math.ceil(filteredRooms.length/PAGE_SIZE);
+  const div=document.getElementById('pagination');
+  div.innerHTML='';
+
+  for(let i=1;i<=pages;i++){
+    const b=document.createElement('button');
+    b.textContent=i;
+    if(i===page)b.disabled=true;
+    b.onclick=()=>{page=i;renderRooms()};
+    div.appendChild(b);
+  }
+}
+
+/* Description Edit */
+function openEdit(){
+  document.getElementById('editDesc').value=roomTypeData.description||'';
+  document.getElementById('editModal').style.display='flex';
+}
+
+function closeEdit(){
+  document.getElementById('editModal').style.display='none';
+}
+
+async function saveDesc(){
+  const desc=document.getElementById('editDesc').value;
+
+  const res=await fetch(`${API}/roomtypes/${roomTypeData.roomTypeId}`,{
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({...roomTypeData,description:desc})
+  });
+
+  if(res.ok){
+    roomTypeData.description=desc;
+    renderType();
+    closeEdit();
+  }else{
+    alert('Update failed');
+  }
+}
+</script>
+
+</body>
+</html>
