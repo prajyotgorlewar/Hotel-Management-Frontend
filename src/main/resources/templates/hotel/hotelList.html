@@ -59,7 +59,7 @@
                     <h1 class="text-3xl font-bold text-[#f8f2e6]">Hotel Management</h1>
                     <p class="text-base text-[#f1d9b3]/85">Manage and monitor your global hotel portfolio</p>
                 </div>
-                <button
+                <button id="openAddHotel"
                     class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-base font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -164,17 +164,21 @@
                         <div class="mt-4 flex items-center gap-2">
                             <button class="flex-1 rounded-lg bg-[#f1d9b3]/90 px-3 py-2 text-sm font-semibold text-[#4a2c12]">
                                 View Details
-                            </button>
-                            <button class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-[#f1d9b3]/25 bg-[#1f140b]/60">
-                                <svg width="14" height="14" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5"></path>
+                            </a>
+            
+                            <!-- KEEP ICON BUTTONS SAME -->
+                            <button onclick="event.stopPropagation()"
+                                th:attr="data-id=${hotel.resolvedId},data-name=${hotel.name},data-location=${hotel.location},data-description=${hotel.description}"
+                                th:class="'editHotelButton inline-flex h-7 w-7 items-center justify-center rounded-lg border border-[#f1d9b3]/25 bg-[#1f140b]/60 hover:bg-amber-900/40'">
+                                <svg width="13" height="13" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                 </svg>
                             </button>
-                            <button class="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-[#f1d9b3]/25 bg-[#1f140b]/60">
-                                <svg width="14" height="14" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                            <button onclick="event.stopPropagation()"
+                                th:attr="data-id=${hotel.resolvedId},data-name=${hotel.name}"
+                                th:class="'deleteHotelButton inline-flex h-7 w-7 items-center justify-center rounded-lg border border-[#f1d9b3]/25 bg-[#1f140b]/60 hover:bg-red-900/40'">
+                                <svg width="13" height="13" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m2 0v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6h16z"></path>
                                 </svg>
@@ -287,15 +291,435 @@
                         <div class="mt-4 h-8 rounded bg-[#f1d9b3]/20"></div>
                     </div>
                 </div>
-            `;
-            grid.innerHTML = Array.from({ length: count }, () => skeleton).join("");
-        }
+            </div>
 
-        async function loadHotels() {
-            if (isLoading) return;
-            const size = parseInt(pageSizeSelect.value, 10);
-            const search = searchInput.value.trim();
-            const location = locationFilter.value;
+            <div id="addHotelModal"
+                class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm px-4">
+                <div
+                    class="w-full max-w-xl rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d] to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-[#f8f2e6]">Add Hotel</h2>
+                        <button id="closeAddHotel"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#f1d9b3]/30 text-[#f1d9b3] hover:bg-[#f1d9b3]/15">
+                            ✕
+                        </button>
+                    </div>
+
+                    <form id="addHotelForm" class="mt-5 space-y-4" method="post" action="/hotels/create">
+                        <div>
+                            <label class="text-sm text-[#f1d9b3]/75">Hotel Name</label>
+                            <input type="text" name="name" required
+                                class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                        </div>
+                        <div>
+                            <label class="text-sm text-[#f1d9b3]/75">Location</label>
+                            <input type="text" name="location" required
+                                class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                        </div>
+                        <div>
+                            <label class="text-sm text-[#f1d9b3]/75">Description</label>
+                            <textarea name="description" rows="3" required
+                                class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="text-sm text-[#f1d9b3]/75">Amenities</label>
+                            <input id="amenityInput" type="text" placeholder="Type amenity and press Enter"
+                                class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                            <input id="amenitiesHidden" name="amenities" type="hidden">
+                            <div id="amenityPills" class="mt-3 flex flex-wrap gap-2"></div>
+                        </div>
+
+                        <button type="submit"
+                            class="mt-2 inline-flex w-full items-center justify-center rounded-full bg-[#f1d9b3]/90 px-4 py-3 text-base font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                            Create Hotel
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="editHotelModal"
+                class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm px-4">
+                <div
+                    class="w-full max-w-xl rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d] to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-[#f8f2e6]">Update Hotel</h2>
+                        <button id="closeEditHotel"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#f1d9b3]/30 text-[#f1d9b3] hover:bg-[#f1d9b3]/15">
+                            ✕
+                        </button>
+                    </div>
+
+                    <form id="editHotelForm" class="mt-5 space-y-4" method="post" action="/hotels/update">
+                        <input id="editHotelId" name="id" type="hidden">
+                        <div>
+                            <label class="text-sm text-[#f1d9b3]/75">Hotel Name</label>
+                            <div class="relative mt-2">
+                                <input id="editName" type="text" name="name" required disabled
+                                    class="w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 pr-11 text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                                <button type="button" data-target="editName"
+                                    class="editFieldBtn absolute right-3 top-1/2 -translate-y-1/2 text-[#f1d9b3] hover:text-[#f8f2e6]">
+                                    ✎
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-sm text-[#f1d9b3]/75">Location</label>
+                            <div class="relative mt-2">
+                                <input id="editLocation" type="text" name="location" required disabled
+                                    class="w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 pr-11 text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                                <button type="button" data-target="editLocation"
+                                    class="editFieldBtn absolute right-3 top-1/2 -translate-y-1/2 text-[#f1d9b3] hover:text-[#f8f2e6]">
+                                    ✎
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-sm text-[#f1d9b3]/75">Description</label>
+                            <div class="relative mt-2">
+                                <textarea id="editDescription" name="description" rows="3" required disabled
+                                    class="w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 pr-11 text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40"></textarea>
+                                <button type="button" data-target="editDescription"
+                                    class="editFieldBtn absolute right-3 top-3 text-[#f1d9b3] hover:text-[#f8f2e6]">
+                                    ✎
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-sm text-[#f1d9b3]/75">Amenities</label>
+                            <input id="editAmenityInput" type="text" placeholder="Type amenity and press Enter"
+                                class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                            <input id="editAmenitiesHidden" name="amenities" type="hidden">
+                            <div id="editAmenityPills" class="mt-3 flex flex-wrap gap-2"></div>
+                        </div>
+
+                        <button type="submit"
+                            class="mt-2 inline-flex w-full items-center justify-center rounded-full bg-[#f1d9b3]/90 px-4 py-3 text-base font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                            Update Hotel
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="deleteHotelModal"
+                class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm px-4">
+                <div
+                    class="w-full max-w-md rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d] to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-bold text-[#f8f2e6]">Delete Hotel</h2>
+                        <button id="closeDeleteHotel"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#f1d9b3]/30 text-[#f1d9b3] hover:bg-[#f1d9b3]/15">
+                            ✕
+                        </button>
+                    </div>
+                    <p class="mt-4 text-[#f1d9b3]/85">
+                        Are you sure you want to delete
+                        <span id="deleteHotelName" class="font-semibold text-[#f8f2e6]">this hotel</span>?
+                    </p>
+                    <p class="mt-2 text-xs text-[#f1d9b3]/60">
+                        * Associated rooms, amenities, reservations, payments, and reviews will be deleted.
+                    </p>
+
+                    <form id="deleteHotelForm" method="post" action="/hotels/delete" class="mt-5 flex gap-3">
+                        <input id="deleteHotelId" name="id" type="hidden">
+                        <button type="button" id="cancelDeleteHotel"
+                            class="flex-1 rounded-full border border-[#f1d9b3]/30 px-4 py-2 text-sm font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="flex-1 rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-sm font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="toast"
+                class="pointer-events-none fixed inset-0 z-[60] hidden items-center justify-center">
+                <div
+                    class="flex items-center gap-3 rounded-xl border border-emerald-200/20 bg-emerald-500/70 px-6 py-4 text-emerald-50 shadow-[0_16px_40px_rgba(0,0,0,0.35)] backdrop-blur-md">
+                <div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500/20">
+                    <svg width="16" height="16" fill="none" stroke="#34d399" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <div class="text-sm font-semibold" id="toastMessage">Success</div>
+                </div>
+            </div>
+            
+            <script>
+                function changePageSize(size) {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('size', size);
+                    url.searchParams.set('page', '0'); // reset to first page
+                    window.location.href = url.toString();
+                }
+
+                function filterByCity(city) {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('city', city);
+                    url.searchParams.set('page', '0');
+                    url.searchParams.delete('name'); // clear search when filtering by city
+                    window.location.href = url.toString();
+                }
+
+                const addHotelModal = document.getElementById('addHotelModal');
+                const openAddHotel = document.getElementById('openAddHotel');
+                const closeAddHotel = document.getElementById('closeAddHotel');
+                const amenityInput = document.getElementById('amenityInput');
+                const amenityPills = document.getElementById('amenityPills');
+                const amenitiesHidden = document.getElementById('amenitiesHidden');
+                const addHotelForm = document.getElementById('addHotelForm');
+                const editHotelModal = document.getElementById('editHotelModal');
+                const closeEditHotel = document.getElementById('closeEditHotel');
+                const editHotelForm = document.getElementById('editHotelForm');
+                const editHotelId = document.getElementById('editHotelId');
+                const editName = document.getElementById('editName');
+                const editLocation = document.getElementById('editLocation');
+                const editDescription = document.getElementById('editDescription');
+                const editAmenityInput = document.getElementById('editAmenityInput');
+                const editAmenityPills = document.getElementById('editAmenityPills');
+                const editAmenitiesHidden = document.getElementById('editAmenitiesHidden');
+                const editFieldButtons = document.querySelectorAll('.editFieldBtn');
+                const editHotelButtons = document.querySelectorAll('.editHotelButton');
+                const deleteHotelButtons = document.querySelectorAll('.deleteHotelButton');
+                const deleteHotelModal = document.getElementById('deleteHotelModal');
+                const deleteHotelId = document.getElementById('deleteHotelId');
+                const deleteHotelName = document.getElementById('deleteHotelName');
+                const closeDeleteHotel = document.getElementById('closeDeleteHotel');
+                const cancelDeleteHotel = document.getElementById('cancelDeleteHotel');
+
+                const amenities = [];
+                const editAmenities = [];
+
+                function renderAmenities() {
+                    amenityPills.innerHTML = '';
+                    amenities.forEach((name, index) => {
+                        const pill = document.createElement('div');
+                        pill.className =
+                            'inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/90 px-3 py-1 text-sm font-semibold text-[#4a2c12]';
+                        pill.innerHTML = `
+                            <span>${name}</span>
+                            <button type="button" class="text-[#4a2c12] hover:text-[#2a1a10]" data-index="${index}">
+                                ✕
+                            </button>
+                        `;
+                        amenityPills.appendChild(pill);
+                    });
+                    amenitiesHidden.value = amenities.join(',');
+                }
+
+                function addAmenityFromInput() {
+                    const value = amenityInput.value.trim();
+                    if (!value) return;
+                    if (!amenities.includes(value)) {
+                        amenities.push(value);
+                        renderAmenities();
+                    }
+                    amenityInput.value = '';
+                }
+
+                amenityInput?.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        addAmenityFromInput();
+                    }
+                });
+
+                amenityPills?.addEventListener('click', (event) => {
+                    const button = event.target.closest('button[data-index]');
+                    if (!button) return;
+                    const index = Number(button.dataset.index);
+                    if (!Number.isNaN(index)) {
+                        amenities.splice(index, 1);
+                        renderAmenities();
+                    }
+                });
+
+                openAddHotel?.addEventListener('click', () => {
+                    addHotelModal.classList.remove('hidden');
+                });
+
+                closeAddHotel?.addEventListener('click', () => {
+                    addHotelModal.classList.add('hidden');
+                });
+
+                addHotelModal?.addEventListener('click', (event) => {
+                    if (event.target === addHotelModal) {
+                        addHotelModal.classList.add('hidden');
+                    }
+                });
+
+                addHotelForm?.addEventListener('submit', (event) => {
+                    addAmenityFromInput();
+                });
+
+                function renderEditAmenities() {
+                    editAmenityPills.innerHTML = '';
+                    editAmenities.forEach((name, index) => {
+                        const pill = document.createElement('div');
+                        pill.className =
+                            'inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/90 px-3 py-1 text-sm font-semibold text-[#4a2c12]';
+                        pill.innerHTML = `
+                            <span>${name}</span>
+                            <button type="button" class="text-[#4a2c12] hover:text-[#2a1a10]" data-index="${index}">
+                                ✕
+                            </button>
+                        `;
+                        editAmenityPills.appendChild(pill);
+                    });
+                    editAmenitiesHidden.value = editAmenities.join(',');
+                }
+
+                function addEditAmenityFromInput() {
+                    const value = editAmenityInput.value.trim();
+                    if (!value) return;
+                    if (!editAmenities.includes(value)) {
+                        editAmenities.push(value);
+                        renderEditAmenities();
+                    }
+                    editAmenityInput.value = '';
+                }
+
+                editAmenityInput?.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        addEditAmenityFromInput();
+                    }
+                });
+
+                editAmenityPills?.addEventListener('click', (event) => {
+                    const button = event.target.closest('button[data-index]');
+                    if (!button) return;
+                    const index = Number(button.dataset.index);
+                    if (!Number.isNaN(index)) {
+                        editAmenities.splice(index, 1);
+                        renderEditAmenities();
+                    }
+                });
+
+                editFieldButtons.forEach((button) => {
+                    button.addEventListener('click', () => {
+                        const targetId = button.getAttribute('data-target');
+                        const target = document.getElementById(targetId);
+                        if (target) {
+                            target.disabled = false;
+                            target.focus();
+                        }
+                    });
+                });
+
+                editHotelButtons.forEach((button) => {
+                    button.addEventListener('click', async (event) => {
+                        event.stopPropagation();
+                        const id = button.getAttribute('data-id');
+                        if (!id) return;
+
+                        editHotelId.value = id;
+                        editName.value = button.getAttribute('data-name') || '';
+                        editLocation.value = button.getAttribute('data-location') || '';
+                        editDescription.value = button.getAttribute('data-description') || '';
+
+                        editName.disabled = true;
+                        editLocation.disabled = true;
+                        editDescription.disabled = true;
+
+                        editAmenities.length = 0;
+                        renderEditAmenities();
+                        try {
+                            const response = await fetch(`/hotels/${id}/amenities/json`);
+                            if (response.ok) {
+                                const data = await response.json();
+                                if (Array.isArray(data)) {
+                                    data.forEach((a) => {
+                                        if (a && a.name) {
+                                            editAmenities.push(a.name);
+                                        }
+                                    });
+                                    renderEditAmenities();
+                                }
+                            }
+                        } catch (error) {
+                            // ignore load errors
+                        }
+
+                        editHotelModal.classList.remove('hidden');
+                    });
+                });
+
+                closeEditHotel?.addEventListener('click', () => {
+                    editHotelModal.classList.add('hidden');
+                });
+
+                editHotelModal?.addEventListener('click', (event) => {
+                    if (event.target === editHotelModal) {
+                        editHotelModal.classList.add('hidden');
+                    }
+                });
+
+                editHotelForm?.addEventListener('submit', () => {
+                    addEditAmenityFromInput();
+                    editName.disabled = false;
+                    editLocation.disabled = false;
+                    editDescription.disabled = false;
+                });
+
+                deleteHotelButtons.forEach((button) => {
+                    button.addEventListener('click', (event) => {
+                        event.stopPropagation();
+                        const id = button.getAttribute('data-id');
+                        if (!id) return;
+                        deleteHotelId.value = id;
+                        deleteHotelName.textContent = button.getAttribute('data-name') || 'this hotel';
+                        deleteHotelModal.classList.remove('hidden');
+                    });
+                });
+
+                closeDeleteHotel?.addEventListener('click', () => {
+                    deleteHotelModal.classList.add('hidden');
+                });
+
+                cancelDeleteHotel?.addEventListener('click', () => {
+                    deleteHotelModal.classList.add('hidden');
+                });
+
+                deleteHotelModal?.addEventListener('click', (event) => {
+                    if (event.target === deleteHotelModal) {
+                        deleteHotelModal.classList.add('hidden');
+                    }
+                });
+
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toastMessage');
+
+                function showToast(message) {
+                    if (!toast || !toastMessage) return;
+                    toastMessage.textContent = message;
+                    toast.classList.remove('hidden');
+                    toast.classList.add('animate-[fadeIn_0.3s_ease-out]');
+                    setTimeout(() => {
+                        toast.classList.add('animate-[fadeOut_0.3s_ease-in]');
+                        setTimeout(() => {
+                            toast.classList.add('hidden');
+                            toast.classList.remove('animate-[fadeIn_0.3s_ease-out]');
+                            toast.classList.remove('animate-[fadeOut_0.3s_ease-in]');
+                        }, 300);
+                    }, 1400);
+                }
+
+                const params = new URLSearchParams(window.location.search);
+                const toastType = params.get('toast');
+                if (toastType) {
+                    if (toastType === 'created') showToast('Created successfully');
+                    if (toastType === 'updated') showToast('Updated successfully');
+                    if (toastType === 'deleted') showToast('Deleted successfully');
+                    params.delete('toast');
+                    const newUrl = window.location.pathname + (params.toString() ? `?${params.toString()}` : '');
+                    window.history.replaceState({}, '', newUrl);
+                }
+            </script>
 
             isLoading = true;
             renderLoadingSkeletons(size);
@@ -312,39 +736,32 @@
                 } else {
                     grid.innerHTML = hotels.map(buildHotelCard).join("");
                 }
-                updateMeta();
-                renderPagination();
-            } catch (err) {
-                grid.innerHTML = `<div class="text-[#f1d9b3]/80">Failed to load hotels.</div>`;
-                totalPages = 0;
-                totalElements = 0;
-                updateMeta();
-                renderPagination();
-            } finally {
-                isLoading = false;
-            }
-        }
 
-        let searchTimeout;
-        searchInput.addEventListener("input", () => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                currentPage = 0;
-                loadHotels();
-            }, 350);
-        });
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-8px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
 
-        locationFilter.addEventListener("change", () => {
-            currentPage = 0;
-            loadHotels();
-        });
-
-        pageSizeSelect.addEventListener("change", () => {
-            currentPage = 0;
-            loadHotels();
-        });
-        loadHotels();
-    </script>
+                @keyframes fadeOut {
+                    from {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                    to {
+                        opacity: 0;
+                        transform: translateY(-8px);
+                    }
+                }
+            </style>
+        </div>
+    </div>
+   
 </body>
 
 </html>
