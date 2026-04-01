@@ -384,11 +384,13 @@
                     </div>
                 </div>
 
-                <div id="toast" class="pointer-events-none hidden items-center justify-center">
+                <div id="toast"
+                    class="pointer-events-none hidden fixed inset-0 z-[60] flex items-start justify-center pt-20">
+                    <div class="absolute inset-0 bg-black/35 backdrop-blur-sm"></div>
                     <div
-                        class="flex items-center gap-3 rounded-xl border border-emerald-200/20 bg-emerald-500/70 px-6 py-4 text-emerald-50 shadow-[0_16px_40px_rgba(0,0,0,0.35)] backdrop-blur-md">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500/20">
-                            <svg width="16" height="16" fill="none" stroke="#34d399" viewBox="0 0 24 24">
+                        class="relative flex items-center gap-3 rounded-xl border border-[#f1d9b3]/25 bg-gradient-to-r from-[#4a3220]/95 via-[#3a2618]/95 to-[#4a3220]/95 px-6 py-4 text-[#f8f2e6] shadow-[0_18px_50px_rgba(0,0,0,0.4)]">
+                        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500/90">
+                            <svg width="16" height="16" fill="none" stroke="#ffffff" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M5 13l4 4L19 7"></path>
                             </svg>
