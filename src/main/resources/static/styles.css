@@ -114,9 +114,10 @@ body {
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+/* Grid Layouts */
 .team-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
 }
 
@@ -600,4 +601,106 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* 🌊 GLOBAL THEME */
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(to bottom, #7FB3C8 0%, #F8FAFC 60%);
+  color: #0F172A;
+}
+
+/* 🌟 MAIN CONTAINER */
+.main-content {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+/* 🏷️ TITLE */
+.page-title {
+  font-size: 3rem;
+  font-weight: 300;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.page-subtitle {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 50px;
+}
+
+/* 🧊 GRID */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  padding: 40px;
+}
+
+/* 🧊 GLASS CARD */
+.team-card {
+  backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ✨ HOVER EFFECT (VERY IMPORTANT FOR LUXURY) */
+.team-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* 👤 AVATAR */
+.team-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.6);
+}
+
+/* 📝 TEXT */
+.team-name {
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.team-role {
+  font-size: 0.9rem;
+  color: #64748B;
+}
+
+/* 📦 MODULE TAG */
+.team-module {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  margin-top: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.4);
+  color: #0F172A;
+}
+
+/* ✨ FADE ANIMATION */
+.fade-in {
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
