@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Room Types — Hotel Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --brown-900:#2c1a00; --brown-800:#3d2400; --brown-700:#5c3800;
+  --brown-600:#7a4d00; --brown-500:#a06820; --brown-400:#c28a3a;
+  --brown-300:#d4a85a; --brown-200:#e8cfa0; --brown-100:#f5ead8;
+  --brown-50:#fdf8f2;  --cream:#faf6ef;    --ink:#1a0f00;
+  --ink-muted:#6b5c45; --ink-light:#9c8878;
+  --success:#4a7c59;   --danger:#9b3232;
+  --radius:6px; --radius-lg:12px;
+  --shadow:0 4px 12px rgba(26,15,0,.10),0 2px 4px rgba(26,15,0,.06);
+  --shadow-lg:0 20px 48px rgba(26,15,0,.16),0 8px 16px rgba(26,15,0,.08);
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'Lato',sans-serif; --font-mono:'DM Mono',monospace;
+  --t:.18s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--cream);color:var(--ink);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+input,select,textarea{font-family:inherit}
+
+.app-shell{display:flex;flex-direction:column;min-height:100vh}
+
+/* Topbar */
+.topbar{height:60px;background:var(--brown-900);display:flex;align-items:center;padding:0 2rem;gap:1.5rem;position:sticky;top:0;z-index:50;border-bottom:2px solid var(--brown-700)}
+.topbar-brand{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--brown-200);letter-spacing:.02em;white-space:nowrap}
+.topbar-brand span{color:var(--brown-400);font-style:italic}
+
+/* Layout */
+.page-container{flex:1;max-width:1200px;width:100%;margin:0 auto;padding:2rem 2rem 4rem}
+.page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.75rem;gap:1rem;flex-wrap:wrap}
+.page-title{font-family:var(--font-display);font-size:2.2rem;font-weight:700;color:var(--brown-900);line-height:1.15}
+.page-title em{color:var(--brown-500);font-style:italic}
+.page-subtitle{font-size:.8rem;color:var(--ink-muted);letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-top:.3rem}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1.2rem;border-radius:var(--radius);font-size:.82rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border:1.5px solid transparent;transition:all var(--t);white-space:nowrap}
+.btn svg{width:15px;height:15px;flex-shrink:0}
+.btn-primary{background:var(--brown-700);color:var(--brown-100);border-color:var(--brown-700)}
+.btn-primary:hover{background:var(--brown-600);border-color:var(--brown-600);box-shadow:0 0 0 3px rgba(122,77,0,.2)}
+.btn-ghost{background:transparent;color:var(--ink-muted);border-color:var(--brown-200)}
+.btn-ghost:hover{background:var(--brown-50);color:var(--ink);border-color:var(--brown-300)}
+.btn-danger{background:transparent;color:var(--danger);border-color:rgba(155,50,50,.3)}
+.btn-danger:hover{background:rgba(155,50,50,.07);border-color:var(--danger)}
+.btn-sm{padding:.3rem .75rem;font-size:.75rem}
+
+/* Card */
+.card{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow);border:1px solid var(--brown-100);overflow:hidden}
+
+/* Table */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead tr.th-labels th{background:var(--brown-900);color:var(--brown-200);font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.75rem 1rem;text-align:left;white-space:nowrap;border-bottom:2px solid var(--brown-700)}
+thead tr.th-search th{background:var(--brown-50);padding:.5rem .6rem;border-bottom:1px solid var(--brown-100)}
+.col-search{width:100%;background:#fff;border:1px solid var(--brown-200);border-radius:var(--radius);padding:.3rem .6rem;font-size:.78rem;color:var(--ink);outline:none;transition:border-color var(--t),box-shadow var(--t)}
+.col-search:focus{border-color:var(--brown-400);box-shadow:0 0 0 3px rgba(194,138,58,.15)}
+.col-search::placeholder{color:var(--ink-light)}
+tbody tr{border-bottom:1px solid var(--brown-100);transition:background var(--t);cursor:pointer}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--brown-50)}
+td{padding:.9rem 1rem;font-size:.875rem;color:var(--ink);vertical-align:middle}
+td.td-sno{font-family:var(--font-mono);font-size:.75rem;color:var(--ink-light);width:52px}
+td.td-name{font-family:var(--font-display);font-size:1rem;font-weight:600;color:var(--brown-800)}
+td.td-price{font-family:var(--font-mono);font-size:.85rem;color:var(--brown-600);font-weight:500}
+td.td-actions{width:48px;text-align:right;padding-right:.75rem}
+
+/* Three-dot menu */
+.menu-wrapper{position:relative;display:inline-block}
+.menu-trigger{width:30px;height:30px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;color:var(--ink-muted);transition:background var(--t),color var(--t);border:1px solid transparent}
+.menu-trigger:hover{background:var(--brown-100);color:var(--ink);border-color:var(--brown-200)}
+.menu-trigger svg{width:16px;height:16px}
+.dropdown-menu{position:absolute;right:0;top:calc(100% + 4px);background:#fff;border:1px solid var(--brown-200);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);min-width:140px;z-index:100;overflow:hidden;opacity:0;pointer-events:none;transform:translateY(-6px) scale(.97);transition:opacity .15s ease,transform .15s ease;transform-origin:top right}
+.dropdown-menu.open{opacity:1;pointer-events:all;transform:translateY(0) scale(1)}
+.dropdown-item{display:flex;align-items:center;gap:.6rem;width:100%;padding:.6rem .9rem;font-size:.82rem;font-weight:700;letter-spacing:.03em;color:var(--ink);background:none;border:none;cursor:pointer;text-align:left;transition:background var(--t)}
+.dropdown-item:hover{background:var(--brown-50)}
+.dropdown-item.danger{color:var(--danger)}
+.dropdown-item.danger:hover{background:rgba(155,50,50,.06)}
+.dropdown-item svg{width:14px;height:14px;flex-shrink:0}
+.dropdown-divider{height:1px;background:var(--brown-100);margin:.25rem 0}
+
+/* Pagination */
+.pagination-bar{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1rem;border-top:1px solid var(--brown-100);background:var(--brown-50);font-size:.8rem;color:var(--ink-muted);flex-wrap:wrap;gap:.5rem}
+.pagination-btns{display:flex;gap:.3rem;flex-wrap:wrap}
+.pg-btn{min-width:32px;height:32px;padding:0 .4rem;border-radius:var(--radius);font-size:.78rem;font-weight:700;background:#fff;border:1px solid var(--brown-200);color:var(--ink-muted);cursor:pointer;transition:all var(--t);display:inline-flex;align-items:center;justify-content:center}
+.pg-btn:hover:not(:disabled){border-color:var(--brown-400);color:var(--brown-700);background:var(--brown-50)}
+.pg-btn.active{background:var(--brown-700);border-color:var(--brown-700);color:#fff}
+.pg-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* Empty / Loading */
+.empty-state{text-align:center;padding:4rem 2rem;color:var(--ink-muted)}
+.empty-icon{font-size:3rem;margin-bottom:1rem;opacity:.5}
+.empty-state p{font-size:.9rem}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--brown-200);border-top-color:var(--brown-600);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-row td{text-align:center;padding:3rem;color:var(--ink-muted)}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(26,15,0,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .2s ease}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);border:1px solid var(--brown-200);width:100%;max-width:480px;transform:translateY(20px) scale(.98);transition:transform .25s cubic-bezier(.16,1,.3,1)}
+.modal-overlay.open .modal{transform:translateY(0) scale(1)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:1.4rem 1.6rem 1rem;border-bottom:1px solid var(--brown-100)}
+.modal-title{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--brown-900)}
+.modal-close{width:30px;height:30px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;color:var(--ink-muted);font-size:1.2rem;border:1px solid var(--brown-200);transition:all var(--t)}
+.modal-close:hover{background:var(--brown-50);color:var(--ink)}
+.modal-body{padding:1.4rem 1.6rem}
+.modal-footer{padding:1rem 1.6rem 1.4rem;display:flex;justify-content:flex-end;gap:.6rem;border-top:1px solid var(--brown-100)}
+
+/* Form */
+.form-grid{display:grid;gap:1rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-group{display:flex;flex-direction:column;gap:.4rem}
+.form-label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
+.form-control{background:var(--brown-50);border:1.5px solid var(--brown-200);border-radius:var(--radius);padding:.55rem .8rem;font-size:.875rem;color:var(--ink);outline:none;transition:border-color var(--t),box-shadow var(--t)}
+.form-control:focus{border-color:var(--brown-400);box-shadow:0 0 0 3px rgba(194,138,58,.15);background:#fff}
+textarea.form-control{resize:vertical;min-height:80px}
+.form-error{font-size:.75rem;color:var(--danger);display:none;margin-top:.2rem}
+.form-control.is-invalid{border-color:var(--danger)}
+.form-control.is-invalid+.form-error{display:block}
+
+/* Confirm */
+.confirm-icon{font-size:2.5rem;text-align:center;margin-bottom:.75rem}
+.confirm-msg{text-align:center;color:var(--ink-muted);font-size:.875rem;line-height:1.65}
+.confirm-msg strong{color:var(--ink)}
+
+/* Toast */
+#toast-area{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;gap:.5rem;max-width:340px}
+.toast{display:flex;align-items:flex-start;gap:.7rem;padding:.85rem 1rem;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);font-size:.84rem;border:1px solid transparent;animation:slideUp .25s ease forwards}
+@keyframes slideUp{from{transform:translateY(12px);opacity:0}to{transform:translateY(0);opacity:1}}
+.toast-success{background:#fff;border-color:rgba(74,124,89,.3);color:var(--success)}
+.toast-error{background:#fff;border-color:rgba(155,50,50,.3);color:var(--danger)}
+.toast svg{width:16px;height:16px;flex-shrink:0;margin-top:1px}
+.toast-close{margin-left:auto;color:inherit;opacity:.5;font-size:1rem;cursor:pointer}
+.toast-close:hover{opacity:1}
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--brown-50)}
+::-webkit-scrollbar-thumb{background:var(--brown-300);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:var(--brown-500)}
+
+@media(max-width:768px){
+  .page-container{padding:1.25rem 1rem 3rem}
+  .page-title{font-size:1.6rem}
+  .form-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <header class="topbar">
+    <div class="topbar-brand">Grand<span>Desk</span></div>
+  </header>
+
+  <main class="page-container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Room Types</h1>
+        <p class="page-subtitle">Click a row to view full details &amp; rooms</p>
+      </div>
+      <button class="btn btn-primary" onclick="openAddModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Room Type
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr class="th-labels">
+              <th style="width:52px">#</th>
+              <th>Type Name</th>
+              <th style="width:160px">Max Occupancy</th>
+              <th style="width:180px">Price / Night</th>
+              <th style="width:52px"></th>
+            </tr>
+            <tr class="th-search">
+              <th></th>
+              <th><input class="col-search" id="searchTypeName" type="text" placeholder="Search name…"/></th>
+              <th><input class="col-search" id="searchMaxOcc" type="number" min="1" placeholder="exact…"/></th>
+              <th><input class="col-search" id="searchPrice" type="number" min="0" step="0.01" placeholder="exact price…"/></th>
+              <th style="text-align:center">
+                <button onclick="clearAllFilters()" title="Clear filters" style="padding:.25rem .45rem;color:var(--ink-light)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="rtBody">
+            <tr class="loading-row"><td colspan="5"><div style="display:flex;align-items:center;justify-content:center;gap:.75rem"><div class="spinner"></div> Loading…</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination-bar">
+        <span id="pgInfo"></span>
+        <div class="pagination-btns" id="pgBtns"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="formModal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2 class="modal-title" id="formModalTitle">New Room Type</h2>
+      <button class="modal-close" onclick="closeFormModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="rtForm" novalidate onsubmit="return false">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="fTypeName">Type Name *</label>
+            <input class="form-control" type="text" id="fTypeName" placeholder="e.g. Deluxe King"/>
+            <span class="form-error">Name is required.</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="fDescription">Description</label>
+            <textarea class="form-control" id="fDescription" placeholder="Brief description…"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="fMaxOcc">Max Occupancy *</label>
+              <input class="form-control" type="number" id="fMaxOcc" min="1" placeholder="e.g. 2"/>
+              <span class="form-error">Must be ≥ 1.</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="fPrice">Price / Night (₹) *</label>
+              <input class="form-control" type="number" id="fPrice" min="0.01" step="0.01" placeholder="e.g. 4999.00"/>
+              <span class="form-error">Must be positive.</span>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeFormModal()">Cancel</button>
+      <button class="btn btn-primary" id="submitBtn" onclick="submitForm()">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal" role="dialog" aria-modal="true" style="max-width:400px">
+    <div class="modal-header">
+      <h2 class="modal-title">Confirm Delete</h2>
+      <button class="modal-close" onclick="closeConfirmModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="confirm-icon">🗑️</div>
+      <p class="confirm-msg">Delete room type<br/><strong id="deleteTypeName"></strong>?<br/>
+        <span style="font-size:.78rem;color:var(--ink-light);margin-top:.4rem;display:block">Cannot be undone. Blocked if rooms are linked.</span>
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeConfirmModal()">Cancel</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-area"></div>
+
+<script>
+const API='http://localhost:8082/api';
+const PAGE_SIZE=10;
+let allRoomTypes=[],viewData=[],currentPage=1;
+let activeFilters={typeName:'',maxOccupancy:'',pricePerNight:''};
+let editId=null,deleteId=null,deleteName=null;
+
+document.addEventListener('DOMContentLoaded',()=>{
+  bindOverlayClose('formModal');
+  bindOverlayClose('confirmModal');
+  setupSearchDebounce();
+  fetchAllRoomTypes();
+});
+
+/* ── Utilities ── */
+function toast(type,msg){
+  const area=document.getElementById('toast-area'),id='toast-'+Date.now();
+  const icon=type==='success'
+    ?`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+    :`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+  area.insertAdjacentHTML('beforeend',`<div class="toast toast-${type}" id="${id}">${icon}<span>${msg}</span><button class="toast-close" onclick="this.closest('.toast').remove()">&times;</button></div>`);
+  setTimeout(()=>document.getElementById(id)?.remove(),4000);
+}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function bindOverlayClose(id){document.getElementById(id).addEventListener('click',function(e){if(e.target===this)closeModal(id)})}
+function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML}
+function fmtPrice(v){'₹ '+Number(v).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});return '₹ '+Number(v).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}
+document.addEventListener('click',()=>document.querySelectorAll('.dropdown-menu.open').forEach(m=>m.classList.remove('open')));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));document.querySelectorAll('.dropdown-menu.open').forEach(m=>m.classList.remove('open'))}});
+
+/* ── Fetch ── */
+async function fetchAllRoomTypes(){
+  showTableLoading();
+  try{
+    const res=await fetch(`${API}/roomtypes?size=100`);
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    const json=await res.json();
+    const raw = json?._embedded?.roomTypes || [];
+
+    allRoomTypes = raw.map(item => {
+      const selfHref = item._links?.self?.href || '';
+      const id = selfHref.split('/').pop();
+
+      return {
+        ...item,
+        _id: id,
+        _selfHref: selfHref
+      };
+    });
+
+    applyFiltersAndRender();
+  }catch(e){showTableError('Failed to load room types. '+e.message)}
+}
+
+/* ── Filters ── */
+function applyFiltersAndRender(){
+  const fn=activeFilters.typeName.trim().toLowerCase();
+  const mo=activeFilters.maxOccupancy.trim();
+  const pp=activeFilters.pricePerNight.trim();
+  viewData=allRoomTypes.filter(rt=>{
+    if(fn&&!(rt.typeName||'').toLowerCase().includes(fn))return false;
+    if(mo&&String(rt.maxOccupancy)!==mo)return false;
+    if(pp&&Math.abs(Number(rt.pricePerNight)-Number(pp))>0.001)return false;
+    return true;
+  });
+  currentPage=1;renderTable();
+}
+function setupSearchDebounce(){
+  let timer;
+  ['searchTypeName','searchMaxOcc','searchPrice'].forEach(sid=>{
+    document.getElementById(sid)?.addEventListener('input',()=>{
+      clearTimeout(timer);
+      timer=setTimeout(()=>{
+        activeFilters.typeName=document.getElementById('searchTypeName').value;
+        activeFilters.maxOccupancy=document.getElementById('searchMaxOcc').value;
+        activeFilters.pricePerNight=document.getElementById('searchPrice').value;
+        applyFiltersAndRender();
+      },300);
+    });
+  });
+}
+function clearAllFilters(){
+  ['searchTypeName','searchMaxOcc','searchPrice'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  activeFilters={typeName:'',maxOccupancy:'',pricePerNight:''};applyFiltersAndRender();
+}
+
+/* ── Render ── */
+function renderTable(){
+  const tbody=document.getElementById('rtBody'),total=viewData.length;
+  const pages=Math.max(1,Math.ceil(total/PAGE_SIZE)),start=(currentPage-1)*PAGE_SIZE;
+  const slice=viewData.slice(start,start+PAGE_SIZE);
+  if(slice.length===0){
+    tbody.innerHTML=`<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">🏨</div><p>No room types found.</p></div></td></tr>`;
+  }else{
+    tbody.innerHTML=slice.map((rt,idx)=>`
+      <tr onclick="goToDetail('${rt._id}')" data-id="${rt._id}">
+        <td class="td-sno">${start+idx+1}</td>
+        <td class="td-name">${esc(rt.typeName)}</td>
+        <td>${rt.maxOccupancy} <span style="color:var(--ink-light);font-size:.78rem">guest${rt.maxOccupancy>1?'s':''}</span></td>
+        <td class="td-price">${fmtPrice(rt.pricePerNight)}</td>
+        <td class="td-actions" onclick="event.stopPropagation()">
+          <div class="menu-wrapper">
+            <button class="menu-trigger" onclick="toggleMenu(event,'menu-${rt._id}')" aria-label="Actions">
+              <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+            </button>
+            <div class="dropdown-menu" id="menu-${rt._id}">
+              <button class="dropdown-item" onclick="openEditModal('${rt._id}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Edit
+              </button>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item danger" onclick="openDeleteConfirm('${rt._id}','${esc(rt.typeName)}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                Delete
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+  renderPagination(total,pages);
+}
+function renderPagination(total,pages){
+  const start=(currentPage-1)*PAGE_SIZE;
+  document.getElementById('pgInfo').textContent=total===0?'No results':`Showing ${start+1}–${Math.min(start+PAGE_SIZE,total)} of ${total}`;
+  const btns=document.getElementById('pgBtns');btns.innerHTML='';
+  const mk=(label,page,disabled,active)=>{
+    const b=document.createElement('button');
+    b.className='pg-btn'+(active?' active':'');b.textContent=label;b.disabled=disabled;
+    if(!disabled)b.onclick=()=>{currentPage=page;renderTable()};btns.appendChild(b);
+  };
+  mk('‹',currentPage-1,currentPage===1);
+  for(let p=1;p<=pages;p++){
+    if(pages<=7||p===1||p===pages||Math.abs(p-currentPage)<=1){mk(p,p,false,p===currentPage)}
+    else if(Math.abs(p-currentPage)===2){const s=document.createElement('span');s.textContent='…';s.style.cssText='padding:0 .2rem;color:var(--ink-light);font-size:.8rem;line-height:32px';btns.appendChild(s)}
+  }
+  mk('›',currentPage+1,currentPage===pages);
+}
+function showTableLoading(){document.getElementById('rtBody').innerHTML=`<tr class="loading-row"><td colspan="5"><div style="display:flex;align-items:center;justify-content:center;gap:.75rem;color:var(--ink-muted)"><div class="spinner"></div> Loading room types…</div></td></tr>`}
+function showTableError(msg){document.getElementById('rtBody').innerHTML=`<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">⚠️</div><p>${esc(msg)}</p></div></td></tr>`}
+
+/* ── Navigation ── */
+function goToDetail(id){window.location.href=`/room-type-detail?id=${id}`}
+
+/* ── Three-dot menu ── */
+function toggleMenu(event,menuId){
+  event.stopPropagation();
+  const menu=document.getElementById(menuId),wasOpen=menu.classList.contains('open');
+  document.querySelectorAll('.dropdown-menu.open').forEach(m=>m.classList.remove('open'));
+  if(!wasOpen)menu.classList.add('open');
+}
+
+/* ── Add / Edit ── */
+function openAddModal(){
+  editId=null;
+  document.getElementById('formModalTitle').textContent='New Room Type';
+  document.getElementById('submitBtn').textContent='Create';
+  document.getElementById('rtForm').reset();clearFormErrors();openModal('formModal');
+}
+async function openEditModal(id){
+  document.querySelectorAll('.dropdown-menu.open').forEach(m=>m.classList.remove('open'));
+  editId=id;
+  document.getElementById('formModalTitle').textContent='Edit Room Type';
+  document.getElementById('submitBtn').textContent='Update';
+  clearFormErrors();
+  const rt=allRoomTypes.find(x=>x._id===id);
+  if(rt){
+    document.getElementById('fTypeName').value=rt.typeName||'';
+    document.getElementById('fDescription').value=rt.description||'';
+    document.getElementById('fMaxOcc').value=rt.maxOccupancy||'';
+    document.getElementById('fPrice').value=rt.pricePerNight||'';
+    openModal('formModal');
+  }else{
+    try{
+      const res=await fetch(`${API}/roomtypes/${id}`),data=await res.json();
+      document.getElementById('fTypeName').value=data.typeName||'';
+      document.getElementById('fDescription').value=data.description||'';
+      document.getElementById('fMaxOcc').value=data.maxOccupancy||'';
+      document.getElementById('fPrice').value=data.pricePerNight||'';
+      openModal('formModal');
+    }catch(e){toast('error','Could not load room type data.')}
+  }
+}
+function closeFormModal(){closeModal('formModal')}
+async function submitForm(){
+  if(!validateForm())return;
+  const body={
+    typeName:document.getElementById('fTypeName').value.trim(),
+    description:document.getElementById('fDescription').value.trim(),
+    maxOccupancy:parseInt(document.getElementById('fMaxOcc').value),
+    pricePerNight:parseFloat(document.getElementById('fPrice').value),
+  };
+  const url=editId?`${API}/roomtypes/${editId}`:`${API}/roomtypes`;
+  const method=editId?'PUT':'POST';
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true;btn.textContent='Saving…';
+  try{
+    const res=await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(res.status===409)throw new Error('A room type with that name already exists.');
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    closeModal('formModal');
+    toast('success',editId?'Room type updated.':'Room type created.');
+    await fetchAllRoomTypes();
+  }catch(e){toast('error',e.message)}
+  finally{btn.disabled=false;btn.textContent=editId?'Update':'Create'}
+}
+function validateForm(){
+  let ok=true;clearFormErrors();
+  if(!document.getElementById('fTypeName').value.trim()){document.getElementById('fTypeName').classList.add('is-invalid');ok=false}
+  if(isNaN(parseInt(document.getElementById('fMaxOcc').value))||parseInt(document.getElementById('fMaxOcc').value)<1){document.getElementById('fMaxOcc').classList.add('is-invalid');ok=false}
+  if(isNaN(parseFloat(document.getElementById('fPrice').value))||parseFloat(document.getElementById('fPrice').value)<=0){document.getElementById('fPrice').classList.add('is-invalid');ok=false}
+  return ok;
+}
+function clearFormErrors(){document.querySelectorAll('.form-control').forEach(el=>el.classList.remove('is-invalid'))}
+
+/* ── Delete ── */
+function openDeleteConfirm(id,name){
+  document.querySelectorAll('.dropdown-menu.open').forEach(m=>m.classList.remove('open'));
+  deleteId=id;deleteName=name;
+  document.getElementById('deleteTypeName').textContent=name;openModal('confirmModal');
+}
+function closeConfirmModal(){closeModal('confirmModal')}
+async function confirmDelete(){
+  if(!deleteId)return;
+  const btn=document.getElementById('confirmDeleteBtn');btn.disabled=true;btn.textContent='Deleting…';
+  try{
+    const res=await fetch(`${API}/roomtypes/${deleteId}`,{method:'DELETE'});
+    if(res.status===409)throw new Error(`"${deleteName}" is linked to rooms and cannot be deleted.`);
+    if(res.status===404)throw new Error('Room type not found.');
+    if(!res.ok&&res.status!==204)throw new Error(`HTTP ${res.status}`);
+    closeModal('confirmModal');toast('success',`"${deleteName}" deleted.`);await fetchAllRoomTypes();
+  }catch(e){closeModal('confirmModal');toast('error',e.message)}
+  finally{btn.disabled=false;btn.textContent='Delete';deleteId=deleteName=null}
+}
+</script>
+</body>
+</html>

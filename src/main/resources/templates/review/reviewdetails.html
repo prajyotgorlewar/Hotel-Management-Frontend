@@ -1,315 +1,157 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Review Detail — The Grand</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com"/>
-    <link rel="praeconnect" href="https://fonts.gstatic.com" crossorigin=""/>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-    <style>
-        :root {
-            --gold: #C9A84C;
-            --gold-light: #E8D5A3;
-            --gold-dark: #9A7A2E;
-            --charcoal: #1A1A1A;
-            --charcoal-mid: #2C2C2C;
-            --charcoal-soft: #3D3D3D;
-            --ivory: #F8F5EF;
-            --ivory-dark: #EDE8DF;
-            --stone: #9A9180;
-        }
-
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            background-color: var(--charcoal);
-            color: var(--ivory);
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 300;
-            min-height: 100vh;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.6;
-        }
-
-        .top-bar {
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
-        }
-
-        /* ── Nav ── */
-        nav {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.4rem 3rem;
-            border-bottom: 1px solid rgba(201,168,76,0.15);
-        }
-
-        .nav-logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.6rem;
-            font-weight: 300;
-            letter-spacing: 0.25em;
-            color: var(--gold-light);
-            text-transform: uppercase;
-        }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.68rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--stone);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .back-link:hover { color: var(--gold-light); }
-        .back-link span { font-size: 1rem; }
-
-        /* ── Main ── */
-        main {
-            position: relative;
-            z-index: 1;
-            max-width: 820px;
-            margin: 0 auto;
-            padding: 4rem 2rem 6rem;
-            animation: fadeIn 0.5s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(16px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ── Hero quote block ── */
-        .quote-block {
-            position: relative;
-            margin-bottom: 3.5rem;
-            padding: 3rem 3.5rem;
-            border: 1px solid rgba(201,168,76,0.2);
-            background: var(--charcoal-mid);
-        }
-
-        .quote-mark {
-            position: absolute;
-            top: -1.2rem;
-            left: 2.5rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 6rem;
-            line-height: 1;
-            color: var(--gold);
-            opacity: 0.3;
-            pointer-events: none;
-        }
-
-        .quote-text {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(1.4rem, 2.5vw, 2rem);
-            font-weight: 300;
-            font-style: italic;
-            line-height: 1.7;
-            color: var(--ivory);
-        }
-
-        .quote-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 1.8rem;
-            padding-top: 1.2rem;
-            border-top: 1px solid rgba(201,168,76,0.15);
-        }
-
-        .quote-date {
-            font-size: 0.68rem;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--stone);
-        }
-
-        .rating-display {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-
-        .stars-lg { display: flex; gap: 3px; }
-        .star-lg {
-            width: 18px;
-            height: 18px;
-        }
-        .star-lg.filled { color: var(--gold); }
-        .star-lg.empty  { color: var(--charcoal-soft); }
-
-        .rating-label {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.8rem;
-            font-weight: 400;
-            color: var(--gold-light);
-        }
-
-        /* ── Divider ── */
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin: 2.5rem 0;
-        }
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: rgba(201,168,76,0.2);
-        }
-        .divider-label {
-            font-size: 0.62rem;
-            letter-spacing: 0.35em;
-            text-transform: uppercase;
-            color: var(--stone);
-        }
-
-        /* ── Info grid ── */
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5px;
-            margin-bottom: 2rem;
-        }
-
-        .info-cell {
-            background: var(--charcoal-mid);
-            border-left: 2px solid transparent;
-            padding: 1.4rem 1.8rem;
-            transition: border-left-color 0.25s;
-        }
-        .info-cell:hover { border-left-color: var(--gold); }
-
-        .info-label {
-            font-size: 0.6rem;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            color: var(--stone);
-            margin-bottom: 0.5rem;
-        }
-
-        .info-value {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.2rem;
-            font-weight: 400;
-            color: var(--ivory);
-        }
-
-        .info-value.accent { color: var(--gold-light); }
-
-        /* ── Badge ── */
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.8rem;
-            border: 1px solid var(--gold);
-            font-size: 0.6rem;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            color: var(--gold-light);
-        }
-
-        footer {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-            padding: 2rem;
-            border-top: 1px solid rgba(201,168,76,0.1);
-            font-size: 0.65rem;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            color: var(--charcoal-soft);
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Details - Hotel Management</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-
-<div class="top-bar"></div>
-
-<nav>
-    <div class="nav-logo">The Grand</div>
-    <a th:href="@{/reviews(hotelId=${hotelId})}" class="back-link">
-        <span>←</span> All Reviews
-    </a>
-</nav>
-
-<main>
-
-    <!-- ── Quote Block ── -->
-    <div class="quote-block">
-        <div class="quote-mark">"</div>
-        <div class="quote-text" th:text="${review.comment}">
-            An unforgettable stay from the first moment we arrived. The staff went above and beyond every single day.
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <svg class="navbar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                    </path>
+                </svg>
+                Hotel Manager
+            </a>
+            <a href="reviews.html" class="back-btn">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back to Reviews
+            </a>
         </div>
-        <div class="quote-footer">
-            <div class="quote-date">
-                <span th:text="'Reviewed on ' + ${review.review_date}">Reviewed on 2023-05-15</span>
-                &nbsp;·&nbsp;
-                <span th:text="'Review #' + ${review.review_id}">Review #1</span>
-            </div>
-            <div class="rating-display">
-                <div class="stars-lg">
-                    <span th:each="i : ${#numbers.sequence(1,5)}"
-                          th:class="${i <= review.rating} ? 'star-lg filled' : 'star-lg empty'">
-                        <svg viewBox="0 0 12 12" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
-                            <path d="M6 0l1.35 4.15H11.7L8.18 6.72 9.53 10.87 6 8.3 2.47 10.87l1.35-4.15L0.3 4.15H4.65z"/>
-                        </svg>
-                    </span>
+    </nav>
+
+    <main class="main-content">
+        <div class="detail-container fade-in" id="reviewDetail">
+        </div>
+    </main>
+
+    <script>
+        const reviews = [
+            { id: 1, guest: "Michael Anderson", email: "michael@email.com", hotel: "Grand Plaza Hotel", hotelId: 1, rating: 5, title: "Exceptional Stay!", comment: "The Grand Plaza exceeded all expectations. Impeccable service, luxurious rooms, and the location couldn't be better. The staff went above and beyond to make our anniversary special. The concierge arranged a surprise dinner reservation at a rooftop restaurant with stunning city views. The room was immaculate with premium amenities. We'll definitely be back!", date: "2024-03-10", stayDate: "March 5-10, 2024", roomType: "Deluxe Suite", categories: { cleanliness: 5, service: 5, amenities: 5, location: 5, value: 4 } },
+            { id: 2, guest: "Sarah Johnson", email: "sarah.j@email.com", hotel: "Seaside Resort", hotelId: 2, rating: 4, title: "Beautiful Beach Views", comment: "Loved waking up to the ocean every morning. The beach access was perfect and the pool area was well maintained. Only minor issue was slow room service during peak hours. The breakfast buffet had great variety and the beachside bar made amazing cocktails. The spa treatment I had was very relaxing.", date: "2024-03-08", stayDate: "March 1-5, 2024", roomType: "Ocean View Room", categories: { cleanliness: 4, service: 3, amenities: 4, location: 5, value: 4 } },
+            { id: 3, guest: "David Wilson", email: "dwilson@email.com", hotel: "Mountain Lodge", hotelId: 3, rating: 5, title: "Perfect Mountain Getaway", comment: "Exactly what we needed for a family ski trip. Cozy rooms with fireplaces, great ski-in/ski-out access, and the restaurant served amazing comfort food. The kids loved the hot chocolate bar and the adults appreciated the extensive wine list. The staff helped us arrange ski lessons for the whole family.", date: "2024-03-05", stayDate: "February 20-25, 2024", roomType: "Mountain Suite", categories: { cleanliness: 5, service: 5, amenities: 5, location: 5, value: 5 } },
+            { id: 4, guest: "Emily Brown", email: "emily.b@email.com", hotel: "City Center Inn", hotelId: 4, rating: 3, title: "Good Location, Average Service", comment: "The location is fantastic for exploring downtown, but the room was smaller than expected and housekeeping missed a day. Decent value for the price. The front desk staff was helpful when I needed directions. The breakfast was basic but adequate. Would consider staying again for the location alone.", date: "2024-03-02", stayDate: "February 28-March 2, 2024", roomType: "Standard Room", categories: { cleanliness: 2, service: 3, amenities: 3, location: 5, value: 3 } },
+            { id: 5, guest: "James Taylor", email: "jtaylor@email.com", hotel: "Lakefront Hotel", hotelId: 5, rating: 5, title: "Absolutely Stunning", comment: "The views from our suite were breathtaking. Watching the sunset over the lake from our private balcony was magical. The spa treatments were world-class and the restaurant offered incredible farm-to-table cuisine. This was our anniversary trip and the hotel made it unforgettable with special touches throughout our stay.", date: "2024-02-28", stayDate: "February 22-27, 2024", roomType: "Lake View Suite", categories: { cleanliness: 5, service: 5, amenities: 5, location: 5, value: 5 } },
+            { id: 6, guest: "Lisa Martinez", email: "lisa.m@email.com", hotel: "Desert Oasis Resort", hotelId: 6, rating: 4, title: "Golf Paradise", comment: "The golf course is championship quality and the desert landscape is beautiful. The spa was relaxing after a day on the links. Would definitely return. The villa was spacious with a private pool. The only downside was the distance from the main building to some of the amenities.", date: "2024-02-25", stayDate: "February 18-23, 2024", roomType: "Golf Villa", categories: { cleanliness: 4, service: 4, amenities: 5, location: 3, value: 4 } },
+            { id: 7, guest: "Robert Garcia", email: "rgarcia@email.com", hotel: "Grand Plaza Hotel", hotelId: 1, rating: 4, title: "Great for Business Travel", comment: "Excellent business amenities and the concierge helped arrange all my meetings. The executive lounge was a nice perk. Room was comfortable and quiet. Fast WiFi and a great desk setup made working remotely easy. The gym was well-equipped for early morning workouts.", date: "2024-02-20", stayDate: "February 15-19, 2024", roomType: "Executive Suite", categories: { cleanliness: 4, service: 4, amenities: 4, location: 5, value: 4 } },
+            { id: 8, guest: "Jennifer Lee", email: "jlee@email.com", hotel: "Seaside Resort", hotelId: 2, rating: 5, title: "Family Paradise", comment: "Our kids had the time of their lives! The kids club was fantastic, and the family activities kept everyone entertained. Already planning our next visit. The bungalow gave us plenty of space and the private beach area was perfect for building sandcastles. The staff was incredibly patient with our energetic children.", date: "2024-02-15", stayDate: "February 8-13, 2024", roomType: "Beachfront Bungalow", categories: { cleanliness: 5, service: 5, amenities: 5, location: 5, value: 5 } }
+        ];
+
+        function renderStars(rating) {
+            let stars = '';
+            for (let i = 0; i < 5; i++) {
+                if (i < rating) {
+                    stars += '<svg class="star star-filled" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+                } else {
+                    stars += '<svg class="star star-empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+                }
+            }
+            return stars;
+        }
+
+        function getReviewId() {
+            const params = new URLSearchParams(window.location.search);
+            return parseInt(params.get('id')) || 1;
+        }
+
+        function renderRatingBar(rating) {
+            const percentage = (rating / 5) * 100;
+            return `
+                <div style="flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+                    <div style="width: ${percentage}%; height: 100%; background: #fbbf24; border-radius: 4px;"></div>
                 </div>
-                <div class="rating-label" th:text="${review.rating} + ' / 5'">4 / 5</div>
-            </div>
-        </div>
-    </div>
+            `;
+        }
 
-    <!-- ── Reservation Details ── -->
-    <div class="divider">
-        <div class="divider-label">✦ Reservation Details ✦</div>
-    </div>
+        function renderReviewDetail() {
+            const id = getReviewId();
+            const review = reviews.find(r => r.id === id) || reviews[0];
 
-    <div class="info-grid">
+            document.getElementById('reviewDetail').innerHTML = `
+                <div style="margin-bottom: 2rem;">
+                    <h1 class="detail-title">${review.title}</h1>
+                    <p class="detail-subtitle" style="margin-bottom: 1rem;">
+                        <a href="hoteldetails.html?id=${review.hotelId}" style="color: #3b82f6; text-decoration: none;">${review.hotel}</a>
+                    </p>
+                    <div class="rating" style="margin-bottom: 0.5rem;">
+                        ${renderStars(review.rating)}
+                        <span style="margin-left: 0.5rem; font-weight: 600;">${review.rating}/5</span>
+                    </div>
+                </div>
 
-        <div class="info-cell">
-            <div class="info-label">Guest Name</div>
-            <div class="info-value accent" th:text="${review.reservation_GuestName}">—</div>
-        </div>
+                <div class="detail-section">
+                    <h3 class="detail-section-title">Review</h3>
+                    <p style="color: #4b5563; line-height: 1.8; font-size: 1rem;">"${review.comment}"</p>
+                </div>
 
-        <div class="info-cell">
-            <div class="info-label">Reservation ID</div>
-            <div class="info-value">
-                <span class="badge" th:text="'# ' + ${review.reservation_Reservation_id}"># —</span>
-            </div>
-        </div>
+                <div class="detail-section">
+                    <h3 class="detail-section-title">Guest Information</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Guest Name</span>
+                        <span class="detail-value">${review.guest}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Email</span>
+                        <span class="detail-value">${review.email}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Stay Dates</span>
+                        <span class="detail-value">${review.stayDate}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Room Type</span>
+                        <span class="detail-value">${review.roomType}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Review Date</span>
+                        <span class="detail-value">${review.date}</span>
+                    </div>
+                </div>
 
-        <div class="info-cell">
-            <div class="info-label">Check-in Date</div>
-            <div class="info-value" th:text="${review.reservation_CheckInDate}">—</div>
-        </div>
+                <div class="detail-section">
+                    <h3 class="detail-section-title">Category Ratings</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span style="width: 100px; font-size: 0.875rem; color: #6b7280;">Cleanliness</span>
+                            ${renderRatingBar(review.categories.cleanliness)}
+                            <span style="font-weight: 500; width: 30px;">${review.categories.cleanliness}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span style="width: 100px; font-size: 0.875rem; color: #6b7280;">Service</span>
+                            ${renderRatingBar(review.categories.service)}
+                            <span style="font-weight: 500; width: 30px;">${review.categories.service}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span style="width: 100px; font-size: 0.875rem; color: #6b7280;">Amenities</span>
+                            ${renderRatingBar(review.categories.amenities)}
+                            <span style="font-weight: 500; width: 30px;">${review.categories.amenities}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span style="width: 100px; font-size: 0.875rem; color: #6b7280;">Location</span>
+                            ${renderRatingBar(review.categories.location)}
+                            <span style="font-weight: 500; width: 30px;">${review.categories.location}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span style="width: 100px; font-size: 0.875rem; color: #6b7280;">Value</span>
+                            ${renderRatingBar(review.categories.value)}
+                            <span style="font-weight: 500; width: 30px;">${review.categories.value}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
 
-        <div class="info-cell">
-            <div class="info-label">Check-out Date</div>
-            <div class="info-value" th:text="${review.reservation_CheckOutDate}">—</div>
-        </div>
-
-    </div>
-
-</main>
-
-<footer>The Grand Hotel &nbsp;·&nbsp; All Rights Reserved &nbsp;·&nbsp; MMXXVI</footer>
-
+        renderReviewDetail();
+    </script>
 </body>
+
 </html>
