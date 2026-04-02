@@ -30,6 +30,6 @@ public class RoomTypeDetailView {
         }
         model.addAttribute("roomType", roomType);
         model.addAttribute("rooms", roomService.getRoomsByRoomType(id));
-        return "roomtype/roomTypeDetail";
+        return "roomtype/roomtypedetail";
     }
 }
