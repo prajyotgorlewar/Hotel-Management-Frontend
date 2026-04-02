@@ -1,6 +1,4 @@
 package com.example.Hotel_Management_Frontend.controller;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,13 +55,6 @@ public String getReservationDetails(@PathVariable int id, Model model) {
 
     return "reservation/reservationdetails";
 }
-
-    // 🔥 SHOW FORM
-    @GetMapping("/reservations/add")
-    public String showAddForm(Model model) {
-        model.addAttribute("reservation", new Reservation());
-        return "reservation/add-reservation";
-    }
 
     // 🔥 SUBMIT FORM
     @PostMapping("/reservations/add")
