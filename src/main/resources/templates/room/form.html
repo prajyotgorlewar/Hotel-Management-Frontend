@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${room.roomId != null} ? 'Edit Room' : 'New Room'">Room Form | LuxStay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <style>
+        :root{--ink:#0f0e0b;--cream:#f5f0e8;--gold:#c49a3c;--muted:#7a7469;--card:#ffffff;--border:#e2ddd4}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh}
+        header{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 3rem;border-bottom:1px solid var(--border);background:var(--cream);position:sticky;top:0;z-index:100}
+        .logo{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:600;color:var(--ink);text-decoration:none}
+        .logo span{color:var(--gold)}
+        .breadcrumb{display:flex;align-items:center;gap:.45rem;font-size:.77rem;color:var(--muted)}
+        .breadcrumb a{color:var(--muted);text-decoration:none}.breadcrumb a:hover{color:var(--ink)}
+        .sep{opacity:.35}
+        .page-hdr{max-width:600px;margin:0 auto;padding:3rem 2rem 1.5rem}
+        .lbl{font-size:.67rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
+        .page-hdr h1{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;line-height:1.05}
+        .page-hdr h1 em{font-style:italic;color:var(--gold)}
+        .form-wrap{max-width:600px;margin:0 auto;padding:0 2rem 5rem}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:2px;padding:2rem}
+        .fr{margin-bottom:1.2rem}
+        .fr label{display:block;font-size:.73rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem}
+        .fr input,.fr select{width:100%;padding:.6rem .9rem;border:1px solid var(--border);background:var(--cream);font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--ink);border-radius:1px;outline:none;transition:border-color .2s}
+        .fr input:focus,.fr select:focus{border-color:var(--gold)}
+        .radio-grp{display:flex;gap:1.5rem}
+        .radio-grp label{display:flex;align-items:center;gap:.4rem;font-size:.85rem;cursor:pointer;text-transform:none;letter-spacing:0;color:var(--ink)}
+        .radio-grp input{width:auto;accent-color:var(--gold)}
+        .form-actions{display:flex;gap:.6rem;margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--border)}
+        .btn{display:inline-flex;align-items:center;padding:.5rem 1.1rem;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:500;letter-spacing:.04em;border:none;cursor:pointer;text-decoration:none;border-radius:1px;transition:.2s}
+        .btn-primary{background:var(--ink);color:var(--cream)}.btn-primary:hover{background:var(--gold)}
+        .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+    </style>
+</head>
+<body>
+<header>
+    <a class="logo" href="/hotels">Lux<span>Stay</span></a>
+    <div class="breadcrumb">
+        <a href="/hotels">Hotels</a><span class="sep">/</span>
+        <a th:href="@{/hotels/{id}/rooms(id=${hotelId})}">Rooms</a><span class="sep">/</span>
+        <span th:text="${room.roomId != null} ? 'Edit Room' : 'New Room'">Form</span>
+    </div>
+</header>
+
+<div class="page-hdr">
+    <p class="lbl" th:text="${room.roomId != null} ? 'Edit' : 'New'">New</p>
+    <h1><em th:text="${room.roomId != null} ? 'Edit Room' : 'Add Room'">Add Room</em></h1>
+</div>
+
+<div class="form-wrap">
+    <div class="card">
+
+        <form th:if="${room.roomId == null}"
+              th:action="@{/hotels/{id}/rooms(id=${hotelId})}" method="post">
+            <div class="fr">
+                <label>Room Number</label>
+                <input type="number" name="roomNumber" th:value="${room.roomNumber}"
+                       required placeholder="e.g. 101"/>
+            </div>
+            <div class="fr">
+                <label>Room Type</label>
+                <select name="roomType.roomTypeId" required>
+                    <option value="">Select room type</option>
+                    <option th:each="roomType : ${roomTypes}"
+                            th:value="${roomType.roomTypeId}"
+                            th:text="${roomType.typeName + ' | Max ' + roomType.maxOccupancy + ' | Rs. ' + roomType.pricePerNight}"
+                            th:selected="${room.roomType != null and room.roomType.roomTypeId == roomType.roomTypeId}">
+                        Room Type
+                    </option>
+                </select>
+            </div>
+            <div class="fr">
+                <label>Availability</label>
+                <div class="radio-grp">
+                    <label>
+                        <input type="radio" name="isAvailable" value="true"
+                               th:checked="${room.isAvailable == null or room.isAvailable}"/> Available
+                    </label>
+                    <label>
+                        <input type="radio" name="isAvailable" value="false"
+                               th:checked="${room.isAvailable != null and !room.isAvailable}"/> Occupied
+                    </label>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Room</button>
+                <a class="btn btn-ghost" th:href="@{/hotels/{id}/rooms(id=${hotelId})}">Cancel</a>
+            </div>
+        </form>
+
+        <form th:if="${room.roomId != null}"
+              th:action="@{/hotels/{hid}/rooms/{rid}/update(hid=${hotelId},rid=${room.roomId})}"
+              method="post">
+            <div class="fr">
+                <label>Room Number</label>
+                <input type="number" name="roomNumber" th:value="${room.roomNumber}" required/>
+            </div>
+            <div class="fr">
+                <label>Room Type</label>
+                <select name="roomType.roomTypeId" required>
+                    <option value="">Select room type</option>
+                    <option th:each="roomType : ${roomTypes}"
+                            th:value="${roomType.roomTypeId}"
+                            th:text="${roomType.typeName + ' | Max ' + roomType.maxOccupancy + ' | Rs. ' + roomType.pricePerNight}"
+                            th:selected="${room.roomType != null and room.roomType.roomTypeId == roomType.roomTypeId}">
+                        Room Type
+                    </option>
+                </select>
+            </div>
+            <div class="fr">
+                <label>Availability</label>
+                <div class="radio-grp">
+                    <label>
+                        <input type="radio" name="isAvailable" value="true"
+                               th:checked="${room.isAvailable}"/> Available
+                    </label>
+                    <label>
+                        <input type="radio" name="isAvailable" value="false"
+                               th:checked="${!room.isAvailable}"/> Occupied
+                    </label>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a class="btn btn-ghost" th:href="@{/hotels/{id}/rooms(id=${hotelId})}">Cancel</a>
+            </div>
+        </form>
+
+    </div>
+</div>
+</body>
+</html>

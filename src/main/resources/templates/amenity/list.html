@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="'Amenities – Room ' + ${room.roomNumber}">Amenities | LuxStay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <style>
+        :root{--ink:#0f0e0b;--cream:#f5f0e8;--gold:#c49a3c;--gold-light:#e8c97a;--muted:#7a7469;--card:#ffffff;--border:#e2ddd4;--danger:#c0392b}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh}
+        header{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 3rem;border-bottom:1px solid var(--border);background:var(--cream);position:sticky;top:0;z-index:100}
+        .logo{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:600;color:var(--ink);text-decoration:none}
+        .logo span{color:var(--gold)}
+        .breadcrumb{display:flex;align-items:center;gap:.45rem;font-size:.77rem;color:var(--muted);flex-wrap:wrap}
+        .breadcrumb a{color:var(--muted);text-decoration:none}.breadcrumb a:hover{color:var(--ink)}
+        .sep{opacity:.35}
+        .flash{max-width:1100px;margin:.6rem auto 0;padding:0 3rem}
+        .alert{padding:.65rem 1.1rem;font-size:.82rem;border-left:3px solid;margin-bottom:.4rem}
+        .alert-success{border-color:#4caf50;background:#f1faf1;color:#2e7d32}
+        .alert-error{border-color:#f44336;background:#fdf3f3;color:#c62828}
+        .page-hdr{max-width:1100px;margin:0 auto;padding:3rem 3rem 1.5rem;display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
+        .lbl{font-size:.67rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
+        .page-hdr h1{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;line-height:1.05}
+        .page-hdr h1 em{font-style:italic;color:var(--gold)}
+        .info-strip{max-width:1100px;margin:0 auto;padding:0 3rem 1.8rem;display:flex;gap:2rem;flex-wrap:wrap}
+        .chip{display:flex;align-items:center;gap:.45rem;font-size:.82rem;color:var(--muted)}
+        .chip strong{color:var(--ink)}
+        .badge{display:inline-block;padding:.2rem .65rem;border-radius:20px;font-size:.71rem;font-weight:500}
+        .b-av{background:#e8f5e9;color:#2e7d32}.b-oc{background:#ffebee;color:#c62828}
+        .divider{max-width:1100px;margin:0 auto;padding:0 3rem .8rem;display:flex;align-items:center;gap:1rem}
+        .div-line{flex:1;height:1px;background:var(--border)}
+        .div-lbl{font-size:.68rem;letter-spacing:.17em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+        .section{max-width:1100px;margin:0 auto;padding:0 3rem 5rem}
+        .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+        .count{font-size:.78rem;color:var(--muted)}
+        .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.2rem}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:2px;overflow:hidden;transition:box-shadow .3s,transform .3s;animation:up .4s both}
+        .card:hover{box-shadow:0 10px 34px rgba(0,0,0,.08);transform:translateY(-3px)}
+        @keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+        .card-top{height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light))}
+        .card-body{padding:1.4rem}
+        .card-icon{font-size:1.4rem;margin-bottom:.7rem;color:var(--gold)}
+        .card h3{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;margin-bottom:.35rem}
+        .card-desc{font-size:.83rem;color:var(--muted);line-height:1.65;margin-bottom:1.1rem}
+        .card-footer{display:flex;gap:.4rem;border-top:1px solid var(--border);padding-top:.9rem}
+        .btn{display:inline-flex;align-items:center;gap:.3rem;padding:.42rem .95rem;font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:500;letter-spacing:.04em;border:none;cursor:pointer;text-decoration:none;border-radius:1px;transition:.2s}
+        .btn-primary{background:var(--ink);color:var(--cream)}.btn-primary:hover{background:var(--gold)}
+        .btn-gold{background:var(--gold);color:#fff}.btn-gold:hover{background:#a67c28}
+        .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+        .btn-danger{background:transparent;color:var(--danger);border:1px solid #e8c4c0}.btn-danger:hover{background:var(--danger);color:#fff}
+        .btn-sm{padding:.3rem .68rem;font-size:.72rem}
+        .empty{text-align:center;padding:3.5rem;color:var(--muted)}
+        .empty-icon{font-size:2.5rem;margin-bottom:.8rem;opacity:.35}
+        .overlay{display:none;position:fixed;inset:0;background:rgba(15,14,11,.52);backdrop-filter:blur(3px);z-index:200;align-items:center;justify-content:center}
+        .overlay.open{display:flex}
+        .modal{background:var(--card);border:1px solid var(--border);border-radius:2px;width:min(510px,92vw);animation:mi .22s both}
+        @keyframes mi{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}
+        .mhdr{display:flex;align-items:center;justify-content:space-between;padding:1.3rem 1.6rem;border-bottom:1px solid var(--border)}
+        .mhdr h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600}
+        .mcls{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--muted);line-height:1}.mcls:hover{color:var(--ink)}
+        .mbody{padding:1.6rem}
+        .mftr{display:flex;justify-content:flex-end;gap:.5rem;padding:1rem 1.6rem;border-top:1px solid var(--border)}
+        .fr{margin-bottom:1.1rem}
+        .fr label{display:block;font-size:.73rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem}
+        .fr input,.fr select,.fr textarea{width:100%;padding:.58rem .9rem;border:1px solid var(--border);background:var(--cream);font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--ink);border-radius:1px;outline:none;transition:border-color .2s}
+        .fr textarea{resize:vertical;min-height:75px}
+        .fr input:focus,.fr select:focus,.fr textarea:focus{border-color:var(--gold)}
+        .confirm-txt{font-size:.9rem;line-height:1.65;color:var(--muted)}
+        .confirm-txt strong{color:var(--ink)}
+        .warn{font-size:.8rem;color:var(--danger);margin-top:.4rem;display:block}
+    </style>
+</head>
+<body>
+
+<header>
+    <a class="logo" href="/hotels">Lux<span>Stay</span></a>
+    <div class="breadcrumb">
+        <a href="/hotels">Hotels</a><span class="sep">/</span>
+        <a th:href="@{/hotels/{id}/rooms(id=${hotelId})}">Rooms</a><span class="sep">/</span>
+        <span th:text="'Room ' + ${room.roomNumber}">Room</span><span class="sep">/</span>
+        <span>Amenities</span>
+    </div>
+</header>
+
+<div class="flash">
+    <div th:if="${successMsg}" class="alert alert-success" th:text="${successMsg}"></div>
+    <div th:if="${errorMsg}"   class="alert alert-error"   th:text="${errorMsg}"></div>
+</div>
+
+<div class="page-hdr">
+    <div>
+        <p class="lbl">Room <span th:text="${room.roomNumber}">101</span></p>
+        <h1>Room<br><em>Amenities</em></h1>
+    </div>
+    <button class="btn btn-primary" onclick="openCreate()">+ New Amenity</button>
+</div>
+
+<div class="info-strip">
+    <div class="chip">
+        Type: <strong th:text="${room.roomType != null ? room.roomType.typeName : '—'}">Standard</strong>
+    </div>
+    <div class="chip">
+        Price: <strong th:text="${room.roomType != null ? '₹' + room.roomType.pricePerNight + '/night' : '—'}">₹5000/night</strong>
+    </div>
+    <div class="chip">
+        Status:
+        <span class="badge b-av" th:if="${room.isAvailable}">Available</span>
+        <span class="badge b-oc" th:unless="${room.isAvailable}">Occupied</span>
+    </div>
+</div>
+
+<div class="divider">
+    <div class="div-line"></div>
+    <span class="div-lbl">Assigned Amenities</span>
+    <div class="div-line"></div>
+</div>
+
+<section class="section">
+    <div class="toolbar">
+        <span class="count" th:text="${#lists.size(amenities)} + ' amenity(s) assigned'">0</span>
+        <button class="btn btn-ghost btn-sm" onclick="openAssign()">+ Assign Existing</button>
+    </div>
+
+    <div th:if="${#lists.isEmpty(amenities)}" class="empty">
+        <div class="empty-icon">✦</div>
+        <p>No amenities assigned to this room yet.</p>
+    </div>
+
+    <div class="grid" th:unless="${#lists.isEmpty(amenities)}">
+        <div class="card" th:each="a, s : ${amenities}"
+             th:style="'animation-delay:' + ${s.index * 60} + 'ms'">
+            <div class="card-top"></div>
+            <div class="card-body">
+                <div class="card-icon">✦</div>
+                <h3 th:text="${a.name}">Amenity</h3>
+                <p class="card-desc" th:text="${a.description ?: 'No description.'}">Desc</p>
+                <div class="card-footer">
+                    <button class="btn btn-ghost btn-sm"
+                            th:attr="data-id=${a.amenityId},data-name=${a.name},data-description=${a.description ?: ''}"
+                            onclick="openEdit(this)">
+                        Edit
+                    </button>
+                    <button class="btn btn-danger btn-sm"
+                            th:attr="data-id=${a.amenityId},data-name=${a.name}"
+                            onclick="openUnassign(this)">
+                        Remove
+                    </button>
+                    <button class="btn btn-danger btn-sm"
+                            th:attr="data-id=${a.amenityId},data-name=${a.name}"
+                            onclick="openDelete(this)">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="overlay" id="createModal">
+    <div class="modal">
+        <div class="mhdr"><h3>New Amenity</h3><button class="mcls" onclick="closeModal('createModal')">✕</button></div>
+        <form th:action="@{/hotels/{hid}/rooms/{rid}/amenities/create(hid=${hotelId},rid=${roomId})}" method="post">
+            <div class="mbody">
+                <div class="fr"><label>Name</label><input type="text" name="name" required placeholder="e.g. Free WiFi"/></div>
+                <div class="fr"><label>Description</label><textarea name="description" placeholder="Brief description…"></textarea></div>
+            </div>
+            <div class="mftr">
+                <button type="button" class="btn btn-ghost" onclick="closeModal('createModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create &amp; Assign</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="overlay" id="assignModal">
+    <div class="modal">
+        <div class="mhdr"><h3>Assign Existing Amenity</h3><button class="mcls" onclick="closeModal('assignModal')">✕</button></div>
+        <form th:action="@{/hotels/{hid}/rooms/{rid}/amenities/assign(hid=${hotelId},rid=${roomId})}" method="post">
+            <div class="mbody">
+                <div class="fr">
+                    <label>Select Amenity</label>
+                    <select name="amenityId" required>
+                        <option value="">— Choose —</option>
+                        <option th:each="a : ${allAmenities}"
+                                th:value="${a.amenityId}"
+                                th:text="${a.name}">Amenity</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mftr">
+                <button type="button" class="btn btn-ghost" onclick="closeModal('assignModal')">Cancel</button>
+                <button type="submit" class="btn btn-gold">Assign</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="overlay" id="editModal">
+    <div class="modal">
+        <div class="mhdr"><h3>Edit Amenity</h3><button class="mcls" onclick="closeModal('editModal')">✕</button></div>
+        <form id="editForm" method="post">
+            <div class="mbody">
+                <div class="fr"><label>Name</label><input type="text" id="eName" name="name" required/></div>
+                <div class="fr"><label>Description</label><textarea id="eDesc" name="description"></textarea></div>
+            </div>
+            <div class="mftr">
+                <button type="button" class="btn btn-ghost" onclick="closeModal('editModal')">Cancel</button>
+                <button type="submit" class="btn btn-gold">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="overlay" id="unassignModal">
+    <div class="modal">
+        <div class="mhdr"><h3>Remove from Room</h3><button class="mcls" onclick="closeModal('unassignModal')">✕</button></div>
+        <form id="unassignForm" method="post">
+            <div class="mbody">
+                <p class="confirm-txt">Remove <strong id="unassignName">this amenity</strong> from this room?
+                    <span class="warn">The amenity record itself will not be deleted.</span>
+                </p>
+            </div>
+            <div class="mftr">
+                <button type="button" class="btn btn-ghost" onclick="closeModal('unassignModal')">Cancel</button>
+                <button type="submit" class="btn btn-danger">Remove</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="overlay" id="deleteModal">
+    <div class="modal">
+        <div class="mhdr"><h3>Delete Amenity</h3><button class="mcls" onclick="closeModal('deleteModal')">✕</button></div>
+        <form id="deleteForm" method="post">
+            <div class="mbody">
+                <p class="confirm-txt">Permanently delete <strong id="deleteName">this amenity</strong>?
+                    <span class="warn">This removes it from every room and hotel in the system.</span>
+                </p>
+            </div>
+            <div class="mftr">
+                <button type="button" class="btn btn-ghost" onclick="closeModal('deleteModal')">Cancel</button>
+                <button type="submit" class="btn btn-danger">Permanently Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const hotelId = /*[[${hotelId}]]*/ 0;
+    const roomId  = /*[[${roomId}]]*/ 0;
+
+    function openCreate() { document.getElementById('createModal').classList.add('open'); }
+    function openAssign() { document.getElementById('assignModal').classList.add('open'); }
+
+    function openEdit(button) {
+        const aid = button.dataset.id;
+        const name = button.dataset.name || '';
+        const desc = button.dataset.description || '';
+        document.getElementById('editForm').action =
+            `/hotels/${hotelId}/rooms/${roomId}/amenities/${aid}/update`;
+        document.getElementById('eName').value = name;
+        document.getElementById('eDesc').value = desc;
+        document.getElementById('editModal').classList.add('open');
+    }
+    function openUnassign(button) {
+        const aid = button.dataset.id;
+        const name = button.dataset.name || '';
+        document.getElementById('unassignForm').action =
+            `/hotels/${hotelId}/rooms/${roomId}/amenities/${aid}/unassign`;
+        document.getElementById('unassignName').textContent = name;
+        document.getElementById('unassignModal').classList.add('open');
+    }
+    function openDelete(button) {
+        const aid = button.dataset.id;
+        const name = button.dataset.name || '';
+        document.getElementById('deleteForm').action =
+            `/hotels/${hotelId}/rooms/${roomId}/amenities/${aid}/delete`;
+        document.getElementById('deleteName').textContent = name;
+        document.getElementById('deleteModal').classList.add('open');
+    }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    document.querySelectorAll('.overlay').forEach(o =>
+        o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
+</script>
+</body>
+</html>
