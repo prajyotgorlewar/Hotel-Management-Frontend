@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -71,22 +72,41 @@ public class AmenityService {
     }
 
     public List<AmenityDTO> getAmenitiesByRoom(Integer roomId) {
-        String url = baseUrl + "/rooms/" + roomId + "/amenities";
-        AmenityPage page = restTemplate.getForObject(url, AmenityPage.class);
-        if (page == null || page.getEmbedded() == null
-                || page.getEmbedded().getAmenities() == null) return List.of();
-        List<AmenityDTO> result = new ArrayList<>();
-        for (AmenityHal a : page.getEmbedded().getAmenities()) result.add(a.toDTO());
-        return result;
+        List<String> urls = List.of(
+                baseUrl + "/rooms/" + roomId + "/amenities",
+                baseUrl + "/amenities/search/findByRooms_RoomId?roomId=" + roomId,
+                baseUrl + "/amenities/search/findByRooms_roomId?roomId=" + roomId,
+                baseUrl + "/amenities/search/findByRoomId?roomId=" + roomId,
+                baseUrl + "/amenities/search/findByRoomsId?roomId=" + roomId
+        );
+
+        for (String url : urls) {
+            AmenityPage page = fetchAmenityPage(url);
+            if (page == null || page.getEmbedded() == null
+                    || page.getEmbedded().getAmenities() == null) {
+                continue;
+            }
+            List<AmenityDTO> result = new ArrayList<>();
+            for (AmenityHal a : page.getEmbedded().getAmenities()) {
+                result.add(a.toDTO());
+            }
+            return result;
+        }
+
+        return List.of();
     }
 
     public List<AmenityDTO> getAllAmenities() {
         String url = baseUrl + "/amenities?size=200";
-        AmenityPage page = restTemplate.getForObject(url, AmenityPage.class);
+        AmenityPage page = fetchAmenityPage(url);
         if (page == null || page.getEmbedded() == null
-                || page.getEmbedded().getAmenities() == null) return List.of();
+                || page.getEmbedded().getAmenities() == null) {
+            return List.of();
+        }
         List<AmenityDTO> result = new ArrayList<>();
-        for (AmenityHal a : page.getEmbedded().getAmenities()) result.add(a.toDTO());
+        for (AmenityHal a : page.getEmbedded().getAmenities()) {
+            result.add(a.toDTO());
+        }
         return result;
     }
 
@@ -96,8 +116,7 @@ public class AmenityService {
         body.put("description", dto.getDescription());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        ResponseEntity<AmenityHal> resp = restTemplate.postForEntity(
-                baseUrl + "/amenities", new HttpEntity<>(body, headers), AmenityHal.class);
+        ResponseEntity<AmenityHal> resp = postAmenity(body, headers);
         Integer amenityId = null;
         if (resp.getBody() != null) {
             amenityId = resp.getBody().extractId();
@@ -116,12 +135,27 @@ public class AmenityService {
     }
 
     public void assignToRoom(Integer roomId, Integer amenityId) {
-        String url = baseUrl + "/rooms/" + roomId + "/amenities";
         String amenityUri = baseUrl + "/amenities/" + amenityId;
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("text/uri-list"));
-        restTemplate.exchange(url, HttpMethod.POST,
-                new HttpEntity<>(amenityUri, headers), String.class);
+        HttpEntity<String> entity = new HttpEntity<>(amenityUri, headers);
+
+        List<String> urls = List.of(
+                baseUrl + "/rooms/" + roomId + "/amenities",
+                baseUrl + "/api/rooms/" + roomId + "/amenities"
+        );
+        RuntimeException lastError = null;
+        for (String url : urls) {
+            try {
+                restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+                return;
+            } catch (Exception ex) {
+                lastError = new RuntimeException(ex.getMessage(), ex);
+            }
+        }
+        if (lastError != null) {
+            throw lastError;
+        }
     }
 
     public void updateAmenity(Integer amenityId, AmenityDTO dto) {
@@ -140,6 +174,36 @@ public class AmenityService {
 
     public void deleteAmenity(Integer amenityId) {
         restTemplate.delete(baseUrl + "/amenities/" + amenityId);
+    }
+
+    private AmenityPage fetchAmenityPage(String url) {
+        try {
+            return restTemplate.getForObject(url, AmenityPage.class);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    private ResponseEntity<AmenityHal> postAmenity(Map<String, Object> body, HttpHeaders headers) {
+        List<String> urls = List.of(
+                baseUrl + "/amenities",
+                baseUrl + "/api/amenities"
+        );
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+        RuntimeException lastError = null;
+        for (String url : urls) {
+            try {
+                return restTemplate.postForEntity(url, entity, AmenityHal.class);
+            } catch (HttpStatusCodeException ex) {
+                lastError = new RuntimeException(ex.getStatusCode() + " " + ex.getResponseBodyAsString(), ex);
+            } catch (Exception ex) {
+                lastError = new RuntimeException(ex.getMessage(), ex);
+            }
+        }
+        if (lastError != null) {
+            throw lastError;
+        }
+        throw new IllegalStateException("Amenity creation failed.");
     }
 }
 
