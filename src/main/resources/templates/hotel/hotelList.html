@@ -112,7 +112,7 @@
                 <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
 
                     <div th:each="hotel : ${hotels}"
-                        th:onclick="|window.location='/hotels/' + ${hotel.hotelId} + '/details'|"
+                        th:onclick="|window.location='/hotels/' + ${hotel.resolvedId} + '/details'|"
                         class="h-[425px] cursor-pointer overflow-hidden rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d]/95 to-[#1a110a]/95 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/15 backdrop-blur-sm">
 
                         <div class="h-[235px] bg-cover bg-center"
@@ -139,7 +139,7 @@
                             </p>
 
                             <div class="mt-4 flex items-center gap-2">
-                                <a th:href="@{'/hotels/' + ${hotel.hotelId} + '/details'}"
+                                <a th:href="@{'/hotels/' + ${hotel.resolvedId} + '/details'}"
                                     onclick="event.stopPropagation()"
                                     class="flex-1 rounded-lg bg-[#f1d9b3]/90 px-3 py-2 text-sm font-semibold text-[#4a2c12] text-center">
                                     View Details
@@ -147,7 +147,7 @@
 
                                 <!-- KEEP ICON BUTTONS SAME -->
                                 <button onclick="event.stopPropagation()"
-                                    th:attr="data-id=${hotel.hotelId},data-name=${hotel.name},data-location=${hotel.location},data-description=${hotel.description}"
+                                    th:attr="data-id=${hotel.resolvedId},data-name=${hotel.name},data-location=${hotel.location},data-description=${hotel.description}"
                                     th:class="'editHotelButton inline-flex h-7 w-7 items-center justify-center rounded-lg border border-[#f1d9b3]/25 bg-[#1f140b]/60 hover:bg-amber-900/40'">
                                     <svg width="13" height="13" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -155,7 +155,7 @@
                                     </svg>
                                 </button>
                                 <button onclick="event.stopPropagation()"
-                                    th:attr="data-id=${hotel.hotelId},data-name=${hotel.name}"
+                                    th:attr="data-id=${hotel.resolvedId},data-name=${hotel.name}"
                                     th:class="'deleteHotelButton inline-flex h-7 w-7 items-center justify-center rounded-lg border border-[#f1d9b3]/25 bg-[#1f140b]/60 hover:bg-red-900/40'">
                                     <svg width="13" height="13" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
