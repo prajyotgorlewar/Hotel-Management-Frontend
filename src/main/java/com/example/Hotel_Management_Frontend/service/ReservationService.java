@@ -112,7 +112,7 @@ public class ReservationService {
 
     public void addReservation(CreateReservationDTO reservation) {
 
-        String url = "http://localhost:8081/api/reservations";
+        String url = "http://172.16.160.110:8081/api/reservations";
 
         List<Integer> availableRoomIds = new ArrayList<>(Arrays.asList(
                 1, 3, 5, 6, 8, 10, 11, 13, 15, 17, 18, 20, 22, 23, 25,
