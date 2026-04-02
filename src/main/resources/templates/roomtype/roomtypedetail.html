@@ -48,7 +48,7 @@
           <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[#f1d9b3]/80">Room Type</div>
           <h1 class="mt-2 text-3xl font-bold text-[#f8f2e6]" id="dcTypeName">—</h1>
           <p class="mt-2 text-sm text-[#f1d9b3]/85" id="dcDescription">—</p>
-          <div class="mt-4 grid gap-4 sm:grid-cols-3">
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
             <div>
               <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[#f1d9b3]/70">Max Occupancy</div>
               <div class="mt-1 text-base font-semibold text-[#f8f2e6]" id="dcMaxOcc">—</div>
@@ -56,10 +56,6 @@
             <div>
               <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[#f1d9b3]/70">Price / Night</div>
               <div class="mt-1 font-mono text-base text-[#f1d9b3]" id="dcPrice">—</div>
-            </div>
-            <div>
-              <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[#f1d9b3]/70">ID</div>
-              <div class="mt-1 font-mono text-base text-[#f1d9b3]" id="dcId">—</div>
             </div>
           </div>
         </div>
@@ -122,8 +118,6 @@
       document.getElementById('dcDescription').textContent = rt.description || 'No description provided.';
       document.getElementById('dcMaxOcc').textContent = `${rt.maxOccupancy} guest${rt.maxOccupancy > 1 ? 's' : ''}`;
       document.getElementById('dcPrice').textContent = fmtPrice(rt.pricePerNight);
-      const resolvedId = rt.resolvedId || rt.roomTypeId || rt._id;
-      document.getElementById('dcId').textContent = resolvedId ? `#${resolvedId}` : '—';
     }
   </script>
 </body>
