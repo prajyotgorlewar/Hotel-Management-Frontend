@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.Hotel_Management_Frontend.dto.HotelResponse;
+import com.example.Hotel_Management_Frontend.service.HotelService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -28,11 +30,59 @@ public class ReviewController {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
           //  .registeredModules(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+    private final HotelService hotelService;
 
     @Value("${backend.base-url}")
     private String backendUrl;
 
     private static final int PAGE_SIZE = 6;
+
+    public ReviewController(HotelService hotelService) {
+        this.hotelService = hotelService;
+    }
+
+    @GetMapping("/list")
+    public String listHotelsForReviews(
+            @RequestParam(name = "name", defaultValue = "") String name,
+            @RequestParam(name = "city", defaultValue = "") String city,
+            @RequestParam(name = "amenity", defaultValue = "") String amenity,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "4") int size,
+            Model model) {
+
+        String resolvedName = name;
+        String resolvedAmenity = amenity;
+
+        if (!name.isEmpty() && amenity.isEmpty()) {
+            String matched = hotelService.getAllAmenityNames().stream()
+                    .filter(a -> a.equalsIgnoreCase(name.trim()))
+                    .findFirst().orElse("");
+            if (!matched.isEmpty()) {
+                resolvedAmenity = matched;
+                resolvedName = "";
+            }
+        }
+
+        HotelResponse response = hotelService.getHotels(page, size, resolvedName, city, resolvedAmenity);
+
+        model.addAttribute("hotels", response != null && response.getEmbedded() != null
+                ? response.getEmbedded().getHotels()
+                : Collections.emptyList());
+        model.addAttribute("totalPages", response != null && response.getPage() != null
+                ? response.getPage().getTotalPages()
+                : 1);
+        model.addAttribute("totalElements", response != null && response.getPage() != null
+                ? response.getPage().getTotalElements()
+                : 0);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("name", resolvedName);
+        model.addAttribute("city", city);
+        model.addAttribute("amenity", resolvedAmenity);
+        model.addAttribute("cities", hotelService.getAllCities());
+
+        return "review/hotelreviewlist";
+    }
 
     // ─────────────────────────────────────────
     // GET /reviews?hotelId=1&page=0
