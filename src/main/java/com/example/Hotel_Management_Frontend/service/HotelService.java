@@ -3,45 +3,50 @@ package com.example.Hotel_Management_Frontend.service;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import com.example.Hotel_Management_Frontend.dto.Hotel;
-import com.example.Hotel_Management_Frontend.dto.HotelResponse;
-import com.example.Hotel_Management_Frontend.dto.Amenity;
-import com.example.Hotel_Management_Frontend.dto.AmenityResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.Hotel_Management_Frontend.dto.Amenity;
+import com.example.Hotel_Management_Frontend.dto.AmenityResponse;
+import com.example.Hotel_Management_Frontend.dto.Hotel;
+import com.example.Hotel_Management_Frontend.dto.HotelResponse;
 
 @Service
 public class HotelService {
 
-    private final String BASE_URL = "http://172.16.160.110:8081";
+    private final String baseUrl;
     private final RestTemplate restTemplate = new RestTemplate();
 
+    public HotelService(@Value("${backend.base-url}") String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
     public HotelResponse getHotels(int page, int size, String name, String city) {
-        String url = BASE_URL + "/hotels?page=" + page + "&size=" + size;
+        String url = baseUrl + "/hotels?page=" + page + "&size=" + size;
 
         if (city != null && !city.isEmpty()) {
-            url = BASE_URL + "/hotels/search/findByLocation?location=" + city + "&page=" + page + "&size=" + size;
+            url = baseUrl + "/hotels/search/findByLocation?location=" + city + "&page=" + page + "&size=" + size;
         } else if (name != null && !name.isEmpty()) {
-            url = BASE_URL + "/hotels/search/findByName?name=" + name + "&page=" + page + "&size=" + size;
+            url = baseUrl + "/hotels/search/findByName?name=" + name + "&page=" + page + "&size=" + size;
         }
 
         return restTemplate.getForObject(url, HotelResponse.class);
     }
 
     public Hotel getHotelById(int id) {
-        return restTemplate.getForObject(BASE_URL + "/hotels/" + id, Hotel.class);
+        return restTemplate.getForObject(baseUrl + "/hotels/" + id, Hotel.class);
     }
 
     public List<Amenity> getAmenitiesForHotel(int id) {
         try {
             AmenityResponse response = restTemplate.getForObject(
-                    BASE_URL + "/hotels/" + id + "/amenities",
+                    baseUrl + "/hotels/" + id + "/amenities",
                     AmenityResponse.class);
             if (response != null && response.getEmbedded() != null) {
                 return response.getEmbedded().getAmenities();
@@ -60,7 +65,7 @@ public class HotelService {
             payload.put("description", description);
 
             ResponseEntity<Hotel> createResponse = restTemplate.postForEntity(
-                    BASE_URL + "/hotels",
+                    baseUrl + "/hotels",
                     payload,
                     Hotel.class);
 
@@ -99,7 +104,7 @@ public class HotelService {
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setAccept(java.util.List.of(MediaType.APPLICATION_JSON));
             HttpEntity<java.util.Map<String, Object>> entity = new HttpEntity<>(payload, headers);
-            restTemplate.exchange(BASE_URL + "/hotels/" + hotelId, HttpMethod.PUT, entity, Void.class);
+            restTemplate.exchange(baseUrl + "/hotels/" + hotelId, HttpMethod.PUT, entity, Void.class);
 
             updateHotelAmenities(hotelId, amenityNames);
             return true;
@@ -110,7 +115,7 @@ public class HotelService {
 
     public boolean deleteHotel(int hotelId) {
         try {
-            restTemplate.delete(BASE_URL + "/hotels/" + hotelId);
+            restTemplate.delete(baseUrl + "/hotels/" + hotelId);
             return true;
         } catch (Exception e) {
             return false;
@@ -137,12 +142,12 @@ public class HotelService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("text/uri-list"));
         HttpEntity<String> entity = new HttpEntity<>(body, headers);
-        restTemplate.put(BASE_URL + "/hotels/" + hotelId + "/amenities", entity);
+        restTemplate.put(baseUrl + "/hotels/" + hotelId + "/amenities", entity);
     }
 
     private String findOrCreateAmenityLink(String amenityName) {
         try {
-            String searchUrl = BASE_URL + "/amenities/search/findByName?name=" +
+            String searchUrl = baseUrl + "/amenities/search/findByName?name=" +
                     java.net.URLEncoder.encode(amenityName, java.nio.charset.StandardCharsets.UTF_8);
             AmenityResponse response = restTemplate.getForObject(searchUrl, AmenityResponse.class);
             if (response != null && response.getEmbedded() != null) {
@@ -159,7 +164,7 @@ public class HotelService {
             java.util.Map<String, Object> payload = new java.util.HashMap<>();
             payload.put("name", amenityName);
             ResponseEntity<Amenity> createResponse = restTemplate.postForEntity(
-                    BASE_URL + "/amenities",
+                    baseUrl + "/amenities",
                     payload,
                     Amenity.class);
             Amenity created = createResponse.getBody();
@@ -177,7 +182,7 @@ public class HotelService {
     }
 
     public List<String> getAllCities() {
-        String url = BASE_URL + "/hotels?page=0&size=1000";
+        String url = baseUrl + "/hotels?page=0&size=1000";
         HotelResponse response = restTemplate.getForObject(url, HotelResponse.class);
 
         if (response != null && response.getEmbedded() != null) {
@@ -193,14 +198,14 @@ public class HotelService {
     }
 
     public HotelResponse getHotels(int page, int size, String name, String city, String amenity) {
-        String url = BASE_URL + "/hotels?page=" + page + "&size=" + size;
+        String url = baseUrl + "/hotels?page=" + page + "&size=" + size;
 
         if (amenity != null && !amenity.isEmpty()) {
-            url = BASE_URL + "/hotels/search/findByAmenityName?amenity=" + amenity + "&page=" + page + "&size=" + size;
+            url = baseUrl + "/hotels/search/findByAmenityName?amenity=" + amenity + "&page=" + page + "&size=" + size;
         } else if (city != null && !city.isEmpty()) {
-            url = BASE_URL + "/hotels/search/findByLocation?location=" + city + "&page=" + page + "&size=" + size;
+            url = baseUrl + "/hotels/search/findByLocation?location=" + city + "&page=" + page + "&size=" + size;
         } else if (name != null && !name.isEmpty()) {
-            url = BASE_URL + "/hotels/search/findByName?name=" + name + "&page=" + page + "&size=" + size;
+            url = baseUrl + "/hotels/search/findByName?name=" + name + "&page=" + page + "&size=" + size;
         }
 
         return restTemplate.getForObject(url, HotelResponse.class);
@@ -208,7 +213,7 @@ public class HotelService {
 
     public List<String> getAllAmenityNames() {
         try {
-            String raw = restTemplate.getForObject(BASE_URL + "/amenities?size=100", String.class);
+            String raw = restTemplate.getForObject(baseUrl + "/amenities?size=100", String.class);
             com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
             com.fasterxml.jackson.databind.JsonNode root = mapper.readTree(raw);
             List<String> names = new java.util.ArrayList<>();

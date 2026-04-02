@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Room Types — Hotel Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: "Cormorant Garamond", "Times New Roman", serif; }
+    h1,h2,h3 { font-family: "Playfair Display", "Times New Roman", serif; }
+    select option { background-color:#1a0f07; color:#f1d9b3; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(-8px);} to { opacity:1; transform:translateY(0);} }
+    @keyframes fadeOut { from { opacity:1; transform:translateY(0);} to { opacity:0; transform:translateY(-8px);} }
+  </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-b from-[#2a1a10] via-[#1b120a] to-[#120b07] text-[#f8f2e6] pb-6 pt-24">
+  <div class="w-full">
+    <div class="mx-6 mt-6">
+      <div class="fixed inset-x-6 top-6 z-50 flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#4a3220] via-[#3a2618]/90 to-[#4a3220] p-3 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10 backdrop-blur-sm">
+        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#f1d9b3]/25">
+          <svg width="18" height="18" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21h18M4 21V5a2 2 0 012-2h6v18M14 9h6a1 1 0 011 1v11M8 7h2M8 11h2M8 15h2M16 13h2M16 17h2"/>
+          </svg>
+        </div>
+        <div class="flex-1"></div>
+        <a href="/" class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/25 px-3 py-2 text-sm font-semibold text-[#f1d9b3]">
+          <svg width="14" height="14" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Back
+        </a>
+      </div>
+
+      <div class="mx-0 mt-6">
+        <div class="flex items-center gap-2 text-sm text-[#f1d9b3]/75">
+          <a href="/" class="hover:text-[#f8f2e6]">Home</a>
+          <span>/</span>
+          <span class="font-semibold text-[#f1d9b3]">Room Types</span>
+        </div>
+
+        <div class="mt-2 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 class="text-3xl font-bold text-[#f8f2e6]">Room Type Management</h1>
+          </div>
+          <button onclick="openAddModal()" class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-base font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5"></path>
+            </svg>
+            Add Room Type
+          </button>
+        </div>
+
+        <div class="mt-6 rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d]/95 to-[#1a110a]/95 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10">
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+              <thead>
+                <tr class="bg-[#2a1a10] text-[#f1d9b3] text-xs uppercase tracking-[0.18em]">
+                  <th class="px-4 py-3 text-left w-[60px]">#</th>
+                  <th class="px-4 py-3 text-left w-[260px]">Type Name</th>
+                  <th class="px-4 py-3 text-left w-[240px]">Max Occupancy</th>
+                  <th class="px-4 py-3 text-left w-[190px]">Price / Night</th>
+                  <th class="px-4 py-3 text-right w-[60px]"></th>
+                </tr>
+                <tr class="bg-[#24160d]/90 text-[#f1d9b3]">
+                  <th class="px-4 py-2"></th>
+                  <th class="px-4 py-2">
+                    <div class="relative">
+                      <input class="w-full rounded-full bg-[#3a2618]/60 px-4 py-2 pr-10 text-base text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40" id="searchTypeName" type="text" placeholder="Search name…"/>
+                      <button type="button" onclick="clearSearch('searchTypeName')" class="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#f1d9b3]/25 bg-[#1f140b]/60 text-[#f1d9b3] hover:bg-[#f1d9b3]/20" title="Clear">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      </button>
+                    </div>
+                  </th>
+                  <th class="px-4 py-2">
+                    <div class="relative">
+                      <input class="w-full rounded-full bg-[#3a2618]/60 px-4 py-2 pr-10 text-base text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40" id="searchMaxOcc" type="number" min="1" placeholder="Search occupancy"/>
+                      <button type="button" onclick="clearSearch('searchMaxOcc')" class="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#f1d9b3]/25 bg-[#1f140b]/60 text-[#f1d9b3] hover:bg-[#f1d9b3]/20" title="Clear">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      </button>
+                    </div>
+                  </th>
+                  <th class="px-4 py-2">
+                    <div class="relative">
+                      <input class="w-full rounded-full bg-[#3a2618]/60 px-4 py-2 pr-10 text-base text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40" id="searchPrice" type="number" min="0" step="0.01" placeholder="Search price"/>
+                      <button type="button" onclick="clearSearch('searchPrice')" class="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#f1d9b3]/25 bg-[#1f140b]/60 text-[#f1d9b3] hover:bg-[#f1d9b3]/20" title="Clear">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      </button>
+                    </div>
+                  </th>
+                  <th class="px-4 py-2"></th>
+                </tr>
+              </thead>
+              <tbody id="rtBody" class="text-[#f8f2e6] text-sm"></tbody>
+            </table>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-4 border-t border-[#f1d9b3]/20 bg-[#1a110a]/70 px-4 py-3 text-sm text-[#f1d9b3]/85">
+            <span id="pgInfo"></span>
+            <div class="flex items-center gap-2" id="pgBtns"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD / EDIT MODAL -->
+  <div class="hidden fixed inset-0 z-50 items-center justify-center bg-black/45 backdrop-blur-sm px-4" id="formModal">
+    <div class="w-full max-w-xl rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d] to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+      <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-bold text-[#f8f2e6]" id="formModalTitle">New Room Type</h2>
+        <button class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#f1d9b3]/30 text-[#f1d9b3] hover:bg-[#f1d9b3]/15" onclick="closeFormModal()">✕</button>
+      </div>
+      <form id="rtForm" th:action="@{/roomtypes/create}" method="post" novalidate onsubmit="return false" class="mt-5 space-y-4">
+        <input type="hidden" id="fId" name="id"/>
+        <div>
+          <label class="text-sm text-[#f1d9b3]/75" for="fTypeName">Type Name *</label>
+          <input class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40" type="text" id="fTypeName" name="typeName" placeholder="e.g. Deluxe King"/>
+          <span class="mt-1 hidden text-xs text-red-300" id="errTypeName">Name is required.</span>
+        </div>
+        <div>
+          <label class="text-sm text-[#f1d9b3]/75" for="fDescription">Description</label>
+          <textarea class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40" id="fDescription" name="description" rows="3" placeholder="Brief description…"></textarea>
+        </div>
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
+            <label class="text-sm text-[#f1d9b3]/75" for="fMaxOcc">Max Occupancy *</label>
+            <input class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40" type="number" id="fMaxOcc" name="maxOccupancy" min="1" placeholder="e.g. 2"/>
+            <span class="mt-1 hidden text-xs text-red-300" id="errMaxOcc">Must be ≥ 1.</span>
+          </div>
+          <div>
+            <label class="text-sm text-[#f1d9b3]/75" for="fPrice">Price / Night (₹) *</label>
+            <input class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40" type="number" id="fPrice" name="pricePerNight" min="0.01" step="0.01" placeholder="e.g. 4999.00"/>
+            <span class="mt-1 hidden text-xs text-red-300" id="errPrice">Must be positive.</span>
+          </div>
+        </div>
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button type="button" class="rounded-full border border-[#f1d9b3]/30 px-4 py-2 text-sm font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10" onclick="closeFormModal()">Cancel</button>
+          <button type="button" class="rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-sm font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]" id="submitBtn" onclick="submitForm()">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRM MODAL -->
+  <div class="hidden fixed inset-0 z-50 items-center justify-center bg-black/45 backdrop-blur-sm px-4" id="confirmModal">
+    <div class="w-full max-w-md rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d] to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-bold text-[#f8f2e6]">Delete Room Type</h2>
+        <button class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#f1d9b3]/30 text-[#f1d9b3] hover:bg-[#f1d9b3]/15" onclick="closeConfirmModal()">✕</button>
+      </div>
+      <p class="mt-4 text-[#f1d9b3]/85">Delete room type <span id="deleteTypeName" class="font-semibold text-[#f8f2e6]">this room type</span>?</p>
+      <p class="mt-2 text-xs text-[#f1d9b3]/60">This cannot be undone. Blocked if rooms are linked.</p>
+      <div class="mt-5 flex gap-3">
+        <button type="button" class="flex-1 rounded-full border border-[#f1d9b3]/30 px-4 py-2 text-sm font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10" onclick="closeConfirmModal()">Cancel</button>
+        <button type="button" class="flex-1 rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-sm font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]" id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <form id="deleteForm" th:action="@{/roomtypes/delete}" method="post">
+    <input type="hidden" id="deleteIdInput" name="id"/>
+  </form>
+
+  <div id="toast" class="pointer-events-none hidden fixed inset-0 z-[60] flex items-start justify-center pt-20">
+    <div class="absolute inset-0 bg-black/35 backdrop-blur-sm"></div>
+    <div class="relative flex items-center gap-3 rounded-xl border border-[#f1d9b3]/25 bg-gradient-to-r from-[#4a3220]/95 via-[#3a2618]/95 to-[#4a3220]/95 px-6 py-4 text-[#f8f2e6] shadow-[0_18px_50px_rgba(0,0,0,0.4)]">
+      <div id="toastIcon" class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500/90">
+        <svg width="16" height="16" fill="none" stroke="#ffffff" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+      <div class="text-sm font-semibold" id="toastMessage">Success</div>
+    </div>
+  </div>
+
+  <script th:inline="javascript">
+    const PAGE_SIZE=7;
+    const INITIAL_ROOM_TYPES = /*[[${roomTypes}]]*/ [];
+    const TOAST = /*[[${toast}]]*/ '';
+    let allRoomTypes=[],viewData=[],currentPage=1;
+    let activeFilters={typeName:'',maxOccupancy:'',pricePerNight:''};
+    let editId=null,deleteId=null,deleteName=null;
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      bindOverlayClose('formModal');
+      bindOverlayClose('confirmModal');
+      setupSearchDebounce();
+      initRoomTypes();
+      showToastFromRedirect();
+    });
+
+    function toast(type,msg){
+      const toastEl=document.getElementById('toast');
+      const toastMessage=document.getElementById('toastMessage');
+      const toastIcon=document.getElementById('toastIcon');
+      if(!toastEl||!toastMessage||!toastIcon)return;
+      toastMessage.textContent=msg;
+      toastIcon.className='flex h-9 w-9 items-center justify-center rounded-full ' + (type==='error'?'bg-red-500/90':'bg-emerald-500/90');
+      toastEl.classList.remove('hidden');
+      toastEl.style.animation='fadeIn 0.3s ease-out';
+      setTimeout(()=>{
+        toastEl.style.animation='fadeOut 0.3s ease-in';
+        setTimeout(()=>toastEl.classList.add('hidden'),300);
+      },1400);
+    }
+    function openModal(id){document.getElementById(id).classList.remove('hidden')}
+    function closeModal(id){document.getElementById(id).classList.add('hidden')}
+    function bindOverlayClose(id){document.getElementById(id).addEventListener('click',function(e){if(e.target===this)closeModal(id)})}
+    function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML}
+    function fmtPrice(v){return '₹ '+Number(v).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}
+    function showToastFromRedirect(){
+      if(TOAST==='created')toast('success','Room type created.');
+      else if(TOAST==='updated')toast('success','Room type updated.');
+      else if(TOAST==='deleted')toast('success','Room type deleted.');
+      else if(TOAST==='error')toast('error','Something went wrong. Please try again.');
+    }
+
+    function initRoomTypes(){
+      const raw = Array.isArray(INITIAL_ROOM_TYPES) ? INITIAL_ROOM_TYPES : [];
+      allRoomTypes = raw.map(item => {
+        const links = item?._links || item?.links || {};
+        const selfHref = links?.self?.href || '';
+        const id = item?.resolvedId || item?.roomTypeId || (selfHref ? selfHref.split('/').pop() : null);
+        return { ...item, _id: id, _selfHref: selfHref };
+      });
+      applyFiltersAndRender();
+    }
+
+    function applyFiltersAndRender(){
+      const fn=activeFilters.typeName.trim().toLowerCase();
+      const mo=activeFilters.maxOccupancy.trim();
+      const pp=activeFilters.pricePerNight.trim();
+      viewData=allRoomTypes.filter(rt=>{
+        if(fn&&!(rt.typeName||'').toLowerCase().includes(fn))return false;
+        if(mo&&String(rt.maxOccupancy)!==mo)return false;
+        if(pp&&Math.abs(Number(rt.pricePerNight)-Number(pp))>0.001)return false;
+        return true;
+      });
+      currentPage=1;renderTable();
+    }
+
+    function setupSearchDebounce(){
+      let timer;
+      ['searchTypeName','searchMaxOcc','searchPrice'].forEach(sid=>{
+        document.getElementById(sid)?.addEventListener('input',()=>{
+          clearTimeout(timer);
+          timer=setTimeout(()=>{
+            activeFilters.typeName=document.getElementById('searchTypeName').value;
+            activeFilters.maxOccupancy=document.getElementById('searchMaxOcc').value;
+            activeFilters.pricePerNight=document.getElementById('searchPrice').value;
+            applyFiltersAndRender();
+          },300);
+        });
+      });
+    }
+
+    function clearAllFilters(){
+      ['searchTypeName','searchMaxOcc','searchPrice'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+      activeFilters={typeName:'',maxOccupancy:'',pricePerNight:''};applyFiltersAndRender();
+    }
+    function clearSearch(id){
+      const el=document.getElementById(id);
+      if(el){el.value='';}
+      activeFilters.typeName=document.getElementById('searchTypeName').value;
+      activeFilters.maxOccupancy=document.getElementById('searchMaxOcc').value;
+      activeFilters.pricePerNight=document.getElementById('searchPrice').value;
+      applyFiltersAndRender();
+    }
+
+    function renderTable(){
+      const tbody=document.getElementById('rtBody'),total=viewData.length;
+      const pages=Math.max(1,Math.ceil(total/PAGE_SIZE)),start=(currentPage-1)*PAGE_SIZE;
+      const slice=viewData.slice(start,start+PAGE_SIZE);
+      if(slice.length===0){
+        tbody.innerHTML=`<tr><td colspan="5"><div class="flex flex-col items-center justify-center gap-3 py-16 text-[#f1d9b3]/70"><div class="text-4xl">🏨</div><p>No room types found.</p></div></td></tr>`;
+      }else{
+        tbody.innerHTML=slice.map((rt,idx)=>`
+          <tr onclick="goToDetail('${rt._id}')" class="border-b border-[#f1d9b3]/10 hover:bg-[#f1d9b3]/5 cursor-pointer">
+            <td class="px-4 py-3 text-xs text-[#f1d9b3]/60">${start+idx+1}</td>
+            <td class="px-4 py-3 font-semibold text-[#f8f2e6]">${esc(rt.typeName)}</td>
+            <td class="px-4 py-3 text-lg font-semibold text-[#f1d9b3]">${rt.maxOccupancy} <span class="text-xs text-[#f1d9b3]/60">guest${rt.maxOccupancy>1?'s':''}</span></td>
+            <td class="px-4 py-3 text-[#f1d9b3] font-mono text-sm">${fmtPrice(rt.pricePerNight)}</td>
+            <td class="px-4 py-3 text-right" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-end gap-2">
+                <button class="inline-flex items-center gap-2 rounded-full border border-[#f1d9b3]/25 bg-[#1f140b]/60 px-3 py-1 text-sm font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/20" onclick="openEditModal('${rt._id}')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Edit
+                </button>
+                <button class="inline-flex items-center gap-2 rounded-full border border-red-300/30 bg-[#1f140b]/60 px-3 py-1 text-sm font-semibold text-[#ffb5b5] hover:bg-red-400/10" onclick="openDeleteConfirm('${rt._id}','${esc(rt.typeName)}')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>`).join('');
+      }
+      renderPagination(total,pages);
+    }
+
+    function renderPagination(total,pages){
+      const start=(currentPage-1)*PAGE_SIZE;
+      document.getElementById('pgInfo').textContent=total===0?'No results':`Showing ${start+1}–${Math.min(start+PAGE_SIZE,total)} of ${total}`;
+      const btns=document.getElementById('pgBtns');btns.innerHTML='';
+      const mk=(label,page,disabled,active)=>{
+        const b=document.createElement('button');
+        b.className='inline-flex h-8 w-8 items-center justify-center rounded-lg border text-sm font-semibold ' + (active?'bg-[#f1d9b3]/90 text-[#4a2c12] border-[#f1d9b3]/90':'bg-[#1f140b]/60 text-[#f1d9b3] border-[#f1d9b3]/25 hover:bg-[#f1d9b3]/20');
+        b.textContent=label;
+        b.disabled=disabled;
+        if(disabled){
+          b.className='inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#f1d9b3]/10 bg-[#1f140b]/30 text-[#f1d9b3]/30 cursor-not-allowed';
+        }else{
+          b.onclick=()=>{currentPage=page;renderTable()};
+        }
+        btns.appendChild(b);
+      };
+      mk('‹',currentPage-1,currentPage===1);
+      for(let p=1;p<=pages;p++){
+        if(pages<=7||p===1||p===pages||Math.abs(p-currentPage)<=1){mk(p,p,false,p===currentPage)}
+        else if(Math.abs(p-currentPage)===2){const s=document.createElement('span');s.textContent='…';s.className='px-1 text-[#f1d9b3]/60';btns.appendChild(s)}
+      }
+      mk('›',currentPage+1,currentPage===pages);
+    }
+
+    function goToDetail(id){window.location.href=`/room-type-detail?id=${id}`}
+    function openAddModal(){
+      editId=null;
+      const form=document.getElementById('rtForm');
+      form.action='/roomtypes/create';
+      document.getElementById('fId').value='';
+      document.getElementById('formModalTitle').textContent='New Room Type';
+      document.getElementById('submitBtn').textContent='Create';
+      document.getElementById('rtForm').reset();clearFormErrors();openModal('formModal');
+    }
+    async function openEditModal(id){
+      document.querySelectorAll('.dropdown-menu:not(.hidden)').forEach(m=>m.classList.add('hidden'));
+      editId=id;
+      const form=document.getElementById('rtForm');
+      form.action='/roomtypes/update';
+      document.getElementById('fId').value=id;
+      document.getElementById('formModalTitle').textContent='Edit Room Type';
+      document.getElementById('submitBtn').textContent='Update';
+      clearFormErrors();
+      const rt=allRoomTypes.find(x=>x._id===id);
+      if(rt){
+        document.getElementById('fTypeName').value=rt.typeName||'';
+        document.getElementById('fDescription').value=rt.description||'';
+        document.getElementById('fMaxOcc').value=rt.maxOccupancy||'';
+        document.getElementById('fPrice').value=rt.pricePerNight||'';
+        openModal('formModal');
+      }else{
+        toast('error','Could not load room type data.');
+      }
+    }
+    function closeFormModal(){closeModal('formModal')}
+    async function submitForm(){
+      if(!validateForm())return;
+      const btn=document.getElementById('submitBtn');
+      btn.disabled=true;btn.textContent='Saving…';
+      document.getElementById('rtForm').submit();
+    }
+    function validateForm(){
+      let ok=true;clearFormErrors();
+      const typeName=document.getElementById('fTypeName');
+      const maxOcc=document.getElementById('fMaxOcc');
+      const price=document.getElementById('fPrice');
+      if(!typeName.value.trim()){document.getElementById('errTypeName').classList.remove('hidden');ok=false}
+      if(isNaN(parseInt(maxOcc.value))||parseInt(maxOcc.value)<1){document.getElementById('errMaxOcc').classList.remove('hidden');ok=false}
+      if(isNaN(parseFloat(price.value))||parseFloat(price.value)<=0){document.getElementById('errPrice').classList.remove('hidden');ok=false}
+      return ok;
+    }
+    function clearFormErrors(){
+      ['errTypeName','errMaxOcc','errPrice'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+    }
+
+    function openDeleteConfirm(id,name){
+      document.querySelectorAll('.dropdown-menu:not(.hidden)').forEach(m=>m.classList.add('hidden'));
+      deleteId=id;deleteName=name;
+      document.getElementById('deleteTypeName').textContent=name;openModal('confirmModal');
+    }
+    function closeConfirmModal(){closeModal('confirmModal')}
+    async function confirmDelete(){
+      if(!deleteId)return;
+      const btn=document.getElementById('confirmDeleteBtn');btn.disabled=true;btn.textContent='Deleting…';
+      document.getElementById('deleteIdInput').value=deleteId;
+      document.getElementById('deleteForm').submit();
+    }
+  </script>
+</body>
+</html>
