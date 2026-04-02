@@ -9,6 +9,7 @@ import com.example.Hotel_Management_Frontend.dto.PaymentDTO.UpdatePaymentDTO;
 import com.example.Hotel_Management_Frontend.dto.HotelResponse;
 import com.example.Hotel_Management_Frontend.service.HotelService;
 import com.example.Hotel_Management_Frontend.service.PaymentService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,8 @@ public class PaymentController {
 
     private final PaymentService paymentService;
     private final HotelService hotelService;
+    @Value("${backend.base-url}")
+    private String backendBaseUrl;
 
     public PaymentController(PaymentService paymentService, HotelService hotelService) {
         this.paymentService = paymentService;
@@ -96,7 +99,7 @@ public class PaymentController {
             @ModelAttribute CreatePaymentDTO createPaymentDTO,
             RedirectAttributes redirectAttributes) {
         try {
-            createPaymentDTO.setReservation("http://172.16.160.110:8081/reservations/" + reservationId);
+            createPaymentDTO.setReservation(backendBaseUrl + "/reservations/" + reservationId);
             paymentService.createPayment(createPaymentDTO);
             redirectAttributes.addFlashAttribute("successMessage", "Payment created successfully.");
             return "redirect:/hotel-payments?hotelId=" + hotelId;
@@ -172,7 +175,7 @@ public class PaymentController {
             @ModelAttribute UpdatePaymentDTO updatePaymentDTO,
             RedirectAttributes redirectAttributes) {
         try {
-            updatePaymentDTO.setReservation("/reservations/" + reservationId);
+            updatePaymentDTO.setReservation(backendBaseUrl + "/reservations/" + reservationId);
             paymentService.updatePayment(paymentId, updatePaymentDTO);
             redirectAttributes.addFlashAttribute("successMessage", "Payment updated successfully.");
             return "redirect:/hotel-payments/view?paymentId=" + paymentId;
