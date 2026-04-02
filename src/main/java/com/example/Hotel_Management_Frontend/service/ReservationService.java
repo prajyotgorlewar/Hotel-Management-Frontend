@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import com.example.Hotel_Management_Frontend.dto.CreateReservationDTO;
 import com.example.Hotel_Management_Frontend.dto.Reservation;
 import com.example.Hotel_Management_Frontend.dto.ReservationDetailsDTO;
+import com.example.Hotel_Management_Frontend.dto.ReservationPage;
 import com.example.Hotel_Management_Frontend.dto.RoomDTO;
 
 
@@ -27,12 +28,13 @@ public class ReservationService {
     private RestTemplate restTemplate;
 
 
-    public List<Reservation> searchReservations(int page,
+    public ReservationPage searchReservations(int page,
             String guestName, String email,
             String checkIn, String checkOut) {
 
         String base = "http://172.16.160.110:8081";
         String url = "";
+        int pageSize = 5;
 
         // 🔥 decide API based on input
 
@@ -40,14 +42,14 @@ public class ReservationService {
 
             url = base + "/reservations/search/findByGuestNameContainingIgnoreCase"
                     + "?name=" + guestName
-                    + "&page=" + page + "&size=5";
+                    + "&page=" + page + "&size=" + pageSize;
         }
 
         else if (email != null && !email.isEmpty()) {
 
             url = base + "/reservations/search/findByGuestEmailContainingIgnoreCase"
                     + "?email=" + email
-                    + "&page=" + page + "&size=5";
+                    + "&page=" + page + "&size=" + pageSize;
         }
 
         else if (checkIn != null && checkOut != null &&
@@ -55,26 +57,26 @@ public class ReservationService {
 
             url = base + "/reservations/search/findByCheckInDateBetween"
                     + "?start=" + checkIn + "&end=" + checkOut
-                    + "&page=" + page + "&size=5";
+                    + "&page=" + page + "&size=" + pageSize;
         }
 
         else if (checkIn != null && !checkIn.isEmpty()) {
 
             url = base + "/reservations/search/findByCheckInDate"
                     + "?date=" + checkIn
-                    + "&page=" + page + "&size=5";
+                    + "&page=" + page + "&size=" + pageSize;
         }
 
         else if (checkOut != null && !checkOut.isEmpty()) {
 
             url = base + "/reservations/search/findByCheckOutDate"
                     + "?date=" + checkOut
-                    + "&page=" + page + "&size=5";
+                    + "&page=" + page + "&size=" + pageSize;
         }
 
         else {
             // default
-            url = base + "/reservations?page=" + page + "&size=5";
+            url = base + "/reservations?page=" + page + "&size=" + pageSize;
         }
 
         // 🔥 CALL API
@@ -84,23 +86,45 @@ public class ReservationService {
 
         Map<String, Object> embedded = (Map<String, Object>) response.get("_embedded");
 
-        List<Map<String, Object>> list = (List<Map<String, Object>>) embedded.get("reservations");
+        List<Map<String, Object>> list = embedded != null
+                ? (List<Map<String, Object>>) embedded.get("reservations")
+                : null;
 
         List<Reservation> finalList = new ArrayList<>();
 
-        for (Map<String, Object> res : list) {
-            Reservation r = new Reservation();
+        if (list != null) {
+            for (Map<String, Object> res : list) {
+                Reservation r = new Reservation();
 
-            r.setId(((Number) res.get("reservation_id")).intValue());
-            r.setGuestName((String) res.get("guestName"));
-            r.setGuestEmail((String) res.get("guestEmail"));
-            r.setCheckInDate(LocalDate.parse((String) res.get("checkInDate")));
-            r.setCheckOutDate(LocalDate.parse((String) res.get("checkOutDate")));
+                r.setId(((Number) res.get("reservation_id")).intValue());
+                r.setGuestName((String) res.get("guestName"));
+                r.setGuestEmail((String) res.get("guestEmail"));
+                r.setCheckInDate(LocalDate.parse((String) res.get("checkInDate")));
+                r.setCheckOutDate(LocalDate.parse((String) res.get("checkOutDate")));
 
-            finalList.add(r);
+                finalList.add(r);
+            }
         }
 
-        return finalList;
+        int totalPages = 1;
+        long totalElements = finalList.size();
+        if (pageInfo != null) {
+            Object tp = pageInfo.get("totalPages");
+            Object te = pageInfo.get("totalElements");
+            if (tp instanceof Number) {
+                totalPages = ((Number) tp).intValue();
+            }
+            if (te instanceof Number) {
+                totalElements = ((Number) te).longValue();
+            }
+        }
+
+        ReservationPage result = new ReservationPage();
+        result.setReservations(finalList);
+        result.setTotalPages(totalPages);
+        result.setTotalElements(totalElements);
+        result.setPageSize(pageSize);
+        return result;
     }
 
     public ReservationDetailsDTO getReservationDetails(int id) {

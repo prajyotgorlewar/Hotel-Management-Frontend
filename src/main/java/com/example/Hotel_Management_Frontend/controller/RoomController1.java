@@ -24,6 +24,7 @@ public class RoomController1 {
         model.addAttribute("rooms", roomService1.getRoomsByHotel(hotelId));
         model.addAttribute("hotelId", hotelId);
         model.addAttribute("newRoom", new RoomDTO());
+        model.addAttribute("roomTypes", roomTypeService.getAllRoomTypes());
         return "room/list";
     }
 
@@ -60,6 +61,9 @@ public class RoomController1 {
         RoomDTO room = roomService1.getRoomById(roomId);
         if (room != null) {
             room.setHotelId(hotelId);
+            if (room.getRoomId() == null) {
+                room.setRoomId(roomId);
+            }
         }
         model.addAttribute("room", room);
         model.addAttribute("roomTypes", roomTypeService.getAllRoomTypes());
