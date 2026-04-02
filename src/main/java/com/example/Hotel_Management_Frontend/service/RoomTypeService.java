@@ -17,12 +17,15 @@ import org.springframework.web.client.RestTemplate;
 
 import com.example.Hotel_Management_Frontend.dto.RoomType;
 import com.example.Hotel_Management_Frontend.dto.RoomTypeResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class RoomTypeService {
 
     private final String baseUrl;
     private final RestTemplate rt = new RestTemplate();
+    private static final Logger log = LoggerFactory.getLogger(RoomTypeService.class);
 
     public RoomTypeService(@Value("${backend.base-url}") String baseUrl) {
         this.baseUrl = baseUrl;
@@ -131,8 +134,33 @@ public class RoomTypeService {
 
     public boolean deleteRoomTypeById(int id) {
         try {
-            rt.delete(baseUrl + "/roomtypes/" + id);
-            return true;
+            ResponseEntity<Void> response = rt.exchange(
+                baseUrl + "/roomtypes/" + id,
+                HttpMethod.DELETE,
+                null,
+                Void.class
+            );
+            log.info("DELETE /roomtypes/{} -> {}", id, response.getStatusCode());
+            return response.getStatusCode().is2xxSuccessful()
+                || response.getStatusCode().value() == 404;
+        } catch (HttpClientErrorException e) {
+            log.warn("DELETE /roomtypes/{} -> {}", id, e.getStatusCode(), e);
+            if (e.getStatusCode().value() == 404) {
+                return true;
+            }
+            return isDeleted(id);
+        } catch (Exception e) {
+            log.error("DELETE /roomtypes/{} failed", id, e);
+            return isDeleted(id);
+        }
+    }
+
+    private boolean isDeleted(int id) {
+        try {
+            rt.getForEntity(baseUrl + "/roomtypes/" + id, RoomType.class);
+            return false;
+        } catch (HttpClientErrorException e) {
+            return e.getStatusCode().value() == 404;
         } catch (Exception e) {
             return false;
         }

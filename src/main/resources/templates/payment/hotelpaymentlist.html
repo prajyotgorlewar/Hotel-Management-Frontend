@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Payments</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: "Cormorant Garamond", "Times New Roman", serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: "Playfair Display", "Times New Roman", serif;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-b from-[#2a1a10] via-[#1b120a] to-[#120b07] text-[#f8f2e6] pb-6 pt-24">
+    <div class="w-full">
+        <div class="mx-6 mt-6">
+            <div
+                class="fixed inset-x-6 top-6 z-50 flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#4a3220] via-[#3a2618]/90 to-[#4a3220] p-3 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10 backdrop-blur-sm">
+                <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#f1d9b3]/25">
+                    <svg width="18" height="18" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 21h18M4 21V5a2 2 0 012-2h6v18M14 9h6a1 1 0 011 1v11M8 7h2M8 11h2M8 15h2M16 13h2M16 17h2">
+                        </path>
+                    </svg>
+                </div>
+                <div class="mx-auto flex w-full max-w-[560px] items-center gap-2 rounded-full bg-[#f1d9b3]/20 px-4 py-2">
+                    <svg width="16" height="16" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <form method="get" action="/hotel-payments/list" class="w-full flex items-center">
+                        <input type="text" name="name" placeholder="Search hotel name..."
+                            th:value="${name}"
+                            class="w-full bg-transparent text-base text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none">
+                    </form>
+                </div>
+                <a href="/" class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/25 px-3 py-2 text-sm font-semibold text-[#f1d9b3]">
+                    <svg width="14" height="14" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
+                    </svg>
+                    Back
+                </a>
+            </div>
+
+            <div class="mx-0">
+                <div class="flex items-center gap-2 text-sm text-[#f1d9b3]/75">
+                    <a href="/" class="hover:text-[#f8f2e6]">Home</a>
+                    <span>/</span>
+                    <span class="font-semibold text-[#f1d9b3]">Hotel Payments</span>
+                </div>
+                <div class="mt-2 flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold text-[#f8f2e6]">Hotel Payments</h1>
+                        <p class="text-base text-[#f1d9b3]/85">Choose a hotel to view payments</p>
+                    </div>
+                </div>
+
+                <div class="mt-4"></div>
+
+                <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    <div th:each="hotel : ${hotels}"
+                        th:onclick="|window.location='/hotel-payments?hotelId=' + ${hotel.resolvedId}|"
+                        class="h-[425px] cursor-pointer overflow-hidden rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d]/95 to-[#1a110a]/95 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/15 backdrop-blur-sm">
+                        <div class="h-[235px] bg-cover bg-center"
+                            th:style="|background-image: linear-gradient(180deg, rgba(12,8,4,0.15), rgba(12,8,4,0.55)), url(${hotel.image != null ? hotel.image : 'https://images.unsplash.com/photo-1566073771259-6a8506099945'})|">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-base font-bold text-[#f8f2e6]" th:text="${hotel.name}">Hotel Name</h3>
+                            <div class="mt-2 flex items-center gap-2 text-sm text-[#f1d9b3]/85">
+                                <svg width="12" height="12" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                    </path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                <span th:text="${hotel.location}">Location</span>
+                            </div>
+                            <p class="mt-3 min-h-[40px] text-sm leading-5 text-[#f1d9b3]/85"
+                                th:text="${hotel.description}">
+                                Description
+                            </p>
+                            <div class="mt-4">
+                                <a th:href="@{'/hotel-payments?hotelId=' + ${hotel.resolvedId}}"
+                                    onclick="event.stopPropagation()"
+                                    class="inline-flex w-full items-center justify-center rounded-lg bg-[#f1d9b3]/90 px-3 py-2 text-sm font-semibold text-[#4a2c12] text-center">
+                                    View Payments
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${hotels == null || hotels.isEmpty()}" class="text-[#f1d9b3]/80">
+                        No hotels found.
+                    </div>
+                </div>
+
+                <div class="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-[#f1d9b3]/20 pt-4 text-sm text-[#f1d9b3]/85">
+                    <div>
+                        Showing
+                        <span th:text="${currentPage * pageSize + 1}">1</span>–<span
+                            th:text="${(currentPage * pageSize + hotels.size())}">4</span>
+                        of
+                        <span th:text="${totalElements}">0</span> hotels
+                        <span class="mx-2 text-[#f1d9b3]/30">|</span>
+                        Page size:
+                        <span class="inline-flex items-center gap-1">
+                            <select id="pageSize" onchange="changePageSize(this.value)"
+                                class="bg-transparent focus:outline-none">
+                                <option value="4" th:selected="${pageSize == 4}">4</option>
+                                <option value="8" th:selected="${pageSize == 8}">8</option>
+                                <option value="12" th:selected="${pageSize == 12}">12</option>
+                            </select>
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a th:if="${currentPage > 0}"
+                            th:href="@{/hotel-payments/list(page=${currentPage - 1}, size=${pageSize}, name=${name})}"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#f1d9b3]/25 bg-[#1f140b]/60 text-[#f1d9b3] hover:bg-[#f1d9b3]/20">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </a>
+                        <span th:if="${currentPage == 0}"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#f1d9b3]/10 bg-[#1f140b]/30 text-[#f1d9b3]/30 cursor-not-allowed">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </span>
+
+                        <th:block
+                            th:with="start=${T(java.lang.Math).max(0, currentPage - 2)}, end=${T(java.lang.Math).min(totalPages - 1, currentPage + 2)}">
+                            <a th:each="i : ${#numbers.sequence(start, end)}"
+                                th:href="@{/hotel-payments/list(page=${i}, size=${pageSize}, name=${name})}"
+                                th:text="${i + 1}"
+                                th:classappend="${i == currentPage} ? 'bg-[#f1d9b3]/90 text-[#4a2c12] font-bold' : 'bg-[#1f140b]/60 text-[#f1d9b3] hover:bg-[#f1d9b3]/20'"
+                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#f1d9b3]/25 text-sm">
+                            </a>
+                        </th:block>
+
+                        <a th:if="${currentPage < totalPages - 1}"
+                            th:href="@{/hotel-payments/list(page=${currentPage + 1}, size=${pageSize}, name=${name})}"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#f1d9b3]/25 bg-[#1f140b]/60 text-[#f1d9b3] hover:bg-[#f1d9b3]/20">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                        <span th:if="${currentPage >= totalPages - 1}"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#f1d9b3]/10 bg-[#1f140b]/30 text-[#f1d9b3]/30 cursor-not-allowed">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function changePageSize(size) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('size', size);
+            url.searchParams.set('page', '0');
+            window.location.href = url.toString();
+        }
+
+        
+    </script>
+</body>
+
+</html>
