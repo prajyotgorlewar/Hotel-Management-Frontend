@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -26,13 +27,18 @@ public class ReservationService {
 
     @Autowired
     private RestTemplate restTemplate;
+    private final String baseUrl;
+
+    public ReservationService(@Value("${backend.base-url}") String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 
 
     public ReservationPage searchReservations(int page,
             String guestName, String email,
             String checkIn, String checkOut) {
 
-        String base = "http://172.16.160.110:8081";
+        String base = baseUrl;
         String url = "";
         int pageSize = 5;
 
@@ -129,14 +135,14 @@ public class ReservationService {
 
     public ReservationDetailsDTO getReservationDetails(int id) {
 
-        String url = "http://172.16.160.110:8081/api/reservations/" + id + "/details";
+        String url = baseUrl + "/api/reservations/" + id + "/details";
 
         return restTemplate.getForObject(url, ReservationDetailsDTO.class);
     }
 
     public void addReservation(CreateReservationDTO reservation) {
 
-        String url = "http://172.16.160.110:8081/api/reservations";
+        String url = baseUrl + "/api/reservations";
 
         List<Integer> availableRoomIds = new ArrayList<>(Arrays.asList(
                 1, 3, 5, 6, 8, 10, 11, 13, 15, 17, 18, 20, 22, 23, 25,
@@ -156,7 +162,7 @@ public class ReservationService {
     }
     
     public void deleteReservation(int id) {
-    String url = "http://172.16.160.110:8081/reservations/" + id;
+    String url = baseUrl + "/reservations/" + id;
 
     restTemplate.delete(url);
     }
