@@ -233,7 +233,8 @@ public class ReviewController {
             @RequestParam String review_date,
             Model model) {
 
-        String url = backendUrl + "/review";
+        String url = backendUrl + "/reviews";
+        String fallbackUrl = backendUrl + "/review";
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("comment", comment);
@@ -244,7 +245,15 @@ public class ReviewController {
         body.put("reservation_id", reservationId);
 
         try {
-            ResponseEntity<String> createResp = restTemplate.postForEntity(url, body, String.class);
+            if (!reservationExists(reservationId)) {
+                return "redirect:/reviews?hotelId=" + hotelId + "&message=Reservation+ID+not+found";
+            }
+            ResponseEntity<String> createResp;
+            try {
+                createResp = restTemplate.postForEntity(url, body, String.class);
+            } catch (Exception ex) {
+                createResp = restTemplate.postForEntity(fallbackUrl, body, String.class);
+            }
             Integer createdId = null;
 
             if (createResp.getHeaders().getLocation() != null) {
@@ -274,17 +283,60 @@ public class ReviewController {
             }
 
             if (createdId != null) {
-                String relationUrl = backendUrl + "/review/" + createdId + "/reservation";
-                String reservationUri = backendUrl + "/reservations/" + reservationId;
+                String[] reservationUris = new String[] {
+                        backendUrl + "/reservations/" + reservationId,
+                        backendUrl + "/reservation/" + reservationId,
+                        backendUrl + "/api/reservations/" + reservationId
+                };
+                String[] relationUrls = new String[] {
+                        backendUrl + "/reviews/" + createdId + "/reservation",
+                        backendUrl + "/review/" + createdId + "/reservation"
+                };
+
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.parseMediaType("text/uri-list"));
-                HttpEntity<String> relEntity = new HttpEntity<>(reservationUri, headers);
-                restTemplate.put(relationUrl, relEntity);
+
+                boolean linked = false;
+                for (String reservationUri : reservationUris) {
+                    HttpEntity<String> relEntity = new HttpEntity<>(reservationUri, headers);
+                    for (String relationUrl : relationUrls) {
+                        try {
+                            restTemplate.put(relationUrl, relEntity);
+                            linked = true;
+                            break;
+                        } catch (Exception ex) {
+                            // try next relation/uri variant
+                        }
+                    }
+                    if (linked) {
+                        break;
+                    }
+                }
             }
             return "redirect:/reviews?hotelId=" + hotelId + "&message=Review+submitted+successfully";
         } catch (Exception e) {
             return "redirect:/reviews?hotelId=" + hotelId + "&message=Error+submitting+review";
         }
+    }
+
+    private boolean reservationExists(Integer reservationId) {
+        if (reservationId == null) {
+            return false;
+        }
+        String[] urls = new String[] {
+                backendUrl + "/reservations/" + reservationId,
+                backendUrl + "/reservation/" + reservationId,
+                backendUrl + "/api/reservations/" + reservationId
+        };
+        for (String url : urls) {
+            try {
+                restTemplate.getForObject(url, String.class);
+                return true;
+            } catch (Exception ex) {
+                // try next
+            }
+        }
+        return false;
     }
 
     // ─────────────────────────────────────────

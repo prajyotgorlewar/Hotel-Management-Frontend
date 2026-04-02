@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class PaymentController {
     private final HotelService hotelService;
     @Value("${backend.base-url}")
     private String backendBaseUrl;
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public PaymentController(PaymentService paymentService, HotelService hotelService) {
         this.paymentService = paymentService;
@@ -99,6 +101,10 @@ public class PaymentController {
             @ModelAttribute CreatePaymentDTO createPaymentDTO,
             RedirectAttributes redirectAttributes) {
         try {
+            if (!reservationExists(reservationId)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Reservation not found for ID: " + reservationId);
+                return "redirect:/hotel-payments/create?hotelId=" + hotelId;
+            }
             createPaymentDTO.setReservation(backendBaseUrl + "/reservations/" + reservationId);
             paymentService.createPayment(createPaymentDTO);
             redirectAttributes.addFlashAttribute("successMessage", "Payment created successfully.");
@@ -175,6 +181,10 @@ public class PaymentController {
             @ModelAttribute UpdatePaymentDTO updatePaymentDTO,
             RedirectAttributes redirectAttributes) {
         try {
+            if (!reservationExists(reservationId)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Reservation not found for ID: " + reservationId);
+                return "redirect:/hotel-payments/edit?paymentId=" + paymentId;
+            }
             updatePaymentDTO.setReservation(backendBaseUrl + "/reservations/" + reservationId);
             paymentService.updatePayment(paymentId, updatePaymentDTO);
             redirectAttributes.addFlashAttribute("successMessage", "Payment updated successfully.");
@@ -238,5 +248,25 @@ public class PaymentController {
         model.addAttribute("cities", hotelService.getAllCities());
 
         return "payment/hotelpaymentlist";
+    }
+
+    private boolean reservationExists(Long reservationId) {
+        if (reservationId == null) {
+            return false;
+        }
+        String[] urls = new String[] {
+                backendBaseUrl + "/reservations/" + reservationId,
+                backendBaseUrl + "/reservation/" + reservationId,
+                backendBaseUrl + "/api/reservations/" + reservationId
+        };
+        for (String url : urls) {
+            try {
+                restTemplate.getForObject(url, String.class);
+                return true;
+            } catch (Exception ex) {
+                // try next
+            }
+        }
+        return false;
     }
 }
