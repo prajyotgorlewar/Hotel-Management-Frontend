@@ -19,7 +19,11 @@ public class AmenityService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private final String BASE_URL = "http://localhost:8081";
+    private final String baseUrl;
+
+    public AmenityService(@Value("${backend.base-url}") String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -67,7 +71,7 @@ public class AmenityService {
     }
 
     public List<AmenityDTO> getAmenitiesByRoom(Integer roomId) {
-        String url = BASE_URL + "/rooms/" + roomId + "/amenities";
+        String url = baseUrl + "/rooms/" + roomId + "/amenities";
         AmenityPage page = restTemplate.getForObject(url, AmenityPage.class);
         if (page == null || page.getEmbedded() == null
                 || page.getEmbedded().getAmenities() == null) return List.of();
@@ -77,7 +81,7 @@ public class AmenityService {
     }
 
     public List<AmenityDTO> getAllAmenities() {
-        String url = BASE_URL + "/amenities?size=200";
+        String url = baseUrl + "/amenities?size=200";
         AmenityPage page = restTemplate.getForObject(url, AmenityPage.class);
         if (page == null || page.getEmbedded() == null
                 || page.getEmbedded().getAmenities() == null) return List.of();
@@ -93,7 +97,7 @@ public class AmenityService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         ResponseEntity<AmenityHal> resp = restTemplate.postForEntity(
-                BASE_URL + "/amenities", new HttpEntity<>(body, headers), AmenityHal.class);
+                baseUrl + "/amenities", new HttpEntity<>(body, headers), AmenityHal.class);
         Integer amenityId = null;
         if (resp.getBody() != null) {
             amenityId = resp.getBody().extractId();
@@ -112,8 +116,8 @@ public class AmenityService {
     }
 
     public void assignToRoom(Integer roomId, Integer amenityId) {
-        String url = BASE_URL + "/rooms/" + roomId + "/amenities";
-        String amenityUri = BASE_URL + "/amenities/" + amenityId;
+        String url = baseUrl + "/rooms/" + roomId + "/amenities";
+        String amenityUri = baseUrl + "/amenities/" + amenityId;
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("text/uri-list"));
         restTemplate.exchange(url, HttpMethod.POST,
@@ -126,15 +130,16 @@ public class AmenityService {
         body.put("description", dto.getDescription());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        restTemplate.exchange(BASE_URL + amenityId,
+        restTemplate.exchange(baseUrl + "/amenities/" + amenityId,
                 HttpMethod.PUT, new HttpEntity<>(body, headers), String.class);
     }
 
     public void unassignFromRoom(Integer roomId, Integer amenityId) {
-        restTemplate.delete(BASE_URL + "/rooms/" + roomId + "/amenities/" + amenityId);
+        restTemplate.delete( baseUrl+ "/rooms/" + roomId + "/amenities/" + amenityId);
     }
 
     public void deleteAmenity(Integer amenityId) {
-        restTemplate.delete(BASE_URL + "/amenities/" + amenityId);
+        restTemplate.delete(baseUrl + "/amenities/" + amenityId);
     }
 }
+

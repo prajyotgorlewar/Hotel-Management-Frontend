@@ -19,7 +19,10 @@ public class HotelService1 {
     @Autowired
     private RestTemplate restTemplate;
 
-    private final String BASE_URL = "http://localhost:8081";;
+    private final String baseUrl;
+    public HotelService1(@Value("${backend.base-url}") String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 
     // ── HAL response wrappers ─────────────────────────────────────────────────
 
@@ -68,7 +71,7 @@ public class HotelService1 {
 
     // ── READ: all hotels ─────────────────────────────────────────────────────
     public List<HotelDTO> getAllHotels() {
-        String url = BASE_URL + "/hotels?size=100";
+        String url = baseUrl + "/hotels?size=100";
         HotelPage page = restTemplate.getForObject(url, HotelPage.class);
         if (page == null || page.getEmbedded() == null
                 || page.getEmbedded().getHotels() == null) return List.of();
@@ -79,7 +82,7 @@ public class HotelService1 {
 
     // ── READ: single hotel ───────────────────────────────────────────────────
     public HotelDTO getHotelById(Integer hotelId) {
-        String url = BASE_URL + "/hotels/" + hotelId;
+        String url =baseUrl + "/hotels/" + hotelId;
         HotelHal hal = restTemplate.getForObject(url, HotelHal.class);
         if (hal == null) return null;
         HotelDTO dto = hal.toDTO();

@@ -2,6 +2,7 @@ package com.example.Hotel_Management_Frontend.controller;
 
 import java.util.Collections;
 
+import com.example.Hotel_Management_Frontend.service.HotelService1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +21,36 @@ public class HotelController {
 
     @Autowired
     private HotelService hotelService;
+
+    @Autowired
+    private HotelService1 hotelService1;
+
+    @GetMapping("/rooms")
+    public String listHotelsForRooms(
+            @RequestParam(name = "name", defaultValue = "") String name,
+            @RequestParam(name = "city", defaultValue = "") String city,
+            @RequestParam(name = "amenity", defaultValue = "") String amenity,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "4") int size,
+            Model model) {
+
+        String resolvedName = name;
+        String resolvedAmenity = amenity;
+
+        if (!name.isEmpty() && amenity.isEmpty()) {
+            String matched = hotelService.getAllAmenityNames().stream()
+                    .filter(a -> a.equalsIgnoreCase(name.trim()))
+                    .findFirst().orElse("");
+            if (!matched.isEmpty()) {
+                resolvedAmenity = matched;
+                resolvedName = "";
+            }
+        }
+
+        HotelResponse response = hotelService.getHotels(page, size, resolvedName, city, resolvedAmenity);
+        populateHotelPageModel(model, response, page, size, resolvedName, city, resolvedAmenity);
+        return "hotel/hotelListRooms";
+    }
 
     @GetMapping("/hotels")
     public String getHotels(
@@ -44,7 +75,12 @@ public class HotelController {
         }
 
         HotelResponse response = hotelService.getHotels(page, size, resolvedName, city, resolvedAmenity);
+        populateHotelPageModel(model, response, page, size, resolvedName, city, resolvedAmenity);
+        return "hotel/hotelList";
+    }
 
+    private void populateHotelPageModel(Model model, HotelResponse response, int page, int size,
+                                        String resolvedName, String city, String resolvedAmenity) {
         model.addAttribute("hotels", response != null && response.getEmbedded() != null
                 ? response.getEmbedded().getHotels()
                 : Collections.emptyList());
@@ -60,8 +96,6 @@ public class HotelController {
         model.addAttribute("city", city);
         model.addAttribute("amenity", resolvedAmenity);
         model.addAttribute("cities", hotelService.getAllCities());
-
-        return "hotel/hotelList";
     }
 
     @GetMapping("/hotels/{id}/details")

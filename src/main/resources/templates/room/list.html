@@ -7,19 +7,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
     <style>
-        :root{--ink:#0f0e0b;--cream:#f5f0e8;--gold:#c49a3c;--gold-light:#e8c97a;--muted:#7a7469;--card:#ffffff;--border:#e2ddd4;--danger:#c0392b}
+        :root{--ink:#f8f2e6;--cream:#120b07;--gold:#f1d9b3;--gold-light:#e8c97a;--muted:#c9b18a;--card:#1a110a;--border:rgba(241,217,179,.14);--danger:#ffb5b5}
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        body{background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh}
-        header{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 3rem;border-bottom:1px solid var(--border);background:var(--cream);position:sticky;top:0;z-index:100}
+        body{background:linear-gradient(180deg,#2a1a10,#1b120a 55%,#120b07);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh}
+        header{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 3rem;border-bottom:1px solid var(--border);background:rgba(18,11,7,.9);backdrop-filter:blur(6px);position:sticky;top:0;z-index:100}
         .logo{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:600;color:var(--ink);text-decoration:none}
         .logo span{color:var(--gold)}
         .breadcrumb{display:flex;align-items:center;gap:.45rem;font-size:.77rem;color:var(--muted)}
         .breadcrumb a{color:var(--muted);text-decoration:none}.breadcrumb a:hover{color:var(--ink)}
         .sep{opacity:.35}
         .flash{max-width:1100px;margin:.6rem auto 0;padding:0 3rem}
-        .alert{padding:.65rem 1.1rem;font-size:.82rem;border-left:3px solid;margin-bottom:.4rem}
-        .alert-success{border-color:#4caf50;background:#f1faf1;color:#2e7d32}
-        .alert-error{border-color:#f44336;background:#fdf3f3;color:#c62828}
+        .alert{padding:.65rem 1.1rem;font-size:.82rem;border-left:3px solid;margin-bottom:.4rem;border-radius:10px}
+        .alert-success{border-color:#4caf50;background:rgba(46,125,50,.16);color:#b7efc1}
+        .alert-error{border-color:#f44336;background:rgba(198,40,40,.16);color:#ffc0c0}
         .page-hdr{max-width:1100px;margin:0 auto;padding:3rem 3rem 1.5rem;display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
         .lbl{font-size:.67rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
         .page-hdr h1{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;line-height:1.05}
@@ -27,22 +27,22 @@
         .section{max-width:1100px;margin:0 auto;padding:0 3rem 5rem}
         .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
         .count{font-size:.78rem;color:var(--muted)}
-        .tbl-wrap{background:var(--card);border:1px solid var(--border);border-radius:2px;overflow:hidden}
+        .tbl-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35)}
         table{width:100%;border-collapse:collapse;font-size:.87rem}
-        thead{background:var(--ink);color:var(--cream)}
-        thead th{padding:.9rem 1.2rem;text-align:left;font-size:.67rem;font-weight:500;letter-spacing:.13em;text-transform:uppercase}
+        thead{background:var(--ink);color:#24160d}
+        thead th{padding:.9rem 1.2rem;text-align:left;font-size:.67rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase}
         tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
         tbody tr:last-child{border-bottom:none}
-        tbody tr:hover{background:#faf8f4}
+        tbody tr:hover{background:rgba(241,217,179,.06)}
         td{padding:.85rem 1.2rem;vertical-align:middle}
         .badge{display:inline-block;padding:.2rem .65rem;border-radius:20px;font-size:.71rem;font-weight:500}
         .b-av{background:#e8f5e9;color:#2e7d32}.b-oc{background:#ffebee;color:#c62828}
         .ag{display:flex;gap:.35rem}
-        .btn{display:inline-flex;align-items:center;padding:.42rem .95rem;font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:500;letter-spacing:.04em;border:none;cursor:pointer;text-decoration:none;border-radius:1px;transition:.2s}
-        .btn-primary{background:var(--ink);color:var(--cream)}.btn-primary:hover{background:var(--gold)}
-        .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
-        .btn-danger{background:transparent;color:var(--danger);border:1px solid #e8c4c0}.btn-danger:hover{background:var(--danger);color:#fff}
-        .btn-sm{padding:.3rem .7rem;font-size:.72rem}
+        .btn{display:inline-flex;align-items:center;padding:.52rem .95rem;font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:500;letter-spacing:.04em;border:none;cursor:pointer;text-decoration:none;border-radius:999px;transition:.2s}
+        .btn-primary{background:var(--gold);color:#4a2c12}.btn-primary:hover{background:#fff0d2}
+        .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}.btn-ghost:hover{border-color:var(--gold);color:var(--ink)}
+        .btn-danger{background:transparent;color:var(--danger);border:1px solid rgba(255,181,181,.35)}.btn-danger:hover{background:var(--danger);color:#fff}
+        .btn-sm{padding:.38rem .72rem;font-size:.72rem}
         .btn-link{background:none;border:none;color:var(--gold);text-decoration:underline;cursor:pointer;font-size:.82rem;font-family:inherit;padding:0;display:inline}
         .empty{text-align:center;padding:4rem;color:var(--muted)}
         .empty-icon{font-size:2.5rem;margin-bottom:.8rem;opacity:.35}
@@ -59,7 +59,7 @@
 
 <div class="flash">
     <div th:if="${successMsg}" class="alert alert-success" th:text="${successMsg}"></div>
-    <div th:if="${errorMsg}"   class="alert alert-error"   th:text="${errorMsg}"></div>
+    <div th:if="${errorMsg}" class="alert alert-error" th:text="${errorMsg}"></div>
 </div>
 
 <div class="page-hdr">
@@ -67,8 +67,7 @@
         <p class="lbl">Property</p>
         <h1>Hotel<br><em>Rooms</em></h1>
     </div>
-    <a class="btn btn-primary"
-       th:href="@{/hotels/{id}/rooms/new(id=${hotelId})}">+ Add Room</a>
+    <a class="btn btn-primary" th:href="@{/hotels/{id}/rooms/new(id=${hotelId})}">+ Add Room</a>
 </div>
 
 <section class="section">
@@ -77,7 +76,7 @@
     </div>
 
     <div th:if="${#lists.isEmpty(rooms)}" class="empty">
-        <div class="empty-icon">🚪</div>
+        <div class="empty-icon">Door</div>
         <p>No rooms yet. Add the first one.</p>
     </div>
 
@@ -99,29 +98,20 @@
             <tr th:each="room, s : ${rooms}">
                 <td th:text="${s.count}" style="color:var(--muted);font-size:.75rem"></td>
                 <td><strong th:text="${room.roomNumber}">101</strong></td>
-                <td th:text="${room.roomType != null ? room.roomType.typeName : '—'}">Standard</td>
-                <td th:text="${room.roomType != null ? '₹' + room.roomType.pricePerNight : '—'}">₹5000</td>
-                <td th:text="${room.roomType != null ? room.roomType.maxOccupancy : '—'}">2</td>
+                <td th:text="${room.roomType != null ? room.roomType.typeName : '�'}">Standard</td>
+                <td th:text="${room.roomType != null ? '$' + room.roomType.pricePerNight : '�'}">$5000</td>
+                <td th:text="${room.roomType != null ? room.roomType.maxOccupancy : '�'}">2</td>
                 <td>
                     <span class="badge b-av" th:if="${room.isAvailable}">Available</span>
                     <span class="badge b-oc" th:unless="${room.isAvailable}">Occupied</span>
                 </td>
                 <td>
-                    <a class="btn-link"
-                       th:href="@{/hotels/{hid}/rooms/{rid}/amenities(hid=${hotelId},rid=${room.roomId})}">
-                        View →
-                    </a>
+                    <a class="btn-link" th:href="@{/hotels/{hid}/rooms/{rid}/amenities(hid=${hotelId},rid=${room.roomId})}">View -></a>
                 </td>
                 <td>
                     <div class="ag">
-                        <a class="btn btn-ghost btn-sm"
-                           th:href="@{/hotels/{hid}/rooms/{rid}/edit(hid=${hotelId},rid=${room.roomId})}">
-                            Edit
-                        </a>
-                        <form th:action="@{/hotels/{hid}/rooms/{rid}/delete(hid=${hotelId},rid=${room.roomId})}"
-                              method="post"
-                              onsubmit="return confirm('Delete Room ' + this.dataset.num + '?')"
-                              th:data-num="${room.roomNumber}">
+                        <a class="btn btn-ghost btn-sm" th:href="@{/hotels/{hid}/rooms/{rid}/edit(hid=${hotelId},rid=${room.roomId})}">Edit</a>
+                        <form th:action="@{/hotels/{hid}/rooms/{rid}/delete(hid=${hotelId},rid=${room.roomId})}" method="post" onsubmit="return confirm('Delete Room ' + this.dataset.num + '?')" th:data-num="${room.roomNumber}">
                             <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                         </form>
                     </div>

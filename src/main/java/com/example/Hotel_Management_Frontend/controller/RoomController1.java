@@ -14,14 +14,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class RoomController1 {
 
     @Autowired
-    private RoomService roomService;
+    private RoomService roomService1;
 
     @Autowired
     private RoomTypeService roomTypeService;
 
     @GetMapping
     public String listRooms(@PathVariable Integer hotelId, Model model) {
-        model.addAttribute("rooms", roomService.getRoomsByHotel(hotelId));
+        model.addAttribute("rooms", roomService1.getRoomsByHotel(hotelId));
         model.addAttribute("hotelId", hotelId);
         model.addAttribute("newRoom", new RoomDTO());
         return "room/list";
@@ -43,7 +43,7 @@ public class RoomController1 {
             @ModelAttribute RoomDTO roomDTO,
             RedirectAttributes ra) {
         try {
-            roomService.createRoom(hotelId, roomDTO);
+            roomService1.createRoom(hotelId, roomDTO);
             ra.addFlashAttribute("successMsg", "Room created successfully.");
         } catch (Exception e) {
             ra.addFlashAttribute("errorMsg", "Failed: " + e.getMessage());
@@ -57,13 +57,13 @@ public class RoomController1 {
             @PathVariable Integer roomId,
             Model model) {
         model.addAttribute("hotelId", hotelId);
-        RoomDTO room = roomService.getRoomById(roomId);
+        RoomDTO room = roomService1.getRoomById(roomId);
         if (room != null) {
             room.setHotelId(hotelId);
         }
         model.addAttribute("room", room);
         model.addAttribute("roomTypes", roomTypeService.getAllRoomTypes());
-        return "rooms/form";
+        return "room/form";
     }
 
     @PostMapping("/{roomId}/update")
@@ -73,7 +73,7 @@ public class RoomController1 {
             @ModelAttribute RoomDTO roomDTO,
             RedirectAttributes ra) {
         try {
-            roomService.updateRoom(hotelId, roomId, roomDTO);
+            roomService1.updateRoom(hotelId, roomId, roomDTO);
             ra.addFlashAttribute("successMsg", "Room updated successfully.");
         } catch (Exception e) {
             ra.addFlashAttribute("errorMsg", "Failed: " + e.getMessage());
@@ -87,7 +87,7 @@ public class RoomController1 {
             @PathVariable Integer roomId,
             RedirectAttributes ra) {
         try {
-            roomService.deleteRoom(roomId);
+            roomService1.deleteRoom(roomId);
             ra.addFlashAttribute("successMsg", "Room deleted successfully.");
         } catch (Exception e) {
             ra.addFlashAttribute("errorMsg", "Failed: " + e.getMessage());
@@ -95,3 +95,4 @@ public class RoomController1 {
         return "redirect:/hotels/" + hotelId + "/rooms";
     }
 }
+
