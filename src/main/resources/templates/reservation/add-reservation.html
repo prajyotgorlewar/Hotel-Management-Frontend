@@ -46,6 +46,76 @@
         input::placeholder {
             color: #a0896a;
         }
+
+        /* Valid state */
+        input.valid {
+            border-color: rgba(74, 180, 100, 0.55) !important;
+        }
+
+        /* Error state */
+        input.error {
+            border-color: rgba(220, 60, 60, 0.7) !important;
+            background: rgba(40, 10, 8, 0.75) !important;
+        }
+
+        /* Error message */
+        .err-msg {
+            display: none;
+            color: #f87171;
+            font-size: 0.7rem;
+            letter-spacing: 0.04em;
+            margin-top: 4px;
+            padding-left: 2px;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .err-msg.visible {
+            display: flex;
+        }
+
+        .err-msg::before {
+            content: '✕';
+            font-size: 0.6rem;
+            background: rgba(220, 60, 60, 0.18);
+            color: #f87171;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Shake animation on failed submit */
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-6px);
+            }
+
+            40% {
+                transform: translateX(6px);
+            }
+
+            60% {
+                transform: translateX(-4px);
+            }
+
+            80% {
+                transform: translateX(4px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.35s ease;
+        }
     </style>
 </head>
 
@@ -62,47 +132,61 @@
                 <div class="h-px w-16 bg-amber-600/40 mt-3"></div>
             </div>
 
-            <form th:action="@{/reservations/add}" method="post" class="flex flex-col gap-4">
+            <form id="reservationForm" th:action="@{/reservations/add}" method="post" class="flex flex-col gap-4"
+                novalidate>
 
+                <!-- Guest Name -->
                 <div class="flex flex-col gap-1">
                     <label class="text-xs tracking-[0.15em] uppercase text-amber-500/60 font-medium">Guest Name</label>
-                    <input type="text" name="guestName" placeholder="Enter guest name" required
+                    <input type="text" id="guestName" name="guestName" placeholder="Enter guest name"
                         class="px-4 py-3 rounded-lg text-sm text-amber-100 focus:outline-none focus:ring-1 focus:ring-amber-500/50 transition-all w-full"
                         style="background: rgba(30,22,8,0.7); border: 1px solid rgba(180,140,60,0.3);">
+                    <span class="err-msg" id="guestName-err">Name must be at least 2 words with only letters (e.g. John
+                        Smith)</span>
                 </div>
 
+                <!-- Email -->
                 <div class="flex flex-col gap-1">
                     <label class="text-xs tracking-[0.15em] uppercase text-amber-500/60 font-medium">Email</label>
-                    <input type="email" name="guestEmail" placeholder="Enter email address" required
+                    <input type="email" id="guestEmail" name="guestEmail" placeholder="Enter email address"
                         class="px-4 py-3 rounded-lg text-sm text-amber-100 focus:outline-none focus:ring-1 focus:ring-amber-500/50 transition-all w-full"
                         style="background: rgba(30,22,8,0.7); border: 1px solid rgba(180,140,60,0.3);">
+                    <span class="err-msg" id="guestEmail-err">Please enter a valid email address (e.g.
+                        name@example.com)</span>
                 </div>
 
+                <!-- Phone -->
                 <div class="flex flex-col gap-1">
                     <label class="text-xs tracking-[0.15em] uppercase text-amber-500/60 font-medium">Phone</label>
-                    <input type="text" name="guestPhone" placeholder="Enter phone number" required
+                    <input type="text" id="guestPhone" name="guestPhone" placeholder="Enter 10-digit phone number"
+                        maxlength="10"
                         class="px-4 py-3 rounded-lg text-sm text-amber-100 focus:outline-none focus:ring-1 focus:ring-amber-500/50 transition-all w-full"
                         style="background: rgba(30,22,8,0.7); border: 1px solid rgba(180,140,60,0.3);">
+                    <span class="err-msg" id="guestPhone-err">Phone number must be exactly 10 digits (numbers
+                        only)</span>
                 </div>
 
+                <!-- Check-In / Check-Out -->
                 <div class="grid grid-cols-2 gap-4">
                     <div class="flex flex-col gap-1">
                         <label
                             class="text-xs tracking-[0.15em] uppercase text-amber-500/60 font-medium">Check-In</label>
-                        <input type="date" name="checkInDate" required
+                        <input type="date" id="checkInDate" name="checkInDate"
                             class="px-4 py-3 rounded-lg text-sm text-amber-100 focus:outline-none focus:ring-1 focus:ring-amber-500/50 transition-all w-full"
                             style="background: rgba(30,22,8,0.7); border: 1px solid rgba(180,140,60,0.3);">
+                        <span class="err-msg" id="checkInDate-err">Check-in date cannot be in the past</span>
                     </div>
                     <div class="flex flex-col gap-1">
                         <label
                             class="text-xs tracking-[0.15em] uppercase text-amber-500/60 font-medium">Check-Out</label>
-                        <input type="date" name="checkOutDate" required
+                        <input type="date" id="checkOutDate" name="checkOutDate"
                             class="px-4 py-3 rounded-lg text-sm text-amber-100 focus:outline-none focus:ring-1 focus:ring-amber-500/50 transition-all w-full"
                             style="background: rgba(30,22,8,0.7); border: 1px solid rgba(180,140,60,0.3);">
+                        <span class="err-msg" id="checkOutDate-err">Check-out must be after check-in date</span>
                     </div>
                 </div>
 
-                <button type="submit"
+                <button type="submit" id="submitBtn"
                     class="mt-4 w-full py-3 rounded-lg text-xs tracking-[0.2em] uppercase font-semibold text-amber-950 bg-amber-500 hover:bg-amber-400 transition-all duration-200 shadow-lg">
                     Add Reservation
                 </button>
@@ -117,6 +201,207 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // ── Helpers ──────────────────────────────────────────────────────────
+
+        function getTodayStr() {
+            // Returns YYYY-MM-DD for today (local time)
+            const d = new Date();
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+
+        function setFieldState(input, errEl, isValid, msg = null) {
+            input.classList.remove('valid', 'error');
+            errEl.classList.remove('visible');
+            if (isValid) {
+                input.classList.add('valid');
+            } else {
+                input.classList.add('error');
+                if (msg) errEl.textContent = msg;
+                errEl.classList.add('visible');
+            }
+        }
+
+        function clearFieldState(input, errEl) {
+            input.classList.remove('valid', 'error');
+            errEl.classList.remove('visible');
+        }
+
+        // ── Validators ───────────────────────────────────────────────────────
+
+        function validateName() {
+            const input = document.getElementById('guestName');
+            const errEl = document.getElementById('guestName-err');
+            const val = input.value.trim();
+
+            // At least 2 parts (first + last), only letters and spaces, min 2 chars each part
+            const nameParts = val.split(/\s+/).filter(p => p.length > 0);
+            const onlyLetters = /^[A-Za-z\s]+$/.test(val);
+
+            if (!val) {
+                setFieldState(input, errEl, false, 'Guest name is required');
+                return false;
+            }
+            if (!onlyLetters) {
+                setFieldState(input, errEl, false, 'Name must contain letters only (no numbers or symbols)');
+                return false;
+            }
+            if (nameParts.length < 2) {
+                setFieldState(input, errEl, false, 'Please enter both first and last name (e.g. John Smith)');
+                return false;
+            }
+            if (nameParts.some(p => p.length < 2)) {
+                setFieldState(input, errEl, false, 'Each part of the name must be at least 2 characters');
+                return false;
+            }
+            setFieldState(input, errEl, true);
+            return true;
+        }
+
+        function validateEmail() {
+            const input = document.getElementById('guestEmail');
+            const errEl = document.getElementById('guestEmail-err');
+            const val = input.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+            if (!val) {
+                setFieldState(input, errEl, false, 'Email address is required');
+                return false;
+            }
+            if (!emailRegex.test(val)) {
+                setFieldState(input, errEl, false, 'Please enter a valid email address (e.g. name@example.com)');
+                return false;
+            }
+            setFieldState(input, errEl, true);
+            return true;
+        }
+
+        function validatePhone() {
+            const input = document.getElementById('guestPhone');
+            const errEl = document.getElementById('guestPhone-err');
+            const val = input.value.trim();
+            const phoneRegex = /^\d{10}$/;
+
+            if (!val) {
+                setFieldState(input, errEl, false, 'Phone number is required');
+                return false;
+            }
+            if (!/^\d+$/.test(val)) {
+                setFieldState(input, errEl, false, 'Phone number must contain digits only (no spaces or dashes)');
+                return false;
+            }
+            if (!phoneRegex.test(val)) {
+                setFieldState(input, errEl, false, 'Phone number must be exactly 10 digits');
+                return false;
+            }
+            setFieldState(input, errEl, true);
+            return true;
+        }
+
+        function validateCheckIn() {
+            const input = document.getElementById('checkInDate');
+            const errEl = document.getElementById('checkInDate-err');
+            const val = input.value;
+            const today = getTodayStr();
+
+            if (!val) {
+                setFieldState(input, errEl, false, 'Check-in date is required');
+                return false;
+            }
+            if (val < today) {
+                setFieldState(input, errEl, false, 'Check-in date cannot be in the past');
+                return false;
+            }
+            setFieldState(input, errEl, true);
+            // Re-validate checkout if it already has a value
+            const checkOut = document.getElementById('checkOutDate');
+            if (checkOut.value) validateCheckOut();
+            return true;
+        }
+
+        function validateCheckOut() {
+            const checkInInput = document.getElementById('checkInDate');
+            const input = document.getElementById('checkOutDate');
+            const errEl = document.getElementById('checkOutDate-err');
+            const val = input.value;
+            const today = getTodayStr();
+            const checkIn = checkInInput.value;
+
+            if (!val) {
+                setFieldState(input, errEl, false, 'Check-out date is required');
+                return false;
+            }
+            if (val < today) {
+                setFieldState(input, errEl, false, 'Check-out date cannot be in the past');
+                return false;
+            }
+            if (checkIn && val <= checkIn) {
+                setFieldState(input, errEl, false, 'Check-out must be at least 1 day after check-in');
+                return false;
+            }
+            setFieldState(input, errEl, true);
+            return true;
+        }
+
+        // ── Live validation (on blur) ─────────────────────────────────────────
+
+        document.getElementById('guestName').addEventListener('blur', validateName);
+        document.getElementById('guestEmail').addEventListener('blur', validateEmail);
+        document.getElementById('guestPhone').addEventListener('blur', validatePhone);
+        document.getElementById('checkInDate').addEventListener('change', validateCheckIn);
+        document.getElementById('checkOutDate').addEventListener('change', validateCheckOut);
+
+        // Clear error on focus
+        ['guestName', 'guestEmail', 'guestPhone', 'checkInDate', 'checkOutDate'].forEach(id => {
+            const input = document.getElementById(id);
+            const errEl = document.getElementById(id + '-err');
+            input.addEventListener('focus', () => {
+                if (input.classList.contains('error')) {
+                    clearFieldState(input, errEl);
+                }
+            });
+        });
+
+        // Allow only digits for phone (block non-numeric key input)
+        document.getElementById('guestPhone').addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        });
+
+        // ── Form submit ───────────────────────────────────────────────────────
+
+        document.getElementById('reservationForm').addEventListener('submit', function (e) {
+            // Run all validators
+            const results = [
+                validateName(),
+                validateEmail(),
+                validatePhone(),
+                validateCheckIn(),
+                validateCheckOut()
+            ];
+
+            if (results.includes(false)) {
+                e.preventDefault();
+
+                // Shake the button to signal failure
+                const btn = document.getElementById('submitBtn');
+                btn.classList.remove('shake');
+                void btn.offsetWidth; // reflow to restart animation
+                btn.classList.add('shake');
+                btn.addEventListener('animationend', () => btn.classList.remove('shake'), { once: true });
+
+                // Scroll to first error
+                const firstError = document.querySelector('input.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.focus();
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>
