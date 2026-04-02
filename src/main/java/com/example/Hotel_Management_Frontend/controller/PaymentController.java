@@ -6,6 +6,8 @@ import com.example.Hotel_Management_Frontend.dto.PaymentDTO.PaymentDTO;
 //import PaymentDetailsDTO;
 import com.example.Hotel_Management_Frontend.dto.PaymentDTO.PaymentDetailsDTO;
 import com.example.Hotel_Management_Frontend.dto.PaymentDTO.UpdatePaymentDTO;
+import com.example.Hotel_Management_Frontend.dto.HotelResponse;
+import com.example.Hotel_Management_Frontend.service.HotelService;
 import com.example.Hotel_Management_Frontend.service.PaymentService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,9 +24,11 @@ import java.util.List;
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final HotelService hotelService;
 
-    public PaymentController(PaymentService paymentService) {
+    public PaymentController(PaymentService paymentService, HotelService hotelService) {
         this.paymentService = paymentService;
+        this.hotelService = hotelService;
     }
 
     @GetMapping
@@ -191,7 +195,45 @@ public class PaymentController {
     }
 
     @GetMapping("/list")
-    public String demo(){
+    public String demo(
+            @RequestParam(name = "name", defaultValue = "") String name,
+            @RequestParam(name = "city", defaultValue = "") String city,
+            @RequestParam(name = "amenity", defaultValue = "") String amenity,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "4") int size,
+            Model model){
+
+        String resolvedName = name;
+        String resolvedAmenity = amenity;
+
+        if (!name.isEmpty() && amenity.isEmpty()) {
+            String matched = hotelService.getAllAmenityNames().stream()
+                    .filter(a -> a.equalsIgnoreCase(name.trim()))
+                    .findFirst().orElse("");
+            if (!matched.isEmpty()) {
+                resolvedAmenity = matched;
+                resolvedName = "";
+            }
+        }
+
+        HotelResponse response = hotelService.getHotels(page, size, resolvedName, city, resolvedAmenity);
+
+        model.addAttribute("hotels", response != null && response.getEmbedded() != null
+                ? response.getEmbedded().getHotels()
+                : java.util.Collections.emptyList());
+        model.addAttribute("totalPages", response != null && response.getPage() != null
+                ? response.getPage().getTotalPages()
+                : 1);
+        model.addAttribute("totalElements", response != null && response.getPage() != null
+                ? response.getPage().getTotalElements()
+                : 0);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("name", resolvedName);
+        model.addAttribute("city", city);
+        model.addAttribute("amenity", resolvedAmenity);
+        model.addAttribute("cities", hotelService.getAllCities());
+
         return "payment/hotelpaymentlist";
     }
 }
