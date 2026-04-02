@@ -2,83 +2,185 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Create Payment</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #f8f9fa; }
-        .form-card {
-            background: white;
-            border-radius: 12px;
-            padding: 32px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        body { font-family: "Cormorant Garamond", "Times New Roman", serif; }
+        h1, h2, h3 { font-family: "Playfair Display", "Times New Roman", serif; }
+
+        .glass-card {
+            background: linear-gradient(135deg, rgba(74,50,32,0.45), rgba(58,38,24,0.40), rgba(74,50,32,0.45));
+            border: 1px solid rgba(241,217,179,0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
-        .form-label { font-weight: 600; }
-        .btn-submit {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: white;
-            border: none;
-            padding: 10px 30px;
+
+        /* Form controls */
+        .luxury-input, .luxury-select {
+            width: 100%;
+            background: rgba(31,20,11,0.6);
+            border: 1px solid rgba(241,217,179,0.2);
             border-radius: 8px;
+            padding: 10px 14px;
+            color: #f8f2e6;
+            font-family: "Cormorant Garamond", serif;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
         }
-        .btn-submit:hover { opacity: 0.9; color: white; }
-        h2 { color: #1a1a2e; }
+        .luxury-input::placeholder { color: rgba(241,217,179,0.35); }
+        .luxury-input:focus, .luxury-select:focus {
+            border-color: rgba(241,217,179,0.5);
+            box-shadow: 0 0 0 3px rgba(241,217,179,0.08);
+        }
+        /* Date input calendar icon colour fix */
+        .luxury-input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8) sepia(0.3); cursor: pointer; }
+
+        .luxury-select option { background: #1b120a; color: #f8f2e6; }
+
+        .form-label {
+            display: block;
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(241,217,179,0.55);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        /* Submit button */
+        .btn-submit {
+            background: rgba(241,217,179,0.9);
+            color: #4a2c12;
+            border: none;
+            border-radius: 9999px;
+            padding: 11px 28px;
+            font-family: "Cormorant Garamond", serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+        }
+        .btn-submit:hover { background: #f1d9b3; box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
+
+        /* Back button */
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(241,217,179,0.25); color: #f1d9b3;
+            border: none; border-radius: 9999px;
+            padding: 8px 18px; font-size: 0.9rem;
+            font-family: "Cormorant Garamond", serif;
+            cursor: pointer; text-decoration: none;
+            transition: background 0.2s;
+        }
+        .btn-back:hover { background: rgba(241,217,179,0.35); color: #f8f2e6; }
+
+        .divider { border-color: rgba(241,217,179,0.12); }
+                /* Breadcrumb */
+        .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: rgba(241,217,179,0.45); margin-bottom: 18px; flex-wrap: wrap; }
+        .breadcrumb a { color: rgba(241,217,179,0.55); text-decoration: none; transition: color 0.18s; }
+        .breadcrumb a:hover { color: rgba(241,217,179,0.9); }
+        .breadcrumb .sep { color: rgba(241,217,179,0.25); font-size: 0.7rem; }
+        .breadcrumb .current { color: rgba(241,217,179,0.85); }
+
+        .divider { border-color: rgba(241,217,179,0.12); }
     </style>
 </head>
-<body>
-<div class="container mt-4">
+<body class="min-h-screen bg-gradient-to-b from-[#2a1a10] via-[#1b120a] to-[#120b07] text-[#f8f2e6]">
+<div class="w-full px-6 pt-6 pb-10">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-plus-circle me-2"></i>Create Payment</h2>
-        <a th:href="@{/hotel-payments(hotelId=${hotelId})}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i>Back
+    <!-- Top Nav Bar -->
+    <div class="flex items-center gap-4 rounded-2xl glass-card p-3 shadow-[0_24px_60px_rgba(0,0,0,0.35)] mb-7">
+        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#f1d9b3]/25 shrink-0">
+            <svg width="18" height="18" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5"/>
+            </svg>
+        </div>
+        <div class="flex-1">
+            <h1 class="text-lg font-bold text-[#f8f2e6] leading-tight">Create Payment</h1>
+            <p class="text-xs text-[#f1d9b3]/50">Add a new payment record</p>
+        </div>
+        <a th:href="@{/hotel-payments(hotelId=${hotelId})}" class="btn-back">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back
         </a>
     </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-card">
-                <form th:action="@{/hotel-payments/create(hotelId=${hotelId})}"
-                      th:object="${createPaymentDTO}"
-                      method="post">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">&#8250;</span>
+        <a href="/hotel-payments/list">Hotels</a>
+        <span class="sep">&#8250;</span>
+        <a th:href="@{/hotel-payments(hotelId=${hotelId})}">Payments</a>
+        <span class="sep">&#8250;</span>
+        <span class="current">Create Payment</span>
+    </nav>
 
-                    <!-- Amount -->
-                    <div class="mb-3">
-                        <label class="form-label">Amount (₹)</label>
-                        <input type="number" step="0.01" class="form-control"
-                               th:field="*{amount}" placeholder="Enter amount" required/>
-                    </div>
+    <!-- Form Card -->
+    <div class="max-w-lg">
+        <div class="glass-card rounded-2xl p-8 shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
 
-                    <!-- Payment Date -->
-                    <div class="mb-3">
-                        <label class="form-label">Payment Date</label>
-                        <input type="date" class="form-control"
-                               th:field="*{paymentDate}" required/>
-                    </div>
+            <h2 class="text-xl font-bold text-[#f8f2e6] mb-6">Payment Details</h2>
 
-                    <!-- Payment Status -->
-                    <div class="mb-3">
-                        <label class="form-label">Payment Status</label>
-                        <select class="form-select" th:field="*{paymentStatus}" required>
-                            <option value="">-- Select Status --</option>
+            <form th:action="@{/hotel-payments/create(hotelId=${hotelId})}"
+                  th:object="${createPaymentDTO}"
+                  method="post">
+
+                <!-- Amount -->
+                <div class="mb-5">
+                    <label class="form-label">Amount (₹)</label>
+                    <input type="number" step="0.01" class="luxury-input"
+                           th:field="*{amount}" placeholder="0.00" required/>
+                </div>
+
+                <!-- Payment Date -->
+                <div class="mb-5">
+                    <label class="form-label">Payment Date</label>
+                    <input type="date" class="luxury-input"
+                           th:field="*{paymentDate}" required/>
+                </div>
+
+                <!-- Payment Status -->
+                <div class="mb-5">
+                    <label class="form-label">Payment Status</label>
+                    <div style="position:relative;">
+                        <select class="luxury-select" th:field="*{paymentStatus}" required>
+                            <option value="">— Select Status —</option>
                             <option value="Paid">Paid</option>
                             <option value="Failed">Failed</option>
                             <option value="Pending">Pending</option>
                         </select>
+                        <svg style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;"
+                             width="14" height="14" fill="none" stroke="rgba(241,217,179,0.5)" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
                     </div>
+                </div>
 
-                    <!-- Reservation ID -->
-                    <div class="mb-4">
-                        <label class="form-label">Reservation ID</label>
-                        <input type="number" class="form-control"
-                               name="reservationId" placeholder="Enter reservation ID" required/>
-                    </div>
+                <!-- Reservation ID -->
+                <div class="mb-7">
+                    <label class="form-label">Reservation ID</label>
+                    <input type="number" class="luxury-input"
+                           name="reservationId" placeholder="Enter reservation ID" required/>
+                </div>
 
-                    <button type="submit" class="btn btn-submit w-100">
-                        <i class="bi bi-save me-1"></i> Save Payment
-                    </button>
+                <hr class="divider mb-6"/>
 
-                </form>
-            </div>
+                <button type="submit" class="btn-submit">
+                    <i class="bi bi-save me-2"></i>Save Payment
+                </button>
+
+            </form>
         </div>
     </div>
 

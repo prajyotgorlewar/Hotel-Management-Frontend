@@ -1,7 +1,84 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<body>
-<div class="alert alert-danger" th:text="${errorMessage}"></div>
-<a href="/hotel-payments">Go Back</a>
+<head>
+    <title>Error — Hotel Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: "Cormorant Garamond", "Times New Roman", serif; }
+        h1, h2 { font-family: "Playfair Display", "Times New Roman", serif; }
+
+        .error-card {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(241,217,179,0.9); color: #4a2c12;
+            border: none; border-radius: 9999px;
+            padding: 10px 24px; font-size: 1rem;
+            font-family: "Cormorant Garamond", serif;
+            font-weight: 600;
+            cursor: pointer; text-decoration: none;
+            transition: background 0.2s;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: rgba(241,217,179,0.45); margin-bottom: 18px; flex-wrap: wrap; }
+        .breadcrumb a { color: rgba(241,217,179,0.55); text-decoration: none; transition: color 0.18s; }
+        .breadcrumb a:hover { color: rgba(241,217,179,0.9); }
+        .breadcrumb .sep { color: rgba(241,217,179,0.25); font-size: 0.7rem; }
+        .breadcrumb .current { color: rgba(241,217,179,0.85); }
+        .btn-back:hover { background: #f1d9b3; color: #4a2c12; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-[#2a1a10] via-[#1b120a] to-[#120b07] text-[#f8f2e6] flex items-center justify-center px-6">
+
+<div class="max-w-md w-full text-center">
+
+    <!-- Icon -->
+    <div class="flex justify-center mb-6">
+        <div class="flex h-16 w-16 items-center justify-center rounded-full" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);">
+            <svg width="28" height="28" fill="none" stroke="#fca5a5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            </svg>
+        </div>
+    </div>
+<!--    &lt;!&ndash; Breadcrumb &ndash;&gt;-->
+<!--    <nav class="breadcrumb">-->
+<!--        <a href="/">Home</a>-->
+<!--        <span class="sep">&#8250;</span>-->
+<!--        <a href="hotel-payments/hotel-payment-list">Hotels</a>-->
+<!--        <span class="sep">&#8250;</span>-->
+<!--        <a href="/hotel-payments">Payments</a>-->
+<!--        <span class="sep">&#8250;</span>-->
+<!--        <span class="current">Error</span>-->
+<!--    </nav>-->
+    <!-- Title -->
+    <h2 class="text-2xl font-bold text-[#f8f2e6] mb-2">Something went wrong</h2>
+    <p class="text-sm text-[#f1d9b3]/50 mb-6">An error occurred while processing your request.</p>
+
+    <!-- Error Message -->
+    <div class="error-card rounded-2xl px-6 py-4 mb-8 text-left">
+        <div class="text-[10px] uppercase tracking-widest text-red-400/60 mb-1">Error Details</div>
+        <p class="text-sm text-red-300" th:text="${errorMessage}">An unexpected error occurred.</p>
+    </div>
+
+    <!-- Back Link -->
+    <a href="hotelpaymentlist.html" class="btn-back">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Go Back to Payments
+    </a>
+
+</div>
+
 </body>
 </html>

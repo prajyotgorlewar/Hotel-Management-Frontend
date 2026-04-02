@@ -2,133 +2,189 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>View Payment</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #f8f9fa; }
-        .detail-card {
-            background: white;
-            border-radius: 12px;
-            padding: 32px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        body { font-family: "Cormorant Garamond", "Times New Roman", serif; }
+        h1, h2, h3, h4 { font-family: "Playfair Display", "Times New Roman", serif; }
+
+        .glass-card {
+            background: linear-gradient(135deg, rgba(74,50,32,0.45), rgba(58,38,24,0.40), rgba(74,50,32,0.45));
+            border: 1px solid rgba(241,217,179,0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
-        .section-title {
-            font-size: 0.75rem;
+
+        .section-label {
+            font-size: 0.62rem;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #999;
-            margin-bottom: 4px;
+            color: rgba(241,217,179,0.45);
+            margin-bottom: 3px;
+            display: block;
         }
         .section-value {
             font-size: 1rem;
             font-weight: 600;
-            color: #1a1a2e;
+            color: #f8f2e6;
         }
-        .card-header-custom {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: white;
-            border-radius: 12px 12px 0 0;
-            padding: 20px 32px;
-        }
+
         .info-block {
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(241,217,179,0.08);
         }
         .info-block:last-child { border-bottom: none; }
+
+        .section-heading {
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(241,217,179,0.4);
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .section-heading i { font-size: 12px; }
+
+        .divider { border-color: rgba(241,217,179,0.1); margin: 4px 0 16px; }
+
+        /* Status badges */
+        .badge-paid    { background: rgba(16,185,129,0.18); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+        .badge-failed  { background: rgba(239,68,68,0.18);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.3);  }
+        .badge-pending { background: rgba(245,158,11,0.18); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(241,217,179,0.25); color: #f1d9b3;
+            border: none; border-radius: 9999px;
+            padding: 8px 18px; font-size: 0.9rem;
+            font-family: "Cormorant Garamond", serif;
+            cursor: pointer; text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: rgba(241,217,179,0.45); margin-bottom: 18px; flex-wrap: wrap; }
+        .breadcrumb a { color: rgba(241,217,179,0.55); text-decoration: none; transition: color 0.18s; }
+        .breadcrumb a:hover { color: rgba(241,217,179,0.9); }
+        .breadcrumb .sep { color: rgba(241,217,179,0.25); font-size: 0.7rem; }
+        .breadcrumb .current { color: rgba(241,217,179,0.85); }
+
+        .btn-back:hover { background: rgba(241,217,179,0.35); color: #f8f2e6; }
     </style>
 </head>
-<body>
-<div class="container mt-4">
+<body class="min-h-screen bg-gradient-to-b from-[#2a1a10] via-[#1b120a] to-[#120b07] text-[#f8f2e6]">
+<div class="w-full px-6 pt-6 pb-10">
 
-    <!-- Back Button -->
-    <div class="mb-4">
-        <a onclick="history.back()" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i> Back
+    <!-- Top Nav Bar -->
+    <div class="flex items-center gap-4 rounded-2xl glass-card p-3 shadow-[0_24px_60px_rgba(0,0,0,0.35)] mb-7">
+        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#f1d9b3]/25 shrink-0">
+            <svg width="18" height="18" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+        </div>
+        <div class="flex-1">
+            <h1 class="text-lg font-bold text-[#f8f2e6] leading-tight">Payment Details</h1>
+            <p class="text-xs text-[#f1d9b3]/50">Full payment record overview</p>
+        </div>
+        <a onclick="history.back()" class="btn-back" style="cursor:pointer;">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back
         </a>
     </div>
+<!--    &lt;!&ndash; Breadcrumb &ndash;&gt;-->
+<!--    <nav class="breadcrumb">-->
+<!--        <a href="/">Home</a>-->
+<!--        <span class="sep">&#8250;</span>-->
+<!--        <a href="/hotel-payments/list">Hotels</a>-->
+<!--        <span class="sep">&#8250;</span>-->
+<!--        <a th:href="@{/hotel-payments(hotelId=${payment.hotelId})}">Payments</a>-->
+<!--        <span class="sep">&#8250;</span>-->
+<!--        <span class="current">Payment #<span th:text="${payment.paymentId}"></span></span>-->
+<!--    </nav>-->
+    <!-- Detail Card -->
+    <div class="max-w-2xl">
 
-    <div class="col-md-8 mx-auto">
-        <!-- Card Header -->
-        <div class="card-header-custom d-flex justify-content-between align-items-center">
+        <!-- Context Header -->
+        <div class="rounded-t-2xl px-8 py-5 shadow-[0_8px_24px_rgba(0,0,0,0.3)] flex items-start justify-between gap-4"
+             style="background: linear-gradient(135deg, rgba(74,50,32,0.7), rgba(26,17,10,0.85)); border: 1px solid rgba(241,217,179,0.18); border-bottom: none;">
             <div>
-                <div class="small opacity-75">Payment ID #<span th:text="${payment.paymentId}"></span></div>
-                <div class="fs-4 fw-bold" th:text="${payment.hotelName}"></div>
-                <div class="small opacity-75" th:text="${payment.hotelLocation}"></div>
+                <div class="text-[10px] uppercase tracking-widest text-[#f1d9b3]/45 mb-0.5">
+                    Payment ID #<span th:text="${payment.paymentId}"></span>
+                </div>
+                <div class="text-xl font-bold text-[#f8f2e6]" th:text="${payment.hotelName}"></div>
+                <div class="text-sm text-[#f1d9b3]/55 mt-0.5" th:text="${payment.hotelLocation}"></div>
             </div>
-            <div>
-                <span class="badge fs-6"
-                      th:classappend="${payment.paymentStatus == 'Paid'} ? 'bg-success' : 'bg-danger'"
-                      th:text="${payment.paymentStatus}">
-                </span>
-            </div>
+            <span class="inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold mt-1 shrink-0"
+                  th:classappend="${payment.paymentStatus == 'Paid'} ? 'badge-paid' : (${payment.paymentStatus == 'Pending'} ? 'badge-pending' : 'badge-failed')"
+                  th:text="${payment.paymentStatus}">
+            </span>
         </div>
 
         <!-- Card Body -->
-        <div class="detail-card" style="border-radius: 0 0 12px 12px;">
+        <div class="glass-card rounded-b-2xl px-8 py-6 shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
 
-            <!-- Guest Info -->
-            <h6 class="text-uppercase text-muted mb-3">
-                <i class="bi bi-person-circle me-1"></i> Guest Information
-            </h6>
-            <div class="row">
-                <div class="col-md-4 info-block">
-                    <div class="section-title">Guest Name</div>
-                    <div class="section-value" th:text="${payment.guestName}"></div>
+            <!-- Guest Information -->
+            <div class="section-heading mb-3"><i class="bi bi-person-circle"></i> Guest Information</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-x-6">
+                <div class="info-block">
+                    <span class="section-label">Guest Name</span>
+                    <span class="section-value" th:text="${payment.guestName}"></span>
                 </div>
-                <div class="col-md-4 info-block">
-                    <div class="section-title">Email</div>
-                    <div class="section-value" th:text="${payment.guestEmail}"></div>
+                <div class="info-block">
+                    <span class="section-label">Email</span>
+                    <span class="section-value text-sm" th:text="${payment.guestEmail}"></span>
                 </div>
-                <div class="col-md-4 info-block">
-                    <div class="section-title">Phone</div>
-                    <div class="section-value" th:text="${payment.guestPhone}"></div>
+                <div class="info-block">
+                    <span class="section-label">Phone</span>
+                    <span class="section-value" th:text="${payment.guestPhone}"></span>
                 </div>
             </div>
 
-            <hr/>
+            <hr class="divider"/>
 
-            <!-- Reservation Info -->
-            <h6 class="text-uppercase text-muted mb-3">
-                <i class="bi bi-calendar-check me-1"></i> Reservation Details
-            </h6>
-            <div class="row">
-                <div class="col-md-4 info-block">
-                    <div class="section-title">Room Number</div>
-                    <div class="section-value" th:text="${payment.roomNumber}"></div>
+            <!-- Reservation Details -->
+            <div class="section-heading mb-3"><i class="bi bi-calendar-check"></i> Reservation Details</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-x-6">
+                <div class="info-block">
+                    <span class="section-label">Room Number</span>
+                    <span class="section-value" th:text="${payment.roomNumber}"></span>
                 </div>
-                <div class="col-md-4 info-block">
-                    <div class="section-title">Check-In</div>
-                    <div class="section-value" th:text="${payment.checkInDate}"></div>
+                <div class="info-block">
+                    <span class="section-label">Check-In</span>
+                    <span class="section-value" th:text="${payment.checkInDate}"></span>
                 </div>
-                <div class="col-md-4 info-block">
-                    <div class="section-title">Check-Out</div>
-                    <div class="section-value" th:text="${payment.checkOutDate}"></div>
+                <div class="info-block">
+                    <span class="section-label">Check-Out</span>
+                    <span class="section-value" th:text="${payment.checkOutDate}"></span>
                 </div>
             </div>
 
-            <hr/>
+            <hr class="divider"/>
 
-            <!-- Payment Info -->
-            <h6 class="text-uppercase text-muted mb-3">
-                <i class="bi bi-cash-stack me-1"></i> Payment Details
-            </h6>
-            <div class="row">
-                <div class="col-md-4 info-block">
-                    <div class="section-title">Amount</div>
-                    <div class="section-value" th:text="'₹' + ${payment.amount}"></div>
+            <!-- Payment Details -->
+            <div class="section-heading mb-3"><i class="bi bi-cash-stack"></i> Payment Details</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-x-6">
+                <div class="info-block">
+                    <span class="section-label">Amount</span>
+                    <span class="section-value text-xl" style="color:#f1d9b3;" th:text="'₹' + ${payment.amount}"></span>
                 </div>
-                <div class="col-md-4 info-block">
-                    <div class="section-title">Payment Date</div>
-                    <div class="section-value" th:text="${payment.paymentDate}"></div>
+                <div class="info-block">
+                    <span class="section-label">Payment Date</span>
+                    <span class="section-value" th:text="${payment.paymentDate}"></span>
                 </div>
-                <div class="col-md-4 info-block">
-                    <div class="section-title">Status</div>
-                    <div>
-                        <span class="badge"
-                              th:classappend="${payment.paymentStatus == 'Paid'} ? 'bg-success' : 'bg-danger'"
-                              th:text="${payment.paymentStatus}">
-                        </span>
-                    </div>
+                <div class="info-block">
+                    <span class="section-label">Status</span>
+                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold mt-1"
+                          th:classappend="${payment.paymentStatus == 'Paid'} ? 'badge-paid' : (${payment.paymentStatus == 'Pending'} ? 'badge-pending' : 'badge-failed')"
+                          th:text="${payment.paymentStatus}">
+                    </span>
                 </div>
             </div>
 
@@ -138,16 +194,3 @@
 </div>
 </body>
 </html>
-```
-
----
-
-## Flow:
-```
-Click View button → GET /hotel-payments/view?paymentId=1
-↓
-Controller → PaymentService
-↓
-GET http://172.16.160.110:8081/payments/search/by-payment-id?paymentId=1
-↓
-PaymentDetailDTO → Model → view.html

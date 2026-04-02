@@ -2,140 +2,210 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Hotel Payments</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #f8f9fa; }
+        body { font-family: "Cormorant Garamond", "Times New Roman", serif; }
+        h1, h2, h3, h4 { font-family: "Playfair Display", "Times New Roman", serif; }
+
+        .glass-card {
+            background: linear-gradient(135deg, rgba(74,50,32,0.45), rgba(58,38,24,0.40), rgba(74,50,32,0.45));
+            border: 1px solid rgba(241,217,179,0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
         .revenue-card {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: white;
-            border-radius: 12px;
-            padding: 24px;
+            background: linear-gradient(135deg, rgba(74,50,32,0.6), rgba(26,17,10,0.8));
+            border: 1px solid rgba(241,217,179,0.2);
+            backdrop-filter: blur(8px);
         }
-        .revenue-card .amount {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #00d4aa;
+
+        /* Table */
+        .luxury-table { border-collapse: separate; border-spacing: 0; width: 100%; }
+        .luxury-table thead th {
+            background: rgba(241,217,179,0.08);
+            color: rgba(241,217,179,0.7);
+            font-family: "Cormorant Garamond", serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(241,217,179,0.15);
+            font-weight: 500;
         }
-        .table thead th { background-color: #1a1a2e; color: white; }
-        .btn-view  { background-color: #0d6efd; color: white; }
-        .btn-edit  { background-color: #ffc107; color: black; }
+        .luxury-table tbody tr {
+            border-bottom: 1px solid rgba(241,217,179,0.08);
+            transition: background 0.18s;
+        }
+        .luxury-table tbody tr:hover { background: rgba(241,217,179,0.06); }
+        .luxury-table tbody td {
+            padding: 13px 16px;
+            color: rgba(248,242,230,0.9);
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(241,217,179,0.07);
+        }
+
+        /* Status badges */
+        .badge-paid    { background: rgba(16,185,129,0.18); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+        .badge-failed  { background: rgba(239,68,68,0.18);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.3);  }
+        .badge-pending { background: rgba(245,158,11,0.18); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+
+        /* Pagination */
+        .page-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 28px; height: 28px; padding: 0 8px;
+            border-radius: 8px; font-size: 0.82rem;
+            background: rgba(31,20,11,0.6);
+            color: rgba(241,217,179,0.9);
+            border: 1px solid rgba(241,217,179,0.25);
+            text-decoration: none;
+            transition: background 0.18s, color 0.18s;
+        }
+        .page-btn:hover { background: rgba(241,217,179,0.15); color: #f1d9b3; }
+        .page-btn.active { background: rgba(241,217,179,0.9); color: #4a2c12; border-color: transparent; }
+        .page-btn.disabled { opacity: 0.35; pointer-events: none; }
+
+        /* Action buttons */
+        .btn-view { background: rgba(59,130,246,0.18); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+        .btn-view:hover { background: rgba(59,130,246,0.3); color: #bfdbfe; }
+        .btn-edit { background: rgba(241,217,179,0.15); color: #f1d9b3; border: 1px solid rgba(241,217,179,0.25); }
+        .btn-edit:hover { background: rgba(241,217,179,0.25); color: #f8f2e6; }
+
+        /* Alert */
+        .alert-success-luxury { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); color: #6ee7b7; }
+        .alert-danger-luxury  { background: rgba(239,68,68,0.12);  border: 1px solid rgba(239,68,68,0.25);  color: #fca5a5; }
+
+                /* Breadcrumb */
+        .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: rgba(241,217,179,0.45); margin-bottom: 18px; flex-wrap: wrap; }
+        .breadcrumb a { color: rgba(241,217,179,0.55); text-decoration: none; transition: color 0.18s; }
+        .breadcrumb a:hover { color: rgba(241,217,179,0.9); }
+        .breadcrumb .sep { color: rgba(241,217,179,0.25); font-size: 0.7rem; }
+        .breadcrumb .current { color: rgba(241,217,179,0.85); }
+
+        .divider { border-color: rgba(241,217,179,0.12); }
     </style>
 </head>
-<body>
-<div class="container mt-4">
+<body class="min-h-screen bg-gradient-to-b from-[#2a1a10] via-[#1b120a] to-[#120b07] text-[#f8f2e6]">
+<div class="w-full px-6 pt-6 pb-10">
 
-    <!-- Header Row -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Payments — Hotel ID: <span th:text="${hotelId}"></span></h2>
-        <a th:href="@{/hotel-payments/create(hotelId=${hotelId})}" class="btn btn-success">
-            <i class="bi bi-plus-circle me-1"></i> Create Payment
+    <!-- Top Nav Bar -->
+    <div class="flex items-center gap-4 rounded-2xl glass-card p-3 shadow-[0_24px_60px_rgba(0,0,0,0.35)] mb-7">
+        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#f1d9b3]/25 shrink-0">
+            <svg width="18" height="18" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21h18M4 21V5a2 2 0 012-2h6v18M14 9h6a1 1 0 011 1v11M8 7h2M8 11h2M8 15h2M16 13h2M16 17h2"/>
+            </svg>
+        </div>
+        <div class="flex-1">
+            <h1 class="text-lg font-bold text-[#f8f2e6] leading-tight">Payments
+                <span class="text-[#f1d9b3]/60 font-normal text-base"> — Hotel ID:
+                    <span th:text="${hotelId}"></span>
+                </span>
+            </h1>
+            <p class="text-xs text-[#f1d9b3]/50">Manage and review all payment records</p>
+        </div>
+        <a th:href="@{/hotel-payments/create(hotelId=${hotelId})}"
+           class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-sm font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)] hover:bg-[#f1d9b3] transition-colors">
+            <i class="bi bi-plus-circle" style="font-size:13px"></i>
+            Create Payment
         </a>
     </div>
 
-    <!-- Total Revenue Card -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="revenue-card shadow">
-                <div class="text-uppercase small mb-1 opacity-75">Total Revenue</div>
-                <div class="amount">
-                    ₹<span th:text="${#aggregates.sum(allPayments.![amount])}"></span>
-                </div>
-                <div class="small opacity-75 mt-1">
-                    <span th:text="${allPayments.size()}"></span> payment(s) found
-                </div>
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">&#8250;</span>
+        <a href="/hotel-payments/list">Hotels</a>
+        <span class="sep">&#8250;</span>
+        <span class="current">Payments</span>
+    </nav>
+
+    <!-- Revenue Card -->
+    <div class="mb-6 max-w-xs">
+        <div class="revenue-card rounded-2xl p-6 shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
+            <div class="text-[10px] uppercase tracking-widest text-[#f1d9b3]/50 mb-1">Total Revenue</div>
+            <div class="text-3xl font-bold text-[#f1d9b3]" style="font-family:'Playfair Display',serif;">
+                ₹<span th:text="${#aggregates.sum(allPayments.![amount])}"></span>
+            </div>
+            <div class="text-xs text-[#f1d9b3]/50 mt-1">
+                <span th:text="${allPayments.size()}"></span> payment(s) found
             </div>
         </div>
     </div>
 
-    <!-- Success Message -->
-    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <!-- Alerts -->
+    <div th:if="${successMessage}" class="alert-success-luxury rounded-xl px-4 py-3 mb-4 flex items-center justify-between text-sm">
         <span th:text="${successMessage}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <button onclick="this.parentElement.remove()" class="opacity-60 hover:opacity-100 ml-4 text-base leading-none">&times;</button>
     </div>
-
-    <!-- Error Message -->
-    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <div th:if="${errorMessage}" class="alert-danger-luxury rounded-xl px-4 py-3 mb-4 flex items-center justify-between text-sm">
         <span th:text="${errorMessage}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <button onclick="this.parentElement.remove()" class="opacity-60 hover:opacity-100 ml-4 text-base leading-none">&times;</button>
     </div>
 
-    <!-- No Payments -->
-    <div th:if="${payments.isEmpty()}">
-        <p class="text-warning">No payments found.</p>
+    <!-- Empty State -->
+    <div th:if="${payments.isEmpty()}" class="glass-card rounded-2xl p-10 text-center text-[#f1d9b3]/50 text-base">
+        No payments found for this hotel.
     </div>
 
-    <!-- Payments Table -->
-    <table class="table table-bordered table-striped table-hover shadow-sm" th:if="${!payments.isEmpty()}">
-        <thead>
-        <tr>
-            <th>Sr. No.</th>
-            <th>Amount</th>
-            <th>Payment Date</th>
-            <th>Status</th>
-            <th class="text-center">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="payment, iterStat : ${payments}">
-            <td th:text="${currentPage * size + iterStat.count}"></td>
-            <td th:text="'₹' + ${payment.amount}"></td>
-            <td th:text="${payment.paymentDate}"></td>
-            <td>
-                <span class="badge"
-                      th:classappend="${payment.paymentStatus == 'Paid'} ? 'bg-success' : 'bg-danger'"
-                      th:text="${payment.paymentStatus}">
-                </span>
-            </td>
-            <td class="text-center">
-                <a th:href="@{/hotel-payments/view(paymentId=${payment.paymentId})}"
-                   class="btn btn-sm btn-view me-1">
-                    <i class="bi bi-eye me-1"></i>View
-                </a>
-                <a th:href="@{/hotel-payments/edit(paymentId=${payment.paymentId})}"
-                   class="btn btn-sm btn-edit">
-                    <i class="bi bi-pencil me-1"></i>Edit
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <!-- Table -->
+    <div th:if="${!payments.isEmpty()}" class="glass-card rounded-2xl overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
+        <table class="luxury-table">
+            <thead>
+            <tr>
+                <th>Sr. No.</th>
+                <th>Amount</th>
+                <th>Payment Date</th>
+                <th>Status</th>
+                <th class="text-center">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="payment, iterStat : ${payments}">
+                <td class="text-[#f1d9b3]/50" th:text="${currentPage * size + iterStat.count}"></td>
+                <td class="font-semibold" th:text="'₹' + ${payment.amount}"></td>
+                <td class="text-[#f1d9b3]/70" th:text="${payment.paymentDate}"></td>
+                <td>
+                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                              th:classappend="${payment.paymentStatus == 'Paid'} ? 'badge-paid' : (${payment.paymentStatus == 'Pending'} ? 'badge-pending' : 'badge-failed')"
+                              th:text="${payment.paymentStatus}">
+                        </span>
+                </td>
+                <td class="text-center">
+                    <div class="inline-flex items-center gap-2">
+                        <a th:href="@{/hotel-payments/view(paymentId=${payment.paymentId})}"
+                           class="btn-view inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors">
+                            <i class="bi bi-eye"></i> View
+                        </a>
+                        <a th:href="@{/hotel-payments/edit(paymentId=${payment.paymentId})}"
+                           class="btn-edit inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
     <!-- Pagination -->
-    <div class="d-flex justify-content-center mt-4" th:if="${totalPages > 1}">
-        <ul class="pagination">
+    <div th:if="${totalPages > 1}" class="mt-5 flex items-center justify-center gap-2">
+        <a th:href="@{/hotel-payments(hotelId=${hotelId}, page=${currentPage - 1}, size=${size})}"
+           class="page-btn" th:classappend="${currentPage == 0} ? 'disabled'">&#8249;</a>
 
-            <!-- Previous -->
-            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                <a class="page-link"
-                   th:href="@{/hotel-payments(hotelId=${hotelId}, page=${currentPage - 1}, size=${size})}">
-                    &laquo; Prev
-                </a>
-            </li>
+        <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+            <a class="page-btn" th:classappend="${i == currentPage} ? 'active'"
+               th:href="@{/hotel-payments(hotelId=${hotelId}, page=${i}, size=${size})}"
+               th:text="${i + 1}"></a>
+        </th:block>
 
-            <!-- Page Numbers -->
-            <li class="page-item"
-                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                th:classappend="${i == currentPage} ? 'active'">
-                <a class="page-link"
-                   th:href="@{/hotel-payments(hotelId=${hotelId}, page=${i}, size=${size})}"
-                   th:text="${i + 1}">
-                </a>
-            </li>
-
-            <!-- Next -->
-            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                <a class="page-link"
-                   th:href="@{/hotel-payments(hotelId=${hotelId}, page=${currentPage + 1}, size=${size})}">
-                    Next &raquo;
-                </a>
-            </li>
-
-        </ul>
+        <a th:href="@{/hotel-payments(hotelId=${hotelId}, page=${currentPage + 1}, size=${size})}"
+           class="page-btn" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">&#8250;</a>
     </div>
 
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

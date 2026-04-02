@@ -189,4 +189,9 @@ public class PaymentController {
             return "redirect:/hotel-payments/edit?paymentId=" + paymentId;
         }
     }
+
+    @GetMapping("/list")
+    public String demo(){
+        return "payment/hotelpaymentlist";
+    }
 }
