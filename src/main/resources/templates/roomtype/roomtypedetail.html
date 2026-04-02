@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Room Type Detail — Hotel Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: "Cormorant Garamond", "Times New Roman", serif; }
+    h1,h2,h3 { font-family: "Playfair Display", "Times New Roman", serif; }
+  </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-b from-[#2a1a10] via-[#1b120a] to-[#120b07] text-[#f8f2e6] pb-8">
+  <div class="mx-6 my-6">
+    <div class="flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#4a3220] via-[#3a2618]/90 to-[#4a3220] p-3 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10 backdrop-blur-sm">
+      <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#f1d9b3]/25">
+        <svg width="18" height="18" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21h18M4 21V5a2 2 0 012-2h6v18M14 9h6a1 1 0 011 1v11M8 7h2M8 11h2M8 15h2M16 13h2M16 17h2"></path>
+        </svg>
+      </div>
+      <div class="flex-1"></div>
+      <a href="/roomtypes" class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/25 px-3 py-2 text-sm font-semibold text-[#f1d9b3]">
+        <svg width="14" height="14" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back
+      </a>
+    </div>
+
+    <div class="mt-6 flex items-center gap-2 text-sm text-[#f1d9b3]/75">
+      <a href="/" class="hover:text-[#f8f2e6]">Home</a>
+      <span>/</span>
+      <a href="/roomtypes" class="hover:text-[#f8f2e6]">Room Types</a>
+      <span>/</span>
+      <span class="font-semibold text-[#f1d9b3]" id="crumbName">Details</span>
+    </div>
+
+    <div class="mt-6 rounded-2xl bg-gradient-to-r from-[#4a3220] via-[#3a2618]/90 to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/15">
+      <div class="grid gap-6 lg:grid-cols-[280px_1fr]">
+        <div class="h-[220px] rounded-xl bg-cover bg-center shadow-[0_18px_40px_rgba(0,0,0,0.35)]"
+             style="background-image: linear-gradient(180deg, rgba(12,8,4,0.2), rgba(12,8,4,0.6)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900&auto=format&fit=crop');">
+        </div>
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[#f1d9b3]/80">Room Type</div>
+          <h1 class="mt-2 text-3xl font-bold text-[#f8f2e6]" id="dcTypeName">—</h1>
+          <p class="mt-2 text-sm text-[#f1d9b3]/85" id="dcDescription">—</p>
+          <div class="mt-4 grid gap-4 sm:grid-cols-3">
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[#f1d9b3]/70">Max Occupancy</div>
+              <div class="mt-1 text-base font-semibold text-[#f8f2e6]" id="dcMaxOcc">—</div>
+            </div>
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[#f1d9b3]/70">Price / Night</div>
+              <div class="mt-1 font-mono text-base text-[#f1d9b3]" id="dcPrice">—</div>
+            </div>
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[#f1d9b3]/70">ID</div>
+              <div class="mt-1 font-mono text-base text-[#f1d9b3]" id="dcId">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <div class="flex items-center justify-between gap-4">
+        <h2 class="text-xl font-bold text-[#f8f2e6]">Rooms
+          <span class="ml-2 rounded-full bg-[#f1d9b3]/20 px-3 py-1 text-xs font-semibold text-[#f1d9b3]" th:text="${rooms != null ? rooms.size() : 0}">0</span>
+        </h2>
+      </div>
+
+      <div class="mt-4 rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d]/95 to-[#1a110a]/95 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10">
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse">
+            <thead>
+              <tr class="bg-[#2a1a10] text-[#f1d9b3] text-xs uppercase tracking-[0.18em]">
+                <th class="px-4 py-3 text-left w-[60px]">#</th>
+                <th class="px-4 py-3 text-left">Room Number</th>
+                <th class="px-4 py-3 text-left w-[180px]">Availability</th>
+              </tr>
+            </thead>
+            <tbody class="text-sm text-[#f8f2e6]">
+              <tr th:if="${rooms == null || rooms.isEmpty()}">
+                <td colspan="3">
+                  <div class="flex flex-col items-center justify-center gap-3 py-16 text-[#f1d9b3]/70">
+                    <div class="text-4xl">🛏️</div>
+                    <p>No rooms found for this room type.</p>
+                  </div>
+                </td>
+              </tr>
+              <tr th:each="room, iter : ${rooms}" class="border-b border-[#f1d9b3]/10 hover:bg-[#f1d9b3]/5">
+                <td class="px-4 py-3 text-xs text-[#f1d9b3]/60" th:text="${iter.count}">1</td>
+                <td class="px-4 py-3 font-mono font-semibold" th:text="${room.roomNumber}">101</td>
+                <td class="px-4 py-3">
+                  <span th:if="${room.isAvailable}" class="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-300">✓ Available</span>
+                  <span th:unless="${room.isAvailable}" class="inline-flex items-center gap-2 rounded-full border border-red-400/30 bg-red-400/10 px-3 py-1 text-xs font-semibold text-red-300">✗ Not Available</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script th:inline="javascript">
+    const ROOM_TYPE = /*[[${roomType}]]*/ {};
+    let roomTypeData = ROOM_TYPE;
+    document.addEventListener('DOMContentLoaded', () => {
+      renderDetailCard(roomTypeData);
+    });
+    function fmtPrice(v) { return '₹ ' + Number(v).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+    function renderDetailCard(rt) {
+      document.title = `${rt.typeName} — Hotel Management`;
+      const crumb=document.getElementById('crumbName');
+      if(crumb){crumb.textContent=rt.typeName||'Room Type';}
+      document.getElementById('dcTypeName').textContent = rt.typeName || '—';
+      document.getElementById('dcDescription').textContent = rt.description || 'No description provided.';
+      document.getElementById('dcMaxOcc').textContent = `${rt.maxOccupancy} guest${rt.maxOccupancy > 1 ? 's' : ''}`;
+      document.getElementById('dcPrice').textContent = fmtPrice(rt.pricePerNight);
+      const resolvedId = rt.resolvedId || rt.roomTypeId || rt._id;
+      document.getElementById('dcId').textContent = resolvedId ? `#${resolvedId}` : '—';
+    }
+  </script>
+</body>
+</html>
