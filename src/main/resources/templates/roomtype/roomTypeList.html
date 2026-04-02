@@ -116,7 +116,7 @@
   </div>
 
   <!-- ADD / EDIT MODAL -->
-  <div class="hidden fixed inset-0 z-50 items-center justify-center bg-black/45 backdrop-blur-sm px-4" id="formModal">
+  <div class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm px-4" id="formModal">
     <div class="w-full max-w-xl rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d] to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
       <div class="flex items-center justify-between">
         <h2 class="text-2xl font-bold text-[#f8f2e6]" id="formModalTitle">New Room Type</h2>
@@ -154,7 +154,7 @@
   </div>
 
   <!-- DELETE CONFIRM MODAL -->
-  <div class="hidden fixed inset-0 z-50 items-center justify-center bg-black/45 backdrop-blur-sm px-4" id="confirmModal">
+  <div class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm px-4" id="confirmModal">
     <div class="w-full max-w-md rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d] to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
       <div class="flex items-center justify-between">
         <h2 class="text-xl font-bold text-[#f8f2e6]">Delete Room Type</h2>
@@ -225,6 +225,11 @@
       else if(TOAST==='updated')toast('success','Room type updated.');
       else if(TOAST==='deleted')toast('success','Room type deleted.');
       else if(TOAST==='error')toast('error','Something went wrong. Please try again.');
+      if(TOAST){
+        const url=new URL(window.location.href);
+        url.searchParams.delete('toast');
+        window.history.replaceState({}, document.title, url.pathname + url.search);
+      }
     }
 
     function initRoomTypes(){
@@ -233,7 +238,7 @@
         const links = item?._links || item?.links || {};
         const selfHref = links?.self?.href || '';
         const id = item?.resolvedId || item?.roomTypeId || (selfHref ? selfHref.split('/').pop() : null);
-        return { ...item, _id: id, _selfHref: selfHref };
+        return { ...item, _id: id != null ? String(id) : null, _selfHref: selfHref };
       });
       applyFiltersAndRender();
     }
@@ -352,7 +357,7 @@
       document.getElementById('formModalTitle').textContent='Edit Room Type';
       document.getElementById('submitBtn').textContent='Update';
       clearFormErrors();
-      const rt=allRoomTypes.find(x=>x._id===id);
+      const rt=allRoomTypes.find(x=>String(x._id)===String(id));
       if(rt){
         document.getElementById('fTypeName').value=rt.typeName||'';
         document.getElementById('fDescription').value=rt.description||'';
