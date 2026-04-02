@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Add Reservation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #1a1208;
+            background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 10, 3, 0.72);
+            z-index: 0;
+        }
+
+        .glass {
+            background: rgba(30, 22, 8, 0.85);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(180, 140, 60, 0.18);
+        }
+
+        h1,
+        h2,
+        h3,
+        .serif {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        input {
+            color-scheme: dark;
+        }
+
+        input::placeholder {
+            color: #a0896a;
+        }
+    </style>
+</head>
+
+<body class="relative flex items-center justify-center min-h-screen py-12">
+    <div class="relative z-10 w-full max-w-lg px-4">
+
+        <!-- Card -->
+        <div class="glass rounded-2xl shadow-2xl p-10">
+
+            <!-- Header -->
+            <div class="mb-8">
+                <p class="text-xs tracking-[0.25em] text-amber-400/70 uppercase mb-2 font-light">Hotel Management</p>
+                <h2 class="serif text-4xl font-semibold text-amber-100">Add Reservation</h2>
+                <div class="h-px w-16 bg-amber-600/40 mt-3"></div>
+            </div>
+
+            <form th:action="@{/reservations/add}" method="post" class="flex flex-col gap-4">
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs tracking-[0.15em] uppercase text-amber-500/60 font-medium">Guest Name</label>
+                    <input type="text" name="guestName" placeholder="Enter guest name" required
+                        class="px-4 py-3 rounded-lg text-sm text-amber-100 focus:outline-none focus:ring-1 focus:ring-amber-500/50 transition-all w-full"
+                        style="background: rgba(30,22,8,0.7); border: 1px solid rgba(180,140,60,0.3);">
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs tracking-[0.15em] uppercase text-amber-500/60 font-medium">Email</label>
+                    <input type="email" name="guestEmail" placeholder="Enter email address" required
+                        class="px-4 py-3 rounded-lg text-sm text-amber-100 focus:outline-none focus:ring-1 focus:ring-amber-500/50 transition-all w-full"
+                        style="background: rgba(30,22,8,0.7); border: 1px solid rgba(180,140,60,0.3);">
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs tracking-[0.15em] uppercase text-amber-500/60 font-medium">Phone</label>
+                    <input type="text" name="guestPhone" placeholder="Enter phone number" required
+                        class="px-4 py-3 rounded-lg text-sm text-amber-100 focus:outline-none focus:ring-1 focus:ring-amber-500/50 transition-all w-full"
+                        style="background: rgba(30,22,8,0.7); border: 1px solid rgba(180,140,60,0.3);">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-1">
+                        <label
+                            class="text-xs tracking-[0.15em] uppercase text-amber-500/60 font-medium">Check-In</label>
+                        <input type="date" name="checkInDate" required
+                            class="px-4 py-3 rounded-lg text-sm text-amber-100 focus:outline-none focus:ring-1 focus:ring-amber-500/50 transition-all w-full"
+                            style="background: rgba(30,22,8,0.7); border: 1px solid rgba(180,140,60,0.3);">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label
+                            class="text-xs tracking-[0.15em] uppercase text-amber-500/60 font-medium">Check-Out</label>
+                        <input type="date" name="checkOutDate" required
+                            class="px-4 py-3 rounded-lg text-sm text-amber-100 focus:outline-none focus:ring-1 focus:ring-amber-500/50 transition-all w-full"
+                            style="background: rgba(30,22,8,0.7); border: 1px solid rgba(180,140,60,0.3);">
+                    </div>
+                </div>
+
+                <button type="submit"
+                    class="mt-4 w-full py-3 rounded-lg text-xs tracking-[0.2em] uppercase font-semibold text-amber-950 bg-amber-500 hover:bg-amber-400 transition-all duration-200 shadow-lg">
+                    Add Reservation
+                </button>
+
+            </form>
+
+            <div class="mt-6 pt-6" style="border-top: 1px solid rgba(180,140,60,0.15);">
+                <a href="/reservations"
+                    class="text-xs tracking-[0.15em] uppercase text-amber-500/60 hover:text-amber-400 transition-all duration-200">
+                    ⬅ Back to Reservations
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

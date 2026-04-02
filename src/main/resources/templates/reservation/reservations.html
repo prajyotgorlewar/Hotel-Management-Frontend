@@ -4,104 +4,187 @@
 <head>
     <meta charset="UTF-8">
     <title>Reservations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #1a1208;
+            background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 10, 3, 0.72);
+            z-index: 0;
+        }
+
+        .glass {
+            background: rgba(30, 22, 8, 0.82);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(180, 140, 60, 0.18);
+        }
+
+        h1,
+        h2,
+        h3,
+        .serif {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="date"] {
+            background: rgba(30, 22, 8, 0.7) !important;
+            color: #e8d9b0 !important;
+            border: 1px solid rgba(180, 140, 60, 0.3) !important;
+        }
+
+        input::placeholder {
+            color: #a0896a !important;
+        }
+
+        tr:hover td {
+            background: rgba(180, 140, 60, 0.08) !important;
+        }
+
+        thead tr th {
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.12em;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+    </style>
 </head>
 
-<body style="font-family: Arial; margin:20px;">
+<body class="relative">
+    <div class="relative z-10 max-w-7xl mx-auto px-6 py-10">
 
-    <h2>Reservations</h2>
+        <!-- Header -->
+        <div class="mb-10">
+            <p class="text-xs tracking-[0.25em] text-amber-400/70 uppercase mb-2 font-light">Hotel Management</p>
+            <h2 class="serif text-5xl font-semibold text-amber-100 mb-1">Reservations</h2>
+            <div class="h-px w-24 bg-amber-600/40 mt-3"></div>
+        </div>
 
-    <!-- 🔥 SEARCH FORM -->
-    <form method="get" action="/reservations" onsubmit="return validateSearch()"
-        style="margin-bottom:20px; display:flex; flex-wrap:wrap; gap:10px;">
+        <!-- Add Button -->
+        <div class="mb-8">
+            <a href="/reservations/add"
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs tracking-[0.15em] uppercase font-medium text-amber-100 border border-amber-600/40 hover:bg-amber-600/20 transition-all duration-300"
+                style="background: rgba(30,22,8,0.82);">
+                + Add Reservation
+            </a>
+        </div>
 
-        <input type="text" id="guestName" name="guestName" placeholder="Guest Name" th:value="${guestName}"
-            style="padding:8px; border:1px solid #ccc; border-radius:5px;">
+        <!-- Search Form -->
+        <div class="glass rounded-2xl p-6 mb-6 shadow-2xl">
+            <p class="text-xs tracking-[0.2em] uppercase text-amber-500/60 font-medium mb-4">Search Reservations</p>
+            <form method="get" action="/reservations" onsubmit="return validateSearch()"
+                class="flex flex-wrap gap-3 items-center">
 
-        <input type="text" id="email" name="email" placeholder="Email" th:value="${email}"
-            style="padding:8px; border:1px solid #ccc; border-radius:5px;">
+                <input type="text" id="guestName" name="guestName" placeholder="Guest Name" th:value="${guestName}"
+                    class="px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-amber-500/50 transition-all w-44">
 
-        <input type="date" id="checkIn" name="checkIn" th:value="${checkIn}"
-            style="padding:8px; border:1px solid #ccc; border-radius:5px;">
+                <input type="text" id="email" name="email" placeholder="Email" th:value="${email}"
+                    class="px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-amber-500/50 transition-all w-44">
 
-        <input type="date" id="checkOut" name="checkOut" th:value="${checkOut}"
-            style="padding:8px; border:1px solid #ccc; border-radius:5px;">
+                <input type="date" id="checkIn" name="checkIn" th:value="${checkIn}"
+                    class="px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-amber-500/50 transition-all">
 
-        <button type="submit"
-            style="padding:8px 15px; background:#007bff; color:white; border:none; border-radius:5px;">
-            Search
-        </button>
+                <input type="date" id="checkOut" name="checkOut" th:value="${checkOut}"
+                    class="px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-amber-500/50 transition-all">
 
-        <a href="/reservations"
-            style="padding:8px 15px; background:gray; color:white; text-decoration:none; border-radius:5px;">
-            Clear
-        </a>
+                <button type="submit"
+                    class="px-6 py-2.5 rounded-lg text-xs tracking-[0.15em] uppercase font-medium text-amber-950 bg-amber-500 hover:bg-amber-400 transition-all duration-200 shadow-lg">
+                    Search
+                </button>
 
-    </form>
+                <a href="/reservations"
+                    class="px-6 py-2.5 rounded-lg text-xs tracking-[0.15em] uppercase font-medium text-amber-200/70 border border-amber-700/30 hover:bg-amber-800/20 transition-all duration-200"
+                    style="background: rgba(60,40,10,0.4);">
+                    Clear
+                </a>
+            </form>
+            <p class="text-amber-700/50 text-xs mt-3 font-light">* Only one field allowed OR check-in + check-out
+                together</p>
+        </div>
 
-    <p style="color:gray; font-size:12px;">
-        * Only one field allowed OR check-in + check-out together
-    </p>
+        <!-- Table -->
+        <div class="glass rounded-2xl overflow-hidden shadow-2xl mb-6">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr style="background: rgba(60,40,10,0.6); border-bottom: 1px solid rgba(180,140,60,0.2);">
+                        <th class="px-6 py-4 text-left text-amber-500/80">ID</th>
+                        <th class="px-6 py-4 text-left text-amber-500/80">Guest Name</th>
+                        <th class="px-6 py-4 text-left text-amber-500/80">Email</th>
+                        <th class="px-6 py-4 text-left text-amber-500/80">Check-In</th>
+                        <th class="px-6 py-4 text-left text-amber-500/80">Check-Out</th>
+                        <th class="px-6 py-4 text-left text-amber-500/80">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="res : ${reservations}"
+                        th:onclick="'location.href=\'/reservations/' + ${res.id} + '/details\''"
+                        class="cursor-pointer border-b transition-all duration-200"
+                        style="border-color: rgba(180,140,60,0.1);">
 
-    <!-- 🔥 TABLE -->
-    <table border="1" width="100%" cellpadding="10" cellspacing="0">
+                        <td class="px-6 py-4 text-amber-300/70 font-mono text-xs" th:text="${res.id}"></td>
+                        <td class="px-6 py-4 text-amber-100 font-medium" th:text="${res.guestName}"></td>
+                        <td class="px-6 py-4 text-amber-200/60" th:text="${res.guestEmail}"></td>
+                        <td class="px-6 py-4 text-amber-200/70" th:text="${res.checkInDate}"></td>
+                        <td class="px-6 py-4 text-amber-200/70" th:text="${res.checkOutDate}"></td>
 
-        <thead style="background:#f2f2f2;">
-            <tr>
-                <th>ID</th>
-                <th>Guest Name</th>
-                <th>Email</th>
-                <th>Check-In</th>
-                <th>Check-Out</th>
-            </tr>
-        </thead>
+                        <td class="px-6 py-4">
+                            <form th:action="@{/reservations/delete/{id}(id=${res.id})}" method="post"
+                                onclick="event.stopPropagation();"
+                                onsubmit="return confirm('Are you sure you want to delete this reservation?')">
+                                <button type="submit"
+                                    class="px-3 py-1.5 rounded-lg text-xs bg-red-900/40 text-red-300 border border-red-800/40 hover:bg-red-800/60 transition-all duration-200">
+                                    🗑️
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-        <tbody>
-            <tr th:each="res : ${reservations}" th:onclick="'location.href=\'/reservations/' + ${res.id} + '/details\''"
-                style="cursor:pointer;">
-
-                <td th:text="${res.id}"></td>
-                <td th:text="${res.guestName}"></td>
-                <td th:text="${res.guestEmail}"></td>
-                <td th:text="${res.checkInDate}"></td>
-                <td th:text="${res.checkOutDate}"></td>
-
-            </tr>
-        </tbody>
-
-    </table>
-
-    <!-- 🔥 PAGINATION -->
-    <div style="margin-top:20px; text-align:center;">
-
-        <!-- Previous -->
-        <a th:if="${currentPage > 0}" th:href="@{/reservations(
+        <!-- Pagination -->
+        <div class="flex items-center justify-center gap-6 mt-6">
+            <a th:if="${currentPage > 0}" th:href="@{/reservations(
             page=${currentPage - 1},
             guestName=${guestName},
             email=${email},
             checkIn=${checkIn},
             checkOut=${checkOut}
-       )}" style="margin-right:10px;">
-            ⬅ Previous
-        </a>
+       )}" class="text-xs tracking-[0.15em] uppercase text-amber-400/70 hover:text-amber-300 transition-all">
+                ⬅ Previous
+            </a>
 
-        <span>
-            Page <span th:text="${currentPage + 1}"></span>
-        </span>
+            <span class="text-xs tracking-[0.2em] uppercase text-amber-600/60 font-medium">
+                Page <span th:text="${currentPage + 1}" class="text-amber-400"></span>
+            </span>
 
-        <!-- Next -->
-        <a th:href="@{/reservations(
+            <a th:href="@{/reservations(
             page=${currentPage + 1},
             guestName=${guestName},
             email=${email},
             checkIn=${checkIn},
             checkOut=${checkOut}
-       )}" style="margin-left:10px;">
-            Next ➡
-        </a>
-
+       )}" class="text-xs tracking-[0.15em] uppercase text-amber-400/70 hover:text-amber-300 transition-all">
+                Next ➡
+            </a>
+        </div>
     </div>
 
-    <!-- 🔥 VALIDATION SCRIPT -->
     <script>
         function validateSearch() {
             const name = document.getElementById("guestName").value.trim();
@@ -110,96 +193,20 @@
             const checkOut = document.getElementById("checkOut").value;
 
             let count = 0;
-
             if (name) count++;
             if (email) count++;
             if (checkIn) count++;
             if (checkOut) count++;
 
-            // ❌ More than 1 field but not valid combo
             if (count > 1) {
                 if (!(checkIn && checkOut && count === 2)) {
                     alert("Use only ONE field OR check-in + check-out together");
                     return false;
                 }
             }
-
             return true;
         }
     </script>
-
 </body>
 
 </html>
-
-<!-- <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Reservations</title>
-    <link rel="stylesheet" href="/styles.css">
-</head>
-
-<body>
-
-    <nav>
-        <h2>Reservations</h2>
-        <a href="/">Back</a>
-    </nav>
-
-    <div>
-
-        <table border="1" width="100%">
-            <thead>
-                <tr>
-                    <th>SR.NO</th>
-                    <th>Guest Name</th>
-                    <th>Guest Email</th>
-                    <th>Guest Phone</th>
-                    <th>Check-In</th>
-                    <th>Check-Out</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr th:each="res : ${reservations}" th:onclick="'location.href=\'/reservations/' + ${res.id} + '\''"
-                    style="cursor:pointer">
-
-                    <td th:text="${res.id}"></td>
-                    <td th:text="${res.guestName}"></td>
-                    <td th:text="${res.guestEmail}"></td>
-                    <td th:text="${res.phone}"></td>
-                    <td th:text="${res.checkInDate}"></td>
-                    <td th:text="${res.checkOutDate}"></td>
-
-                </tr>
-            </tbody>
-        </table>
-
-    </div>
-
-    <!-- 🔥 PAGINATION -->
-    <div style="margin-top:20px; text-align:center;">
-
-        <!-- Previous -->
-        <a th:if="${currentPage > 0}" th:href="@{/reservations(page=${currentPage - 1})}">
-            ⬅ Previous
-        </a>
-
-        <!-- Current Page -->
-        <span style="margin: 0 10px;">
-            Page <span th:text="${currentPage + 1}"></span>
-        </span>
-
-        <!-- Next -->
-        <a th:href="@{/reservations(page=${currentPage + 1})}">
-            Next ➡
-        </a>
-
-    </div>
-
-</body>
-
-</html> -->
-
