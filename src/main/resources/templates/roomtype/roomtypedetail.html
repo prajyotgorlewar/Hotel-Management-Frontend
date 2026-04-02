@@ -6,482 +6,125 @@
   <title>Room Type Detail — Hotel Management</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<style>
-:root {
-  --brown-900:#2c1a00; --brown-800:#3d2400; --brown-700:#5c3800;
-  --brown-600:#7a4d00; --brown-500:#a06820; --brown-400:#c28a3a;
-  --brown-300:#d4a85a; --brown-200:#e8cfa0; --brown-100:#f5ead8;
-  --brown-50:#fdf8f2;  --cream:#faf6ef;    --ink:#1a0f00;
-  --ink-muted:#6b5c45; --ink-light:#9c8878;
-  --success:#4a7c59;   --danger:#9b3232;
-  --radius:6px; --radius-lg:12px;
-  --shadow:0 4px 12px rgba(26,15,0,.10),0 2px 4px rgba(26,15,0,.06);
-  --shadow-lg:0 20px 48px rgba(26,15,0,.16),0 8px 16px rgba(26,15,0,.08);
-  --font-display:'Playfair Display',Georgia,serif;
-  --font-body:'Lato',sans-serif; --font-mono:'DM Mono',monospace;
-  --t:.18s cubic-bezier(.4,0,.2,1);
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:16px;scroll-behavior:smooth}
-body{font-family:var(--font-body);background:var(--cream);color:var(--ink);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased}
-a{color:inherit;text-decoration:none}
-button{cursor:pointer;font-family:inherit;border:none;background:none}
-input,select,textarea{font-family:inherit}
-
-.app-shell{display:flex;flex-direction:column;min-height:100vh}
-
-/* Topbar */
-.topbar{height:60px;background:var(--brown-900);display:flex;align-items:center;padding:0 2rem;gap:1.5rem;position:sticky;top:0;z-index:50;border-bottom:2px solid var(--brown-700)}
-.topbar-brand{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--brown-200);letter-spacing:.02em;white-space:nowrap}
-.topbar-brand span{color:var(--brown-400);font-style:italic}
-
-/* Layout */
-.page-container{flex:1;max-width:1200px;width:100%;margin:0 auto;padding:2rem 2rem 4rem}
-
-/* Back link */
-.back-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:1.5rem;transition:color var(--t)}
-.back-link:hover{color:var(--brown-600)}
-.back-link svg{width:14px;height:14px}
-
-/* Buttons */
-.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1.2rem;border-radius:var(--radius);font-size:.82rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border:1.5px solid transparent;transition:all var(--t);white-space:nowrap}
-.btn svg{width:15px;height:15px;flex-shrink:0}
-.btn-primary{background:var(--brown-700);color:var(--brown-100);border-color:var(--brown-700)}
-.btn-primary:hover{background:var(--brown-600);border-color:var(--brown-600);box-shadow:0 0 0 3px rgba(122,77,0,.2)}
-.btn-ghost{background:transparent;color:var(--ink-muted);border-color:var(--brown-200)}
-.btn-ghost:hover{background:var(--brown-50);color:var(--ink);border-color:var(--brown-300)}
-.btn-danger{background:transparent;color:var(--danger);border-color:rgba(155,50,50,.3)}
-.btn-danger:hover{background:rgba(155,50,50,.07);border-color:var(--danger)}
-.btn-sm{padding:.3rem .75rem;font-size:.75rem}
-
-/* Detail hero card */
-.detail-card{background:linear-gradient(135deg,var(--brown-900) 0%,var(--brown-800) 100%);border-radius:var(--radius-lg);padding:2rem 2.5rem;margin-bottom:1.75rem;position:relative;overflow:hidden}
-.detail-card::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(212,168,90,.15) 0%,transparent 70%);border-radius:50%}
-.detail-card-label{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brown-400);margin-bottom:.3rem}
-.detail-card-title{font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--brown-100);margin-bottom:.75rem}
-.detail-card-desc{font-size:.9rem;color:var(--brown-300);line-height:1.7;max-width:600px;margin-bottom:1.5rem}
-.detail-meta{display:flex;gap:2rem;flex-wrap:wrap}
-.detail-meta-item{display:flex;flex-direction:column;gap:.2rem}
-.detail-meta-item .label{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brown-400)}
-.detail-meta-item .value{font-size:1rem;font-weight:700;color:var(--brown-100)}
-.detail-meta-item .value.price{font-family:var(--font-mono);color:var(--brown-300);font-size:1.05rem}
-
-/* Section heading */
-.section-heading{font-family:var(--font-display);font-size:1.2rem;font-weight:600;color:var(--brown-800);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
-.section-heading::after{content:'';flex:1;height:1px;background:var(--brown-200);margin-left:.5rem}
-
-/* Card */
-.card{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow);border:1px solid var(--brown-100);overflow:hidden}
-
-/* Table */
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
-thead tr.th-labels th{background:var(--brown-900);color:var(--brown-200);font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.75rem 1rem;text-align:left;white-space:nowrap;border-bottom:2px solid var(--brown-700)}
-thead tr.th-search th{background:var(--brown-50);padding:.5rem .6rem;border-bottom:1px solid var(--brown-100)}
-.col-search{width:100%;background:#fff;border:1px solid var(--brown-200);border-radius:var(--radius);padding:.3rem .6rem;font-size:.78rem;color:var(--ink);outline:none;transition:border-color var(--t),box-shadow var(--t)}
-.col-search:focus{border-color:var(--brown-400);box-shadow:0 0 0 3px rgba(194,138,58,.15)}
-.col-search::placeholder{color:var(--ink-light)}
-tbody tr{border-bottom:1px solid var(--brown-100);transition:background var(--t)}
-tbody tr:last-child{border-bottom:none}
-tbody tr:hover{background:var(--brown-50)}
-td{padding:.9rem 1rem;font-size:.875rem;color:var(--ink);vertical-align:middle}
-td.td-sno{font-family:var(--font-mono);font-size:.75rem;color:var(--ink-light);width:52px}
-td.td-actions{width:48px;text-align:right;padding-right:.75rem}
-
-/* Badges */
-.badge{display:inline-flex;align-items:center;gap:.25rem;padding:.2rem .6rem;border-radius:99px;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
-.badge-available{background:rgba(74,124,89,.12);color:var(--success);border:1px solid rgba(74,124,89,.25)}
-.badge-occupied{background:rgba(155,50,50,.10);color:var(--danger);border:1px solid rgba(155,50,50,.2)}
-
-/* Three-dot menu */
-.menu-wrapper{position:relative;display:inline-block}
-.menu-trigger{width:30px;height:30px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;color:var(--ink-muted);transition:background var(--t),color var(--t);border:1px solid transparent}
-.menu-trigger:hover{background:var(--brown-100);color:var(--ink);border-color:var(--brown-200)}
-.menu-trigger svg{width:16px;height:16px}
-.dropdown-menu{position:absolute;right:0;top:calc(100% + 4px);background:#fff;border:1px solid var(--brown-200);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);min-width:140px;z-index:100;overflow:hidden;opacity:0;pointer-events:none;transform:translateY(-6px) scale(.97);transition:opacity .15s ease,transform .15s ease;transform-origin:top right}
-.dropdown-menu.open{opacity:1;pointer-events:all;transform:translateY(0) scale(1)}
-.dropdown-item{display:flex;align-items:center;gap:.6rem;width:100%;padding:.6rem .9rem;font-size:.82rem;font-weight:700;letter-spacing:.03em;color:var(--ink);background:none;border:none;cursor:pointer;text-align:left;transition:background var(--t)}
-.dropdown-item:hover{background:var(--brown-50)}
-.dropdown-item.danger{color:var(--danger)}
-.dropdown-item.danger:hover{background:rgba(155,50,50,.06)}
-.dropdown-item svg{width:14px;height:14px;flex-shrink:0}
-.dropdown-divider{height:1px;background:var(--brown-100);margin:.25rem 0}
-
-/* Pagination */
-.pagination-bar{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1rem;border-top:1px solid var(--brown-100);background:var(--brown-50);font-size:.8rem;color:var(--ink-muted);flex-wrap:wrap;gap:.5rem}
-.pagination-btns{display:flex;gap:.3rem;flex-wrap:wrap}
-.pg-btn{min-width:32px;height:32px;padding:0 .4rem;border-radius:var(--radius);font-size:.78rem;font-weight:700;background:#fff;border:1px solid var(--brown-200);color:var(--ink-muted);cursor:pointer;transition:all var(--t);display:inline-flex;align-items:center;justify-content:center}
-.pg-btn:hover:not(:disabled){border-color:var(--brown-400);color:var(--brown-700);background:var(--brown-50)}
-.pg-btn.active{background:var(--brown-700);border-color:var(--brown-700);color:#fff}
-.pg-btn:disabled{opacity:.35;cursor:not-allowed}
-
-/* Empty / Loading */
-.empty-state{text-align:center;padding:4rem 2rem;color:var(--ink-muted)}
-.empty-icon{font-size:3rem;margin-bottom:1rem;opacity:.5}
-.empty-state p{font-size:.9rem}
-.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--brown-200);border-top-color:var(--brown-600);border-radius:50%;animation:spin .6s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-row td{text-align:center;padding:3rem;color:var(--ink-muted)}
-
-/* Modal */
-.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(26,15,0,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .2s ease}
-.modal-overlay.open{opacity:1;pointer-events:all}
-.modal{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);border:1px solid var(--brown-200);width:100%;max-width:480px;transform:translateY(20px) scale(.98);transition:transform .25s cubic-bezier(.16,1,.3,1)}
-.modal-overlay.open .modal{transform:translateY(0) scale(1)}
-.modal-header{display:flex;align-items:center;justify-content:space-between;padding:1.4rem 1.6rem 1rem;border-bottom:1px solid var(--brown-100)}
-.modal-title{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--brown-900)}
-.modal-close{width:30px;height:30px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;color:var(--ink-muted);font-size:1.2rem;border:1px solid var(--brown-200);transition:all var(--t)}
-.modal-close:hover{background:var(--brown-50);color:var(--ink)}
-.modal-body{padding:1.4rem 1.6rem}
-.modal-footer{padding:1rem 1.6rem 1.4rem;display:flex;justify-content:flex-end;gap:.6rem;border-top:1px solid var(--brown-100)}
-
-/* Form */
-.form-grid{display:grid;gap:1rem}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.form-group{display:flex;flex-direction:column;gap:.4rem}
-.form-label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
-.form-control{background:var(--brown-50);border:1.5px solid var(--brown-200);border-radius:var(--radius);padding:.55rem .8rem;font-size:.875rem;color:var(--ink);outline:none;transition:border-color var(--t),box-shadow var(--t)}
-.form-control:focus{border-color:var(--brown-400);box-shadow:0 0 0 3px rgba(194,138,58,.15);background:#fff}
-textarea.form-control{resize:vertical;min-height:80px}
-.form-error{font-size:.75rem;color:var(--danger);display:none;margin-top:.2rem}
-.form-control.is-invalid{border-color:var(--danger)}
-.form-control.is-invalid+.form-error{display:block}
-
-/* Confirm */
-.confirm-icon{font-size:2.5rem;text-align:center;margin-bottom:.75rem}
-.confirm-msg{text-align:center;color:var(--ink-muted);font-size:.875rem;line-height:1.65}
-.confirm-msg strong{color:var(--ink)}
-
-/* Toast */
-#toast-area{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;gap:.5rem;max-width:340px}
-.toast{display:flex;align-items:flex-start;gap:.7rem;padding:.85rem 1rem;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);font-size:.84rem;border:1px solid transparent;animation:slideUp .25s ease forwards}
-@keyframes slideUp{from{transform:translateY(12px);opacity:0}to{transform:translateY(0);opacity:1}}
-.toast-success{background:#fff;border-color:rgba(74,124,89,.3);color:var(--success)}
-.toast-error{background:#fff;border-color:rgba(155,50,50,.3);color:var(--danger)}
-.toast svg{width:16px;height:16px;flex-shrink:0;margin-top:1px}
-.toast-close{margin-left:auto;color:inherit;opacity:.5;font-size:1rem;cursor:pointer}
-.toast-close:hover{opacity:1}
-
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-track{background:var(--brown-50)}
-::-webkit-scrollbar-thumb{background:var(--brown-300);border-radius:99px}
-::-webkit-scrollbar-thumb:hover{background:var(--brown-500)}
-
-@media(max-width:768px){
-  .page-container{padding:1.25rem 1rem 3rem}
-  .detail-card{padding:1.5rem}
-  .detail-card-title{font-size:1.5rem}
-  .detail-meta{gap:1.25rem}
-  .form-row{grid-template-columns:1fr}
-}
-</style>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: "Cormorant Garamond", "Times New Roman", serif; }
+    h1,h2,h3 { font-family: "Playfair Display", "Times New Roman", serif; }
+  </style>
 </head>
-<body>
-<div class="app-shell">
 
-  <header class="topbar">
-    <div class="topbar-brand">Grand<span>Desk</span></div>
-  </header>
-
-  <main class="page-container">
-
-    <a href="/room-types" class="back-link">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      Back to Room Types
-    </a>
-
-    <!-- Detail hero -->
-    <div class="detail-card" style="display:flex;gap:2rem;align-items:stretch;padding:0;overflow:hidden">
-      
-      <!-- Hotel photo left side -->
-      <div style="width:280px;flex-shrink:0;background:var(--brown-800)">
-        <img 
-          src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&auto=format&fit=crop"
-          alt="Hotel room"
-          style="width:100%;height:100%;object-fit:cover;opacity:0.85;display:block"
-        />
+<body class="min-h-screen bg-gradient-to-b from-[#2a1a10] via-[#1b120a] to-[#120b07] text-[#f8f2e6] pb-8">
+  <div class="mx-6 my-6">
+    <div class="flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#4a3220] via-[#3a2618]/90 to-[#4a3220] p-3 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10 backdrop-blur-sm">
+      <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#f1d9b3]/25">
+        <svg width="18" height="18" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21h18M4 21V5a2 2 0 012-2h6v18M14 9h6a1 1 0 011 1v11M8 7h2M8 11h2M8 15h2M16 13h2M16 17h2"></path>
+        </svg>
       </div>
+      <div class="flex-1"></div>
+      <a href="/roomtypes" class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/25 px-3 py-2 text-sm font-semibold text-[#f1d9b3]">
+        <svg width="14" height="14" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back
+      </a>
+    </div>
 
-      <!-- Right content -->
-      <div style="padding:2rem 2.5rem;flex:1;position:relative">
-        <div class="detail-card-label">Room Type</div>
-        <div class="detail-card-title" id="dcTypeName">—</div>
-        <div class="detail-card-desc"  id="dcDescription">—</div>
-        <div class="detail-meta">
-          <div class="detail-meta-item">
-            <span class="label">Max Occupancy</span>
-            <span class="value" id="dcMaxOcc">—</span>
-          </div>
-          <div class="detail-meta-item">
-            <span class="label">Price / Night</span>
-            <span class="value price" id="dcPrice">—</span>
-          </div>
-          <div class="detail-meta-item">
-            <span class="label">ID</span>
-            <span class="value" id="dcId" style="font-family:var(--font-mono);font-size:.85rem;color:var(--brown-400)">—</span>
+    <div class="mt-6 flex items-center gap-2 text-sm text-[#f1d9b3]/75">
+      <a href="/" class="hover:text-[#f8f2e6]">Home</a>
+      <span>/</span>
+      <a href="/roomtypes" class="hover:text-[#f8f2e6]">Room Types</a>
+      <span>/</span>
+      <span class="font-semibold text-[#f1d9b3]" id="crumbName">Details</span>
+    </div>
+
+    <div class="mt-6 rounded-2xl bg-gradient-to-r from-[#4a3220] via-[#3a2618]/90 to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/15">
+      <div class="grid gap-6 lg:grid-cols-[280px_1fr]">
+        <div class="h-[220px] rounded-xl bg-cover bg-center shadow-[0_18px_40px_rgba(0,0,0,0.35)]"
+             style="background-image: linear-gradient(180deg, rgba(12,8,4,0.2), rgba(12,8,4,0.6)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900&auto=format&fit=crop');">
+        </div>
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[#f1d9b3]/80">Room Type</div>
+          <h1 class="mt-2 text-3xl font-bold text-[#f8f2e6]" id="dcTypeName">—</h1>
+          <p class="mt-2 text-sm text-[#f1d9b3]/85" id="dcDescription">—</p>
+          <div class="mt-4 grid gap-4 sm:grid-cols-3">
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[#f1d9b3]/70">Max Occupancy</div>
+              <div class="mt-1 text-base font-semibold text-[#f8f2e6]" id="dcMaxOcc">—</div>
+            </div>
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[#f1d9b3]/70">Price / Night</div>
+              <div class="mt-1 font-mono text-base text-[#f1d9b3]" id="dcPrice">—</div>
+            </div>
+            <div>
+              <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[#f1d9b3]/70">ID</div>
+              <div class="mt-1 font-mono text-base text-[#f1d9b3]" id="dcId">—</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Rooms section -->
-    <div id="roomsSection" style="display:none">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.75rem">
-        <h2 class="section-heading" style="margin-bottom:0;flex:1">
-          Rooms
-          <span id="roomCount" style="font-family:var(--font-mono);font-size:.8rem;color:var(--ink-muted);font-style:normal;background:var(--brown-100);padding:.1rem .5rem;border-radius:99px;margin-left:.25rem">0</span>
+    <div class="mt-8">
+      <div class="flex items-center justify-between gap-4">
+        <h2 class="text-xl font-bold text-[#f8f2e6]">Rooms
+          <span class="ml-2 rounded-full bg-[#f1d9b3]/20 px-3 py-1 text-xs font-semibold text-[#f1d9b3]" th:text="${rooms != null ? rooms.size() : 0}">0</span>
         </h2>
-        <!-- Add Room button removed -->
       </div>
-      <div class="card">
-        <div class="table-wrap">
-          <table>
+
+      <div class="mt-4 rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d]/95 to-[#1a110a]/95 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10">
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse">
             <thead>
-              <tr class="th-labels">
-                <th style="width:52px">#</th>
-                <th>Room Number</th>
-                <th style="width:160px">Availability</th>
-              </tr>
-              <tr class="th-search">
-                <th></th>
-                <th><input class="col-search" id="searchRoomNo" type="text" placeholder="Search room no…"/></th>
-                <th><input class="col-search" id="searchAvail" type="text" placeholder="yes / no"/></th>
+              <tr class="bg-[#2a1a10] text-[#f1d9b3] text-xs uppercase tracking-[0.18em]">
+                <th class="px-4 py-3 text-left w-[60px]">#</th>
+                <th class="px-4 py-3 text-left">Room Number</th>
+                <th class="px-4 py-3 text-left w-[180px]">Availability</th>
               </tr>
             </thead>
-            <tbody id="roomsBody"></tbody>
+            <tbody class="text-sm text-[#f8f2e6]">
+              <tr th:if="${rooms == null || rooms.isEmpty()}">
+                <td colspan="3">
+                  <div class="flex flex-col items-center justify-center gap-3 py-16 text-[#f1d9b3]/70">
+                    <div class="text-4xl">🛏️</div>
+                    <p>No rooms found for this room type.</p>
+                  </div>
+                </td>
+              </tr>
+              <tr th:each="room, iter : ${rooms}" class="border-b border-[#f1d9b3]/10 hover:bg-[#f1d9b3]/5">
+                <td class="px-4 py-3 text-xs text-[#f1d9b3]/60" th:text="${iter.count}">1</td>
+                <td class="px-4 py-3 font-mono font-semibold" th:text="${room.roomNumber}">101</td>
+                <td class="px-4 py-3">
+                  <span th:if="${room.isAvailable}" class="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-300">✓ Available</span>
+                  <span th:unless="${room.isAvailable}" class="inline-flex items-center gap-2 rounded-full border border-red-400/30 bg-red-400/10 px-3 py-1 text-xs font-semibold text-red-300">✗ Not Available</span>
+                </td>
+              </tr>
+            </tbody>
           </table>
         </div>
-        <div class="pagination-bar">
-          <span id="roomPgInfo"></span>
-          <div class="pagination-btns" id="roomPgBtns"></div>
-        </div>
       </div>
     </div>
-
-<!-- ROOM TYPE EDIT MODAL -->
-<div class="modal-overlay" id="rtEditModal">
-  <div class="modal" role="dialog" aria-modal="true">
-    <div class="modal-header">
-      <h2 class="modal-title">Edit Room Type</h2>
-      <button class="modal-close" onclick="closeModal('rtEditModal')">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="form-group">
-          <label class="form-label" for="rtEditTypeName">Type Name *</label>
-          <input class="form-control" type="text" id="rtEditTypeName"/>
-          <span class="form-error">Name is required.</span>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="rtEditDescription">Description</label>
-          <textarea class="form-control" id="rtEditDescription"></textarea>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="rtEditMaxOcc">Max Occupancy *</label>
-            <input class="form-control" type="number" id="rtEditMaxOcc" min="1"/>
-            <span class="form-error">Must be ≥ 1.</span>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="rtEditPrice">Price / Night (₹) *</label>
-            <input class="form-control" type="number" id="rtEditPrice" min="0.01" step="0.01"/>
-            <span class="form-error">Must be positive.</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('rtEditModal')">Cancel</button>
-      <button class="btn btn-primary" id="rtEditSubmitBtn" onclick="submitRtEdit()">Update</button>
-    </div>
   </div>
-</div>
 
-<!-- ADD / EDIT ROOM MODAL -->
-<div class="modal-overlay" id="roomFormModal">
-  <div class="modal" role="dialog" aria-modal="true">
-    <div class="modal-header">
-      <h2 class="modal-title" id="roomFormTitle">Add Room</h2>
-      <button class="modal-close" onclick="closeModal('roomFormModal')">&times;</button>
-    </div>
-    <div class="modal-body">
-      <form id="roomForm" novalidate onsubmit="return false">
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label" for="fRoomNumber">Room Number *</label>
-            <input class="form-control" type="number" id="fRoomNumber" min="1" placeholder="e.g. 101"/>
-            <span class="form-error">Valid room number required.</span>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="fIsAvailable">Availability *</label>
-            <select class="form-control" id="fIsAvailable">
-              <option value="true">Available</option>
-              <option value="false">Not Available</option>
-            </select>
-          </div>
-        </div>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('roomFormModal')">Cancel</button>
-      <button class="btn btn-primary" id="roomSubmitBtn" onclick="submitRoomForm()">Create</button>
-    </div>
-  </div>
-</div>
-
-<!-- ROOM DELETE CONFIRM -->
-<div class="modal-overlay" id="roomConfirmModal">
-  <div class="modal" role="dialog" aria-modal="true" style="max-width:400px">
-    <div class="modal-header">
-      <h2 class="modal-title">Delete Room</h2>
-      <button class="modal-close" onclick="closeModal('roomConfirmModal')">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div class="confirm-icon">🛏️</div>
-      <p class="confirm-msg">Delete room <strong id="deleteRoomNo"></strong>?<br/>
-        <span style="font-size:.78rem;color:var(--ink-light);margin-top:.4rem;display:block">This cannot be undone.</span>
-      </p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('roomConfirmModal')">Cancel</button>
-      <button class="btn btn-danger" id="roomConfirmDeleteBtn" onclick="confirmRoomDelete()">Delete</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast-area"></div>
-
-<script>
-  const API = 'http://localhost:8082/api';
-  const ROOM_PAGE_SIZE = 8;
-  let roomTypeData = null, allRooms = [], roomViewData = [], roomPage = 1;
-  let roomFilters = { roomNumber: '', isAvailable: '' };
-  
-  document.addEventListener('DOMContentLoaded', () => {
-    const params = new URLSearchParams(window.location.search), id = params.get('id');
-    if (!id) { window.location.href = '/room-types'; return; }
-    setupRoomSearchDebounce();
-    loadDetailPage(id);
-  });
-  
-  function toast(type, msg) {
-    const area = document.getElementById('toast-area'), id = 'toast-' + Date.now();
-    const icon = type === 'success'
-      ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
-      : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
-    area.insertAdjacentHTML('beforeend', `<div class="toast toast-${type}" id="${id}">${icon}<span>${msg}</span><button class="toast-close" onclick="this.closest('.toast').remove()">&times;</button></div>`);
-    setTimeout(() => document.getElementById(id)?.remove(), 4000);
-  }
-  
-  function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
-  function fmtPrice(v) { return '₹ ' + Number(v).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.dropdown-menu.open').forEach(m => m.classList.remove('open')); });
-  
-  async function loadDetailPage(id) {
-    try {
-      const [rtRes, roomsRes] = await Promise.all([
-        fetch(`${API}/roomtypes/${id}`),
-        fetch(`${API}/rooms/search/byRoomType?roomTypeId=${id}`),
-        fetch(`${API}/rooms?size=1000`)
-      ]);
-      if (!rtRes.ok) throw new Error(`Room type not found (HTTP ${rtRes.status})`);
-      roomTypeData = await rtRes.json();
-      roomTypeData._id = id;
+  <script th:inline="javascript">
+    const ROOM_TYPE = /*[[${roomType}]]*/ {};
+    let roomTypeData = ROOM_TYPE;
+    document.addEventListener('DOMContentLoaded', () => {
       renderDetailCard(roomTypeData);
-  
-      if (roomsRes.ok) {
-        const roomsJson = await roomsRes.json();
-        console.log('FULL RESPONSE:', roomsJson);                          // check structure
-        const embedded = roomsJson._embedded, key = embedded ? Object.keys(embedded)[0] : null;
-        const rawRooms = key ? embedded[key] : [];
-        console.log('RAW ROOMS COUNT:', rawRooms.length);                  // check if rooms come at all
-        console.log('SAMPLE ROOM:', rawRooms[0]);                          // check full room object
-        console.log('ROOM TYPE HREF:', rawRooms[0]?._links?.roomType?.href); // check the href
-        console.log('LOOKING FOR ID:', id);  
-        allRooms = rawRooms
-        .map(r => { 
-          const selfHref = r._links?.self?.href || ''; 
-          return { ...r, _id: selfHref.split('/').pop() }; 
-        })
-        .filter(r => {
-          const rtHref = r._links?.roomType?.href || '';
-          const rtIdFromHref = rtHref.split('/').pop();  // ← extract just the ID
-          return rtIdFromHref === String(id);             // ← compare only IDs
-        });
-            }
-      applyRoomFilters();
-      document.getElementById('roomsSection').style.display = 'block';
-    } catch (e) { toast('error', e.message); }
-  }
-  
-  function renderDetailCard(rt) {
-    document.title = `${rt.typeName} — Hotel Management`;
-    document.getElementById('dcTypeName').textContent = rt.typeName || '—';
-    document.getElementById('dcDescription').textContent = rt.description || 'No description provided.';
-    document.getElementById('dcMaxOcc').textContent = `${rt.maxOccupancy} guest${rt.maxOccupancy > 1 ? 's' : ''}`;
-    document.getElementById('dcPrice').textContent = fmtPrice(rt.pricePerNight);
-    document.getElementById('dcId').textContent = `#${rt.roomTypeId || rt._id}`;
-  }
-  
-  function applyRoomFilters() {
-    const rn = roomFilters.roomNumber.trim().toLowerCase();
-    const av = roomFilters.isAvailable.trim().toLowerCase();
-    roomViewData = allRooms.filter(r => {
-      if (rn && !String(r.roomNumber || '').toLowerCase().includes(rn)) return false;
-      if (av === 'yes' || av === 'true') { if (!r.isAvailable) return false; }
-      else if (av === 'no' || av === 'false') { if (r.isAvailable) return false; }
-      return true;
     });
-    roomPage = 1; renderRoomsTable();
-  }
-  
-  function setupRoomSearchDebounce() {
-    let timer;
-    ['searchRoomNo', 'searchAvail'].forEach(sid => {
-      document.getElementById(sid)?.addEventListener('input', () => {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-          roomFilters.roomNumber = document.getElementById('searchRoomNo').value;
-          roomFilters.isAvailable = document.getElementById('searchAvail').value;
-          applyRoomFilters();
-        }, 300);
-      });
-    });
-  }
-  
-  function renderRoomsTable() {
-    const tbody = document.getElementById('roomsBody'), total = roomViewData.length;
-    const pages = Math.max(1, Math.ceil(total / ROOM_PAGE_SIZE)), start = (roomPage - 1) * ROOM_PAGE_SIZE;
-    const slice = roomViewData.slice(start, start + ROOM_PAGE_SIZE);
-    document.getElementById('roomCount').textContent = total;
-  
-    if (slice.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state"><div class="empty-icon">🛏️</div><p>No rooms found for this room type.</p></div></td></tr>`;
-    } else {
-      tbody.innerHTML = slice.map((r, idx) => `
-        <tr>
-          <td class="td-sno">${start + idx + 1}</td>
-          <td style="font-weight:600;font-family:var(--font-mono)">${esc(String(r.roomNumber))}</td>
-          <td>${r.isAvailable ? '<span class="badge badge-available">✓ Available</span>' : '<span class="badge badge-occupied">✗ Not Available</span>'}</td>
-        </tr>`).join('');
+    function fmtPrice(v) { return '₹ ' + Number(v).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+    function renderDetailCard(rt) {
+      document.title = `${rt.typeName} — Hotel Management`;
+      const crumb=document.getElementById('crumbName');
+      if(crumb){crumb.textContent=rt.typeName||'Room Type';}
+      document.getElementById('dcTypeName').textContent = rt.typeName || '—';
+      document.getElementById('dcDescription').textContent = rt.description || 'No description provided.';
+      document.getElementById('dcMaxOcc').textContent = `${rt.maxOccupancy} guest${rt.maxOccupancy > 1 ? 's' : ''}`;
+      document.getElementById('dcPrice').textContent = fmtPrice(rt.pricePerNight);
+      const resolvedId = rt.resolvedId || rt.roomTypeId || rt._id;
+      document.getElementById('dcId').textContent = resolvedId ? `#${resolvedId}` : '—';
     }
-    renderRoomPagination(total, pages);
-  }
-  
-  function renderRoomPagination(total, pages) {
-    const start = (roomPage - 1) * ROOM_PAGE_SIZE;
-    document.getElementById('roomPgInfo').textContent = total === 0 ? 'No rooms' : `Showing ${start + 1}–${Math.min(start + ROOM_PAGE_SIZE, total)} of ${total}`;
-    const btns = document.getElementById('roomPgBtns'); btns.innerHTML = '';
-    const mk = (label, page, disabled, active) => {
-      const b = document.createElement('button');
-      b.className = 'pg-btn' + (active ? ' active' : ''); b.textContent = label; b.disabled = disabled;
-      if (!disabled) b.onclick = () => { roomPage = page; renderRoomsTable(); }; btns.appendChild(b);
-    };
-    mk('‹', roomPage - 1, roomPage === 1);
-    for (let p = 1; p <= pages; p++) { if (pages <= 7 || p === 1 || p === pages || Math.abs(p - roomPage) <= 1) mk(p, p, false, p === roomPage); }
-    mk('›', roomPage + 1, roomPage === pages);
-  }
-</script>
+  </script>
 </body>
 </html>
