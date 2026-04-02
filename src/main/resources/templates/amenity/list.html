@@ -1,543 +1,346 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title th:text="'Amenities | Room ' + ${room.roomNumber}">Amenities | Room</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com"/>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Amenities | Room ' + ${room != null && room.roomNumber != null ? room.roomNumber : ''}">Amenities | Room</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --bg-top: #2a1a10;
-            --bg-mid: #1b120a;
-            --bg-bottom: #120b07;
-            --panel: #1a110a;
-            --panel-soft: #24160d;
-            --panel-alt: #3a2618;
-            --gold: #f1d9b3;
-            --gold-soft: #d2b387;
-            --text: #f8f2e6;
-            --muted: rgba(241, 217, 179, 0.75);
-            --border: rgba(241, 217, 179, 0.18);
-            --danger: #ffb5b5;
-            --success: #b7efc1;
+        body {
+            font-family: "Cormorant Garamond", "Times New Roman", serif;
         }
 
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            min-height: 100vh;
-            color: var(--text);
-            background: linear-gradient(180deg, var(--bg-top), var(--bg-mid), var(--bg-bottom));
-            font-family: "DM Sans", Arial, sans-serif;
-        }
-        h1, h2, h3, .brand {
+        h1,
+        h2,
+        h3 {
             font-family: "Playfair Display", "Times New Roman", serif;
-        }
-        .shell {
-            padding: 1.5rem;
-        }
-        .nav {
-            position: sticky;
-            top: 1.5rem;
-            z-index: 20;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.9rem 1.2rem;
-            border: 1px solid rgba(241, 217, 179, 0.1);
-            border-radius: 1.25rem;
-            background: linear-gradient(90deg, #4a3220, rgba(58, 38, 24, 0.92), #4a3220);
-            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
-            backdrop-filter: blur(10px);
-        }
-        .brand {
-            color: var(--text);
-            text-decoration: none;
-            font-size: 1.9rem;
-            line-height: 1;
-        }
-        .brand span { color: var(--gold); }
-        .crumbs {
-            margin-left: auto;
-            display: flex;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--muted);
-            flex-wrap: wrap;
-        }
-        .crumbs a { color: inherit; text-decoration: none; }
-        .crumbs a:hover { color: var(--text); }
-        .page {
-            max-width: 1100px;
-            margin: 1.5rem auto 0;
-            padding: 0 1rem 4rem;
-        }
-        .flash {
-            margin-bottom: 1rem;
-        }
-        .alert {
-            padding: 0.9rem 1rem;
-            border-left: 3px solid;
-            background: rgba(255,255,255,0.04);
-            margin-bottom: 0.75rem;
-        }
-        .alert-success { border-color: #4caf50; color: var(--success); }
-        .alert-error { border-color: #f44336; color: #ffc0c0; }
-        .header {
-            display: flex;
-            align-items: end;
-            justify-content: space-between;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .eyebrow {
-            text-transform: uppercase;
-            letter-spacing: 0.22em;
-            color: var(--gold);
-            font-size: 0.72rem;
-            margin-bottom: 0.4rem;
-        }
-        .title {
-            margin: 0;
-            font-size: clamp(2.2rem, 5vw, 3.5rem);
-            font-weight: 500;
-            line-height: 0.95;
-        }
-        .title em {
-            color: var(--gold);
-            font-style: italic;
-            font-weight: 400;
-        }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.45rem;
-            padding: 0.78rem 1.1rem;
-            border-radius: 999px;
-            border: 1px solid transparent;
-            background: rgba(241, 217, 179, 0.92);
-            color: #4a2c12;
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .btn.alt {
-            background: transparent;
-            color: var(--gold);
-            border-color: var(--border);
-        }
-        .btn.danger {
-            background: transparent;
-            color: var(--danger);
-            border-color: rgba(255, 181, 181, 0.35);
-        }
-        .meta {
-            display: flex;
-            gap: 1.2rem;
-            flex-wrap: wrap;
-            margin-bottom: 1.4rem;
-            color: var(--muted);
-        }
-        .meta strong { color: var(--text); }
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            padding: 0.28rem 0.72rem;
-            border-radius: 999px;
-            font-size: 0.78rem;
-            font-weight: 700;
-        }
-        .badge.available {
-            background: rgba(46, 125, 50, 0.18);
-            color: #b7efc1;
-        }
-        .badge.occupied {
-            background: rgba(198, 40, 40, 0.18);
-            color: #ffc0c0;
-        }
-        .section-line {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin: 1.4rem 0 1rem;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.16em;
-            font-size: 0.7rem;
-        }
-        .section-line::before, .section-line::after {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-        }
-        .toolbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            color: var(--muted);
-            font-size: 0.9rem;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1rem;
-        }
-        .card {
-            border: 1px solid var(--border);
-            border-radius: 1.2rem;
-            background: linear-gradient(180deg, rgba(36, 22, 13, 0.96), rgba(26, 17, 10, 0.98));
-            overflow: hidden;
-            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
-        }
-        .card-top {
-            height: 4px;
-            background: linear-gradient(90deg, var(--gold), #e8c97a);
-        }
-        .card-body {
-            padding: 1.25rem;
-        }
-        .card h3 {
-            margin: 0 0 0.35rem;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        .card p {
-            margin: 0;
-            color: var(--muted);
-            line-height: 1.65;
-            min-height: 3rem;
-        }
-        .card-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        .empty {
-            border: 1px dashed var(--border);
-            border-radius: 1.2rem;
-            padding: 3rem 1rem;
-            text-align: center;
-            color: var(--muted);
-            background: rgba(255,255,255,0.02);
-        }
-        .overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 50;
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(5px);
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-        .overlay.open { display: flex; }
-        .modal {
-            width: min(560px, 100%);
-            border-radius: 1.3rem;
-            border: 1px solid var(--border);
-            background: linear-gradient(180deg, #24160d, #1a110a);
-            box-shadow: 0 24px 60px rgba(0,0,0,0.4);
-            overflow: hidden;
-        }
-        .modal-head, .modal-foot {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            padding: 1.2rem 1.4rem;
-            border-bottom: 1px solid var(--border);
-        }
-        .modal-foot {
-            border-top: 1px solid var(--border);
-            border-bottom: 0;
-            justify-content: flex-end;
-        }
-        .modal-head h3 {
-            margin: 0;
-            font-size: 1.7rem;
-            font-weight: 600;
-        }
-        .modal-body {
-            padding: 1.3rem 1.4rem;
-        }
-        .field {
-            margin-bottom: 1rem;
-        }
-        .field label {
-            display: block;
-            margin-bottom: 0.4rem;
-            color: var(--muted);
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-        }
-        .field input, .field textarea, .field select {
-            width: 100%;
-            padding: 0.8rem 0.95rem;
-            border-radius: 0.9rem;
-            border: 1px solid var(--border);
-            background: rgba(58, 38, 24, 0.6);
-            color: var(--text);
-            font: inherit;
-            outline: none;
-        }
-        .field textarea {
-            resize: vertical;
-            min-height: 90px;
-        }
-        .field input:focus, .field textarea:focus, .field select:focus {
-            border-color: rgba(241, 217, 179, 0.45);
-        }
-        .close-btn {
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--gold);
-            width: 2.2rem;
-            height: 2.2rem;
-            border-radius: 999px;
-            cursor: pointer;
-        }
-        .confirm {
-            color: var(--muted);
-            line-height: 1.65;
-        }
-        .confirm strong { color: var(--text); }
-        @media (max-width: 768px) {
-            .shell { padding: 1rem; }
-            .nav { top: 1rem; padding: 0.9rem 1rem; flex-wrap: wrap; }
-            .crumbs { margin-left: 0; width: 100%; }
-            .header { align-items: start; flex-direction: column; }
-            .page { padding: 0 0.25rem 3rem; }
-            .toolbar { flex-direction: column; align-items: start; }
         }
     </style>
 </head>
-<body>
-<div class="shell">
-    <div class="nav">
-        <a class="brand" href="/hotels">Lux<span>Stay</span></a>
-        <div class="crumbs">
-            <a href="/hotels">Hotels</a>
-            <span>/</span>
-            <a th:href="@{/hotels/{id}/rooms(id=${hotelId})}">Rooms</a>
-            <span>/</span>
-            <span th:text="'Room ' + ${room.roomNumber}">Room</span>
-            <span>/</span>
-            <span>Amenities</span>
-        </div>
-    </div>
 
-    <main class="page">
-        <div class="flash">
-            <div th:if="${successMsg}" class="alert alert-success" th:text="${successMsg}"></div>
-            <div th:if="${errorMsg}" class="alert alert-error" th:text="${errorMsg}"></div>
-        </div>
-
-        <div class="header">
-            <div>
-                <div class="eyebrow">Room <span th:text="${room.roomNumber}">101</span></div>
-                <h1 class="title">Room<br><em>Amenities</em></h1>
-            </div>
-            <button class="btn" type="button" onclick="openCreate()">+ New Amenity</button>
-        </div>
-
-        <div class="meta">
-            <div>Type: <strong th:text="${room.roomType != null ? room.roomType.typeName : '-'}">Standard</strong></div>
-            <div>Price: <strong th:text="${room.roomType != null and room.roomType.pricePerNight != null ? '$' + #numbers.formatDecimal(room.roomType.pricePerNight,1,2) + '/night' : '-'}">$120.00/night</strong></div>
-            <div>
-                Status:
-                <span class="badge available" th:if="${room.isAvailable}">Available</span>
-                <span class="badge occupied" th:unless="${room.isAvailable}">Occupied</span>
-            </div>
-        </div>
-
-        <div class="section-line">Assigned Amenities</div>
-
-        <section>
-            <div class="toolbar">
-                <span th:text="${#lists.size(amenities)} + ' amenity(s) assigned'">0 amenity(s) assigned</span>
-                <button class="btn alt" type="button" onclick="openAssign()">+ Assign Existing</button>
+<body class="min-h-screen bg-gradient-to-b from-[#2a1a10] via-[#1b120a] to-[#120b07] text-[#f8f2e6] pb-6 pt-24">
+    <div class="w-full">
+        <div class="mx-6 mt-6">
+            <div
+                class="fixed inset-x-6 top-6 z-50 flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#4a3220] via-[#3a2618]/90 to-[#4a3220] p-3 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10 backdrop-blur-sm">
+                <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#f1d9b3]/25">
+                    <svg width="18" height="18" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 7h18M4 7v10a2 2 0 002 2h12a2 2 0 002-2V7M6 11h12M6 15h12">
+                        </path>
+                    </svg>
+                </div>
+                <div class="flex-1"></div>
+                <a th:href="@{/hotels/{id}/rooms(id=${hotelId})}"
+                    class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/25 px-3 py-2 text-sm font-semibold text-[#f1d9b3]">
+                    <svg width="14" height="14" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
+                    </svg>
+                    Back
+                </a>
             </div>
 
-            <div th:if="${#lists.isEmpty(amenities)}" class="empty">
-                <p>No amenities assigned to this room yet.</p>
-            </div>
+            <div class="mx-0">
+                <div class="flex items-center gap-2 text-sm text-[#f1d9b3]/75">
+                    <a href="/" class="hover:text-[#f8f2e6]">Home</a>
+                    <span>/</span>
+                    <a href="/hotels" class="hover:text-[#f8f2e6]">Hotels</a>
+                    <span>/</span>
+                    <a th:href="@{/hotels/{id}/rooms(id=${hotelId})}" class="hover:text-[#f8f2e6]">Rooms</a>
+                    <span>/</span>
+                    <span class="font-semibold text-[#f1d9b3]">Amenities</span>
+                </div>
 
-            <div class="grid" th:unless="${#lists.isEmpty(amenities)}">
-                <article class="card" th:each="a : ${amenities}">
-                    <div class="card-top"></div>
-                    <div class="card-body">
-                        <h3 th:text="${a.name}">Amenity</h3>
-                        <p th:text="${a.description != null and !#strings.isEmpty(a.description) ? a.description : 'No description available.'}">Description</p>
-                        <div class="card-actions">
-                            <button class="btn alt" type="button" th:attr="data-id=${a.amenityId},data-name=${a.name},data-description=${a.description}" onclick="openEdit(this)">Edit</button>
-                            <button class="btn danger" type="button" th:attr="data-id=${a.amenityId},data-name=${a.name}" onclick="openUnassign(this)">Remove</button>
-                            <button class="btn danger" type="button" th:attr="data-id=${a.amenityId},data-name=${a.name}" onclick="openDelete(this)">Delete</button>
-                        </div>
+                <div class="mt-2 flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold text-[#f8f2e6]">Room Amenities</h1>
+                        <p class="text-base text-[#f1d9b3]/85">Room <span
+                                th:text="${room != null ? room.roomNumber : ''}">101</span> amenities
+                            and status</p>
                     </div>
-                </article>
-            </div>
-        </section>
-    </main>
-</div>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button type="button" onclick="openAssign()"
+                            class="inline-flex items-center gap-2 rounded-full border border-[#f1d9b3]/40 px-4 py-2 text-sm font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10">
+                            Assign Existing
+                        </button>
+                        <button type="button" onclick="openCreate()"
+                            class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-sm font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 5v14m7-7H5"></path>
+                            </svg>
+                            New Amenity
+                        </button>
+                    </div>
+                </div>
 
-<div class="overlay" id="createModal">
-    <div class="modal">
-        <div class="modal-head">
-            <h3>New Amenity</h3>
-            <button class="close-btn" type="button" onclick="closeModal('createModal')">x</button>
+                <div class="mt-4">
+                    <div th:if="${successMsg}"
+                        class="rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200"
+                        th:text="${successMsg}"></div>
+                    <div th:if="${errorMsg}"
+                        class="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-200"
+                        th:text="${errorMsg}"></div>
+                </div>
+
+                <div class="mt-4 flex flex-wrap items-center gap-4 text-sm text-[#f1d9b3]/80">
+                    <div>
+                        Type:
+                        <span class="font-semibold text-[#f8f2e6]"
+                            th:text="${room != null && room.roomType != null ? room.roomType.typeName : '-'}">Standard</span>
+                    </div>
+                    <div>
+                        Price:
+                        <span class="font-semibold text-[#f8f2e6]"
+                            th:text="${room != null && room.roomType != null and room.roomType.pricePerNight != null ? '$' + #numbers.formatDecimal(room.roomType.pricePerNight,1,2) + '/night' : '-'}">$120.00/night</span>
+                    </div>
+                    <div class="inline-flex items-center gap-2">
+                        Status:
+                        <span th:if="${room == null}">-</span>
+                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                            th:if="${room != null && room.isAvailable}"
+                            style="background: rgba(16,185,129,0.18); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3);">Available</span>
+                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                            th:if="${room != null && !room.isAvailable}"
+                            style="background: rgba(239,68,68,0.18); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3);">Occupied</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 rounded-2xl border border-[#f1d9b3]/20 bg-[#1a110a]/70 p-4 text-sm text-[#f1d9b3]/75">
+                    <span th:text="${#lists.size(amenities)} + ' amenity(s) assigned'">0 amenity(s) assigned</span>
+                </div>
+
+                <div th:if="${#lists.isEmpty(amenities)}"
+                    class="mt-6 rounded-2xl border border-[#f1d9b3]/20 bg-[#1a110a]/70 p-10 text-center text-[#f1d9b3]/70">
+                    No amenities assigned to this room yet.
+                </div>
+
+                <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" th:unless="${#lists.isEmpty(amenities)}">
+                    <article class="rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d]/95 to-[#1a110a]/95 p-5 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10"
+                        th:each="a : ${amenities}">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <h3 class="text-xl font-semibold text-[#f8f2e6]" th:text="${a.name}">Amenity</h3>
+                                <p class="mt-2 text-sm text-[#f1d9b3]/75"
+                                    th:text="${a.description != null and !#strings.isEmpty(a.description) ? a.description : 'No description available.'}">
+                                    Description
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex flex-wrap items-center gap-2">
+                            <button type="button"
+                                th:attr="data-id=${a.amenityId},data-name=${a.name},data-description=${a.description}"
+                                onclick="openEdit(this)"
+                                class="inline-flex items-center gap-2 rounded-full border border-[#f1d9b3]/40 px-3 py-1 text-xs font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10">
+                                Edit
+                            </button>
+                            <button type="button" th:attr="data-id=${a.amenityId},data-name=${a.name}"
+                                onclick="openUnassign(this)"
+                                class="inline-flex items-center gap-2 rounded-full border border-red-300/30 bg-[#1f140b]/60 px-3 py-1 text-xs font-semibold text-[#ffb5b5] hover:bg-red-400/10">
+                                Remove
+                            </button>
+                            <button type="button" th:attr="data-id=${a.amenityId},data-name=${a.name}"
+                                onclick="openDelete(this)"
+                                class="inline-flex items-center gap-2 rounded-full border border-red-300/30 bg-[#1f140b]/60 px-3 py-1 text-xs font-semibold text-[#ffb5b5] hover:bg-red-400/10">
+                                Delete
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </div>
         </div>
-        <form th:action="@{/hotels/{hid}/rooms/{rid}/amenities/create(hid=${hotelId},rid=${roomId})}" method="post">
-            <div class="modal-body">
-                <div class="field">
-                    <label for="createName">Name</label>
-                    <input id="createName" type="text" name="name" required placeholder="e.g. Free WiFi"/>
-                </div>
-                <div class="field">
-                    <label for="createDescription">Description</label>
-                    <textarea id="createDescription" name="description" placeholder="Brief description"></textarea>
-                </div>
-            </div>
-            <div class="modal-foot">
-                <button class="btn alt" type="button" onclick="closeModal('createModal')">Cancel</button>
-                <button class="btn" type="submit">Create and Assign</button>
-            </div>
-        </form>
     </div>
-</div>
 
-<div class="overlay" id="assignModal">
-    <div class="modal">
-        <div class="modal-head">
-            <h3>Assign Existing Amenity</h3>
-            <button class="close-btn" type="button" onclick="closeModal('assignModal')">x</button>
+    <div id="createModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm px-4">
+        <div
+            class="w-full max-w-xl rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d] to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-[#f8f2e6]">New Amenity</h2>
+                <button class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#f1d9b3]/30 text-[#f1d9b3] hover:bg-[#f1d9b3]/15"
+                    onclick="closeModal('createModal')">✕</button>
+            </div>
+            <form th:action="@{/hotels/{hid}/rooms/{rid}/amenities/create(hid=${hotelId},rid=${roomId})}" method="post"
+                class="mt-5 space-y-4">
+                <div>
+                    <label class="text-sm text-[#f1d9b3]/75">Name</label>
+                    <input type="text" name="name" required placeholder="e.g. Free WiFi"
+                        class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                </div>
+                <div>
+                    <label class="text-sm text-[#f1d9b3]/75">Description</label>
+                    <textarea name="description" rows="3" placeholder="Brief description"
+                        class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40"></textarea>
+                </div>
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <button type="button"
+                        class="rounded-full border border-[#f1d9b3]/30 px-4 py-2 text-sm font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10"
+                        onclick="closeModal('createModal')">Cancel</button>
+                    <button type="submit"
+                        class="rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-sm font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                        Create and Assign
+                    </button>
+                </div>
+            </form>
         </div>
-        <form th:action="@{/hotels/{hid}/rooms/{rid}/amenities/assign(hid=${hotelId},rid=${roomId})}" method="post">
-            <div class="modal-body">
-                <div class="field">
-                    <label for="amenityId">Select Amenity</label>
-                    <select id="amenityId" name="amenityId" required>
+    </div>
+
+    <div id="assignModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm px-4">
+        <div
+            class="w-full max-w-xl rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d] to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-[#f8f2e6]">Assign Existing Amenity</h2>
+                <button class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#f1d9b3]/30 text-[#f1d9b3] hover:bg-[#f1d9b3]/15"
+                    onclick="closeModal('assignModal')">✕</button>
+            </div>
+            <form th:action="@{/hotels/{hid}/rooms/{rid}/amenities/assign(hid=${hotelId},rid=${roomId})}" method="post"
+                class="mt-5 space-y-4">
+                <div>
+                    <label class="text-sm text-[#f1d9b3]/75">Select Amenity</label>
+                    <select name="amenityId" required
+                        class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 text-[#f8f2e6] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
                         <option value="">Choose an amenity</option>
                         <option th:each="a : ${allAmenities}" th:value="${a.amenityId}" th:text="${a.name}">Amenity</option>
                     </select>
                 </div>
-            </div>
-            <div class="modal-foot">
-                <button class="btn alt" type="button" onclick="closeModal('assignModal')">Cancel</button>
-                <button class="btn" type="submit">Assign</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="overlay" id="editModal">
-    <div class="modal">
-        <div class="modal-head">
-            <h3>Edit Amenity</h3>
-            <button class="close-btn" type="button" onclick="closeModal('editModal')">x</button>
-        </div>
-        <form id="editForm" method="post">
-            <div class="modal-body">
-                <div class="field">
-                    <label for="eName">Name</label>
-                    <input id="eName" type="text" name="name" required/>
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <button type="button"
+                        class="rounded-full border border-[#f1d9b3]/30 px-4 py-2 text-sm font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10"
+                        onclick="closeModal('assignModal')">Cancel</button>
+                    <button type="submit"
+                        class="rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-sm font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                        Assign
+                    </button>
                 </div>
-                <div class="field">
-                    <label for="eDesc">Description</label>
-                    <textarea id="eDesc" name="description"></textarea>
+            </form>
+        </div>
+    </div>
+
+    <div id="editModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm px-4">
+        <div
+            class="w-full max-w-xl rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d] to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-[#f8f2e6]">Edit Amenity</h2>
+                <button class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#f1d9b3]/30 text-[#f1d9b3] hover:bg-[#f1d9b3]/15"
+                    onclick="closeModal('editModal')">✕</button>
+            </div>
+            <form id="editForm" method="post" class="mt-5 space-y-4">
+                <div>
+                    <label class="text-sm text-[#f1d9b3]/75">Name</label>
+                    <input id="eName" type="text" name="name" required
+                        class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 text-[#f8f2e6] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
                 </div>
-            </div>
-            <div class="modal-foot">
-                <button class="btn alt" type="button" onclick="closeModal('editModal')">Cancel</button>
-                <button class="btn" type="submit">Save Changes</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="overlay" id="unassignModal">
-    <div class="modal">
-        <div class="modal-head">
-            <h3>Remove from Room</h3>
-            <button class="close-btn" type="button" onclick="closeModal('unassignModal')">x</button>
+                <div>
+                    <label class="text-sm text-[#f1d9b3]/75">Description</label>
+                    <textarea id="eDesc" name="description" rows="3"
+                        class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-2 text-[#f8f2e6] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40"></textarea>
+                </div>
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <button type="button"
+                        class="rounded-full border border-[#f1d9b3]/30 px-4 py-2 text-sm font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10"
+                        onclick="closeModal('editModal')">Cancel</button>
+                    <button type="submit"
+                        class="rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-sm font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
         </div>
-        <form id="unassignForm" method="post">
-            <div class="modal-body">
-                <p class="confirm">Remove <strong id="unassignName">this amenity</strong> from this room? The amenity itself will stay in the system.</p>
-            </div>
-            <div class="modal-foot">
-                <button class="btn alt" type="button" onclick="closeModal('unassignModal')">Cancel</button>
-                <button class="btn danger" type="submit">Remove</button>
-            </div>
-        </form>
     </div>
-</div>
 
-<div class="overlay" id="deleteModal">
-    <div class="modal">
-        <div class="modal-head">
-            <h3>Delete Amenity</h3>
-            <button class="close-btn" type="button" onclick="closeModal('deleteModal')">x</button>
+    <div id="unassignModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm px-4">
+        <div
+            class="w-full max-w-xl rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d] to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-[#f8f2e6]">Remove from Room</h2>
+                <button class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#f1d9b3]/30 text-[#f1d9b3] hover:bg-[#f1d9b3]/15"
+                    onclick="closeModal('unassignModal')">✕</button>
+            </div>
+            <form id="unassignForm" method="post" class="mt-5">
+                <p class="text-sm text-[#f1d9b3]/75">Remove <strong id="unassignName" class="text-[#f8f2e6]">this amenity</strong> from
+                    this room? The amenity stays in the system.</p>
+                <div class="mt-6 flex items-center justify-end gap-3">
+                    <button type="button"
+                        class="rounded-full border border-[#f1d9b3]/30 px-4 py-2 text-sm font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10"
+                        onclick="closeModal('unassignModal')">Cancel</button>
+                    <button type="submit"
+                        class="rounded-full border border-red-300/30 bg-[#1f140b]/60 px-4 py-2 text-sm font-semibold text-[#ffb5b5] hover:bg-red-400/10">
+                        Remove
+                    </button>
+                </div>
+            </form>
         </div>
-        <form id="deleteForm" method="post">
-            <div class="modal-body">
-                <p class="confirm">Permanently delete <strong id="deleteName">this amenity</strong>? This removes it from every room and hotel.</p>
-            </div>
-            <div class="modal-foot">
-                <button class="btn alt" type="button" onclick="closeModal('deleteModal')">Cancel</button>
-                <button class="btn danger" type="submit">Delete</button>
-            </div>
-        </form>
     </div>
-</div>
 
-<script th:inline="javascript">
-    const hotelId = /*[[${hotelId}]]*/ 0;
-    const roomId = /*[[${roomId}]]*/ 0;
+    <div id="deleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm px-4">
+        <div
+            class="w-full max-w-xl rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d] to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-[#f8f2e6]">Delete Amenity</h2>
+                <button class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#f1d9b3]/30 text-[#f1d9b3] hover:bg-[#f1d9b3]/15"
+                    onclick="closeModal('deleteModal')">✕</button>
+            </div>
+            <form id="deleteForm" method="post" class="mt-5">
+                <p class="text-sm text-[#f1d9b3]/75">Permanently delete <strong id="deleteName" class="text-[#f8f2e6]">this amenity</strong>? This
+                    removes it from every room and hotel.</p>
+                <div class="mt-6 flex items-center justify-end gap-3">
+                    <button type="button"
+                        class="rounded-full border border-[#f1d9b3]/30 px-4 py-2 text-sm font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10"
+                        onclick="closeModal('deleteModal')">Cancel</button>
+                    <button type="submit"
+                        class="rounded-full border border-red-300/30 bg-[#1f140b]/60 px-4 py-2 text-sm font-semibold text-[#ffb5b5] hover:bg-red-400/10">
+                        Delete
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    function openCreate() { document.getElementById('createModal').classList.add('open'); }
-    function openAssign() { document.getElementById('assignModal').classList.add('open'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    <script th:inline="javascript">
+        const hotelId = /*[[${hotelId}]]*/ 0;
+        const roomId = /*[[${roomId}]]*/ 0;
 
-    function openEdit(button) {
-        const aid = button.dataset.id;
-        document.getElementById('editForm').action = `/hotels/${hotelId}/rooms/${roomId}/amenities/${aid}/update`;
-        document.getElementById('eName').value = button.dataset.name || '';
-        document.getElementById('eDesc').value = button.dataset.description || '';
-        document.getElementById('editModal').classList.add('open');
-    }
+        function openCreate() { document.getElementById('createModal').classList.remove('hidden'); }
+        function openAssign() { document.getElementById('assignModal').classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    function openUnassign(button) {
-        const aid = button.dataset.id;
-        document.getElementById('unassignForm').action = `/hotels/${hotelId}/rooms/${roomId}/amenities/${aid}/unassign`;
-        document.getElementById('unassignName').textContent = button.dataset.name || 'this amenity';
-        document.getElementById('unassignModal').classList.add('open');
-    }
+        function openEdit(button) {
+            const aid = button.dataset.id;
+            document.getElementById('editForm').action = `/hotels/${hotelId}/rooms/${roomId}/amenities/${aid}/update`;
+            document.getElementById('eName').value = button.dataset.name || '';
+            document.getElementById('eDesc').value = button.dataset.description || '';
+            document.getElementById('editModal').classList.remove('hidden');
+        }
 
-    function openDelete(button) {
-        const aid = button.dataset.id;
-        document.getElementById('deleteForm').action = `/hotels/${hotelId}/rooms/${roomId}/amenities/${aid}/delete`;
-        document.getElementById('deleteName').textContent = button.dataset.name || 'this amenity';
-        document.getElementById('deleteModal').classList.add('open');
-    }
+        function openUnassign(button) {
+            const aid = button.dataset.id;
+            document.getElementById('unassignForm').action = `/hotels/${hotelId}/rooms/${roomId}/amenities/${aid}/unassign`;
+            document.getElementById('unassignName').textContent = button.dataset.name || 'this amenity';
+            document.getElementById('unassignModal').classList.remove('hidden');
+        }
 
-    document.querySelectorAll('.overlay').forEach((overlay) => {
-        overlay.addEventListener('click', (event) => {
-            if (event.target === overlay) {
-                overlay.classList.remove('open');
-            }
-        });
-    });
-</script>
+        function openDelete(button) {
+            const aid = button.dataset.id;
+            document.getElementById('deleteForm').action = `/hotels/${hotelId}/rooms/${roomId}/amenities/${aid}/delete`;
+            document.getElementById('deleteName').textContent = button.dataset.name || 'this amenity';
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        document.querySelectorAll('#createModal, #assignModal, #editModal, #unassignModal, #deleteModal')
+            .forEach((overlay) => {
+                overlay.addEventListener('click', (event) => {
+                    if (event.target === overlay) {
+                        overlay.classList.add('hidden');
+                    }
+                });
+            });
+    </script>
 </body>
+
 </html>
