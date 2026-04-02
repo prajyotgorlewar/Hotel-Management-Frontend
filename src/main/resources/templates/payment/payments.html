@@ -45,7 +45,7 @@
         .luxury-table tbody td {
             padding: 13px 16px;
             color: rgba(248,242,230,0.9);
-            font-size: 0.95rem;
+            font-size: 1.05rem;
             border-bottom: 1px solid rgba(241,217,179,0.07);
         }
 
@@ -80,7 +80,7 @@
         .alert-danger-luxury  { background: rgba(239,68,68,0.12);  border: 1px solid rgba(239,68,68,0.25);  color: #fca5a5; }
 
                 /* Breadcrumb */
-        .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: rgba(241,217,179,0.45); margin-bottom: 18px; flex-wrap: wrap; }
+        .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 0.9rem; color: rgba(241,217,179,0.45); margin-bottom: 18px; flex-wrap: wrap; }
         .breadcrumb a { color: rgba(241,217,179,0.55); text-decoration: none; transition: color 0.18s; }
         .breadcrumb a:hover { color: rgba(241,217,179,0.9); }
         .breadcrumb .sep { color: rgba(241,217,179,0.25); font-size: 0.7rem; }
@@ -128,7 +128,7 @@
         <div class="revenue-card rounded-2xl p-6 shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
             <div class="text-[10px] uppercase tracking-widest text-[#f1d9b3]/50 mb-1">Total Revenue</div>
             <div class="text-3xl font-bold text-[#f1d9b3]" style="font-family:'Playfair Display',serif;">
-                ₹<span th:text="${#aggregates.sum(allPayments.![amount])}"></span>
+                $<span th:text="${#aggregates.sum(allPayments.![amount])}"></span>
             </div>
             <div class="text-xs text-[#f1d9b3]/50 mt-1">
                 <span th:text="${allPayments.size()}"></span> payment(s) found
@@ -166,7 +166,7 @@
             <tbody>
             <tr th:each="payment, iterStat : ${payments}">
                 <td class="text-[#f1d9b3]/50" th:text="${currentPage * size + iterStat.count}"></td>
-                <td class="font-semibold" th:text="'₹' + ${payment.amount}"></td>
+                <td class="font-semibold" th:text="'$' + ${payment.amount}"></td>
                 <td class="text-[#f1d9b3]/70" th:text="${payment.paymentDate}"></td>
                 <td>
                         <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"

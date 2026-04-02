@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.Hotel_Management_Frontend.dto.HotelResponse;
@@ -235,10 +239,48 @@ public class ReviewController {
         body.put("comment", comment);
         body.put("rating", rating);
         body.put("review_date", review_date);
-        body.put("reservation", backendUrl + "/reservation/" + reservationId);
+        body.put("reservation", backendUrl + "/reservations/" + reservationId);
+        body.put("reservationId", reservationId);
+        body.put("reservation_id", reservationId);
 
         try {
-            restTemplate.postForObject(url, body, String.class);
+            ResponseEntity<String> createResp = restTemplate.postForEntity(url, body, String.class);
+            Integer createdId = null;
+
+            if (createResp.getHeaders().getLocation() != null) {
+                String loc = createResp.getHeaders().getLocation().toString();
+                int lastSlash = loc.lastIndexOf('/');
+                if (lastSlash > -1 && lastSlash < loc.length() - 1) {
+                    try {
+                        createdId = Integer.valueOf(loc.substring(lastSlash + 1));
+                    } catch (NumberFormatException ex) {
+                        createdId = null;
+                    }
+                }
+            }
+
+            if (createdId == null && createResp.getBody() != null && !createResp.getBody().isBlank()) {
+                try {
+                    JsonNode node = mapper.readTree(createResp.getBody());
+                    createdId = node.path("review_id").asInt(
+                            node.path("reviewId").asInt(
+                                    node.path("id").asInt(-1)));
+                    if (createdId != null && createdId < 0) {
+                        createdId = null;
+                    }
+                } catch (Exception ex) {
+                    createdId = null;
+                }
+            }
+
+            if (createdId != null) {
+                String relationUrl = backendUrl + "/review/" + createdId + "/reservation";
+                String reservationUri = backendUrl + "/reservations/" + reservationId;
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.parseMediaType("text/uri-list"));
+                HttpEntity<String> relEntity = new HttpEntity<>(reservationUri, headers);
+                restTemplate.put(relationUrl, relEntity);
+            }
             return "redirect:/reviews?hotelId=" + hotelId + "&message=Review+submitted+successfully";
         } catch (Exception e) {
             return "redirect:/reviews?hotelId=" + hotelId + "&message=Error+submitting+review";

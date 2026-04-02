@@ -1,125 +1,237 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Rooms | LuxStay</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com"/>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rooms</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root{--ink:#f8f2e6;--cream:#120b07;--gold:#f1d9b3;--gold-light:#e8c97a;--muted:#c9b18a;--card:#1a110a;--border:rgba(241,217,179,.14);--danger:#ffb5b5}
-        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        body{background:linear-gradient(180deg,#2a1a10,#1b120a 55%,#120b07);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh}
-        header{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 3rem;border-bottom:1px solid var(--border);background:rgba(18,11,7,.9);backdrop-filter:blur(6px);position:sticky;top:0;z-index:100}
-        .logo{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:600;color:var(--ink);text-decoration:none}
-        .logo span{color:var(--gold)}
-        .breadcrumb{display:flex;align-items:center;gap:.45rem;font-size:.77rem;color:var(--muted)}
-        .breadcrumb a{color:var(--muted);text-decoration:none}.breadcrumb a:hover{color:var(--ink)}
-        .sep{opacity:.35}
-        .flash{max-width:1100px;margin:.6rem auto 0;padding:0 3rem}
-        .alert{padding:.65rem 1.1rem;font-size:.82rem;border-left:3px solid;margin-bottom:.4rem;border-radius:10px}
-        .alert-success{border-color:#4caf50;background:rgba(46,125,50,.16);color:#b7efc1}
-        .alert-error{border-color:#f44336;background:rgba(198,40,40,.16);color:#ffc0c0}
-        .page-hdr{max-width:1100px;margin:0 auto;padding:3rem 3rem 1.5rem;display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
-        .lbl{font-size:.67rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
-        .page-hdr h1{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;line-height:1.05}
-        .page-hdr h1 em{font-style:italic;color:var(--gold)}
-        .section{max-width:1100px;margin:0 auto;padding:0 3rem 5rem}
-        .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
-        .count{font-size:.78rem;color:var(--muted)}
-        .tbl-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35)}
-        table{width:100%;border-collapse:collapse;font-size:.87rem}
-        thead{background:var(--ink);color:#24160d}
-        thead th{padding:.9rem 1.2rem;text-align:left;font-size:.67rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase}
-        tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
-        tbody tr:last-child{border-bottom:none}
-        tbody tr:hover{background:rgba(241,217,179,.06)}
-        td{padding:.85rem 1.2rem;vertical-align:middle}
-        .badge{display:inline-block;padding:.2rem .65rem;border-radius:20px;font-size:.71rem;font-weight:500}
-        .b-av{background:#e8f5e9;color:#2e7d32}.b-oc{background:#ffebee;color:#c62828}
-        .ag{display:flex;gap:.35rem}
-        .btn{display:inline-flex;align-items:center;padding:.52rem .95rem;font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:500;letter-spacing:.04em;border:none;cursor:pointer;text-decoration:none;border-radius:999px;transition:.2s}
-        .btn-primary{background:var(--gold);color:#4a2c12}.btn-primary:hover{background:#fff0d2}
-        .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}.btn-ghost:hover{border-color:var(--gold);color:var(--ink)}
-        .btn-danger{background:transparent;color:var(--danger);border:1px solid rgba(255,181,181,.35)}.btn-danger:hover{background:var(--danger);color:#fff}
-        .btn-sm{padding:.38rem .72rem;font-size:.72rem}
-        .btn-link{background:none;border:none;color:var(--gold);text-decoration:underline;cursor:pointer;font-size:.82rem;font-family:inherit;padding:0;display:inline}
-        .empty{text-align:center;padding:4rem;color:var(--muted)}
-        .empty-icon{font-size:2.5rem;margin-bottom:.8rem;opacity:.35}
+        body {
+            font-family: "Cormorant Garamond", "Times New Roman", serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: "Playfair Display", "Times New Roman", serif;
+        }
     </style>
 </head>
-<body>
-<header>
-    <a class="logo" href="/hotels">Lux<span>Stay</span></a>
-    <div class="breadcrumb">
-        <a href="/hotels">Hotels</a><span class="sep">/</span>
-        <span>Rooms</span>
-    </div>
-</header>
 
-<div class="flash">
-    <div th:if="${successMsg}" class="alert alert-success" th:text="${successMsg}"></div>
-    <div th:if="${errorMsg}" class="alert alert-error" th:text="${errorMsg}"></div>
-</div>
+<body class="min-h-screen bg-gradient-to-b from-[#2a1a10] via-[#1b120a] to-[#120b07] text-[#f8f2e6] pb-6 pt-24">
+    <div class="w-full">
+        <div class="mx-6 mt-6">
+            <div
+                class="fixed inset-x-6 top-6 z-50 flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#4a3220] via-[#3a2618]/90 to-[#4a3220] p-3 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10 backdrop-blur-sm">
+                <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#f1d9b3]/25">
+                    <svg width="18" height="18" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 7h18M4 7v10a2 2 0 002 2h12a2 2 0 002-2V7M6 11h12M6 15h12">
+                        </path>
+                    </svg>
+                </div>
+                <div class="flex-1"></div>
+                <a href="/hotels"
+                    class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/25 px-3 py-2 text-sm font-semibold text-[#f1d9b3]">
+                    <svg width="14" height="14" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
+                    </svg>
+                    Back
+                </a>
+            </div>
 
-<div class="page-hdr">
-    <div>
-        <p class="lbl">Property</p>
-        <h1>Hotel<br><em>Rooms</em></h1>
-    </div>
-    <a class="btn btn-primary" th:href="@{/hotels/{id}/rooms/new(id=${hotelId})}">+ Add Room</a>
-</div>
+            <div class="mx-0">
+                <div class="flex items-center gap-2 text-sm text-[#f1d9b3]/75">
+                    <a href="/" class="hover:text-[#f8f2e6]">Home</a>
+                    <span>/</span>
+                    <a href="/hotels" class="hover:text-[#f8f2e6]">Hotels</a>
+                    <span>/</span>
+                    <span class="font-semibold text-[#f1d9b3]">Rooms</span>
+                </div>
 
-<section class="section">
-    <div class="toolbar">
-        <span class="count" th:text="${#lists.size(rooms)} + ' room(s) found'">0 rooms</span>
-    </div>
+                <div class="mt-2 flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold text-[#f8f2e6]">Hotel Rooms</h1>
+                        <p class="text-base text-[#f1d9b3]/85">Manage rooms for Hotel ID: <span
+                                th:text="${hotelId}"></span></p>
+                    </div>
+                    <button id="openAddRoom"
+                        class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-base font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5">
+                            </path>
+                        </svg>
+                        Add Room
+                    </button>
+                </div>
 
-    <div th:if="${#lists.isEmpty(rooms)}" class="empty">
-        <div class="empty-icon">Door</div>
-        <p>No rooms yet. Add the first one.</p>
-    </div>
+                <div class="mt-4">
+                    <div th:if="${successMsg}"
+                        class="rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200"
+                        th:text="${successMsg}"></div>
+                    <div th:if="${errorMsg}"
+                        class="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-200"
+                        th:text="${errorMsg}"></div>
+                </div>
 
-    <div class="tbl-wrap" th:unless="${#lists.isEmpty(rooms)}">
-        <table>
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>Room No.</th>
-                <th>Type</th>
-                <th>Price / Night</th>
-                <th>Max Occ.</th>
-                <th>Status</th>
-                <th>Amenities</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="room, s : ${rooms}">
-                <td th:text="${s.count}" style="color:var(--muted);font-size:.75rem"></td>
-                <td><strong th:text="${room.roomNumber}">101</strong></td>
-                <td th:text="${room.roomType != null ? room.roomType.typeName : '—'}">Standard</td>
-                <td th:text="${room.roomType != null ? '$' + room.roomType.pricePerNight : '—'}">$5000</td>
-                <td th:text="${room.roomType != null ? room.roomType.maxOccupancy : '—'}">2</td>
-                <td>
-                    <span class="badge b-av" th:if="${room.isAvailable}">Available</span>
-                    <span class="badge b-oc" th:unless="${room.isAvailable}">Occupied</span>
-                </td>
-                <td>
-                    <a class="btn-link" th:href="@{/hotels/{hid}/rooms/{rid}/amenities(hid=${hotelId},rid=${room.roomId})}">View -></a>
-                </td>
-                <td>
-                    <div class="ag">
-                        <a class="btn btn-ghost btn-sm" th:href="@{/hotels/{hid}/rooms/{rid}/edit(hid=${hotelId},rid=${room.roomId})}">Edit</a>
-                        <form th:action="@{/hotels/{hid}/rooms/{rid}/delete(hid=${hotelId},rid=${room.roomId})}" method="post" onsubmit="return confirm('Delete Room ' + this.dataset.num + '?')" th:data-num="${room.roomNumber}">
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                <div th:if="${#lists.isEmpty(rooms)}"
+                    class="mt-6 rounded-2xl border border-[#f1d9b3]/20 bg-[#1a110a]/70 p-10 text-center text-[#f1d9b3]/70">
+                    No rooms yet. Add the first one.
+                </div>
+
+                <div th:unless="${#lists.isEmpty(rooms)}"
+                    class="mt-6 rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d]/95 to-[#1a110a]/95 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10">
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse text-base">
+                            <thead>
+                                <tr class="bg-[#2a1a10] text-[#f1d9b3] text-sm uppercase tracking-[0.18em]">
+                                    <th class="px-4 py-3 text-left">S.No</th>
+                                    <th class="px-4 py-3 text-left">Room No.</th>
+                                    <th class="px-4 py-3 text-left">Type</th>
+                                    <th class="px-4 py-3 text-left">Price / Night</th>
+                                    <th class="px-4 py-3 text-left">Max Occ.</th>
+                                    <th class="px-4 py-3 text-left">Status</th>
+                                    <th class="px-4 py-3 text-left">Amenities</th>
+                                    <th class="px-4 py-3 text-left">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="room, s : ${rooms}"
+                                    class="border-b border-[#f1d9b3]/10 hover:bg-[#f1d9b3]/5">
+                                    <td class="px-4 py-3 text-[#f1d9b3]/70" th:text="${s.count}"></td>
+                                    <td class="px-4 py-3 font-semibold text-[#f8f2e6]" th:text="${room.roomNumber}"></td>
+                                    <td class="px-4 py-3 text-[#f1d9b3]/70"
+                                        th:text="${room.roomType != null ? room.roomType.typeName : 'â€”'}"></td>
+                                    <td class="px-4 py-3 text-[#f1d9b3]/70"
+                                        th:text="${room.roomType != null ? '$' + room.roomType.pricePerNight : 'â€”'}"></td>
+                                    <td class="px-4 py-3 text-[#f1d9b3]/70"
+                                        th:text="${room.roomType != null ? room.roomType.maxOccupancy : 'â€”'}"></td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                                            th:if="${room.isAvailable}"
+                                            style="background: rgba(16,185,129,0.18); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3);">Available</span>
+                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                                            th:unless="${room.isAvailable}"
+                                            style="background: rgba(239,68,68,0.18); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3);">Occupied</span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <a class="inline-flex items-center gap-2 rounded-full border border-[#f1d9b3]/30 px-3 py-1 text-xs font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10"
+                                            th:href="@{/hotels/{hid}/rooms/{rid}/amenities(hid=${hotelId},rid=${room.roomId})}">View</a>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center gap-2">
+                                            <a class="inline-flex items-center gap-2 rounded-full border border-[#f1d9b3]/30 px-3 py-1 text-xs font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10"
+                                                th:href="@{/hotels/{hid}/rooms/{rid}/edit(hid=${hotelId},rid=${room.roomId})}">Edit</a>
+                                            <form th:action="@{/hotels/{hid}/rooms/{rid}/delete(hid=${hotelId},rid=${room.roomId})}"
+                                                method="post" onsubmit="return confirm('Delete Room ' + this.dataset.num + '?')"
+                                                th:data-num="${room.roomNumber}">
+                                                <button type="submit"
+                                                    class="inline-flex items-center gap-2 rounded-full border border-red-300/30 bg-[#1f140b]/60 px-3 py-1 text-xs font-semibold text-[#ffb5b5] hover:bg-red-400/10">Delete</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="addRoomModal"
+                    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm px-4">
+                    <div
+                        class="w-full max-w-2xl rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d] to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs tracking-[0.25em] text-[#f1d9b3]/70 uppercase">Hotel Management</p>
+                                <h2 class="mt-2 text-2xl font-bold text-[#f8f2e6]">Add Room</h2>
+                                <div class="mt-3 h-px w-16 bg-[#f1d9b3]/40"></div>
+                            </div>
+                            <button id="closeAddRoom"
+                                class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#f1d9b3]/30 text-[#f1d9b3] hover:bg-[#f1d9b3]/15">
+                                âœ•
+                            </button>
+                        </div>
+
+                        <form th:action="@{/hotels/{id}/rooms(id=${hotelId})}" method="post" class="mt-5 space-y-4">
+                            <div>
+                                <label class="text-sm text-[#f1d9b3]/75">Room Number</label>
+                                <input type="number" name="roomNumber" required placeholder="e.g. 101"
+                                    class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-3 text-sm text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                            </div>
+
+                            <div>
+                                <label class="text-sm text-[#f1d9b3]/75">Room Type</label>
+                                <select name="roomTypeId" required
+                                    class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-3 text-sm text-[#f8f2e6] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                                    <option value="">Select room type</option>
+                                    <option th:each="roomType : ${roomTypes}" th:value="${roomType.resolvedId}"
+                                        th:text="${roomType.typeName + ' | Max ' + roomType.maxOccupancy + ' | $' + roomType.pricePerNight}">
+                                        Room Type
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="text-sm text-[#f1d9b3]/75">Availability</label>
+                                <div class="mt-2 flex items-center gap-6 text-sm text-[#f8f2e6]">
+                                    <label class="inline-flex items-center gap-2">
+                                        <input type="radio" name="isAvailable" value="true" checked>
+                                        Available
+                                    </label>
+                                    <label class="inline-flex items-center gap-2">
+                                        <input type="radio" name="isAvailable" value="false">
+                                        Occupied
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-end gap-3 pt-2">
+                                <button type="button" id="cancelAddRoom"
+                                    class="rounded-full border border-[#f1d9b3]/30 px-4 py-2 text-sm font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10">
+                                    Cancel
+                                </button>
+                                <button type="submit"
+                                    class="rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-sm font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                                    Create Room
+                                </button>
+                            </div>
                         </form>
                     </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                </div>
+            </div>
+        </div>
     </div>
-</section>
+    <script>
+        const addRoomModal = document.getElementById('addRoomModal');
+        const openAddRoom = document.getElementById('openAddRoom');
+        const closeAddRoom = document.getElementById('closeAddRoom');
+        const cancelAddRoom = document.getElementById('cancelAddRoom');
+
+        openAddRoom?.addEventListener('click', () => {
+            addRoomModal.classList.remove('hidden');
+        });
+
+        closeAddRoom?.addEventListener('click', () => {
+            addRoomModal.classList.add('hidden');
+        });
+
+        cancelAddRoom?.addEventListener('click', () => {
+            addRoomModal.classList.add('hidden');
+        });
+
+        addRoomModal?.addEventListener('click', (event) => {
+            if (event.target === addRoomModal) {
+                addRoomModal.classList.add('hidden');
+            }
+        });
+    </script>
 </body>
+
 </html>
