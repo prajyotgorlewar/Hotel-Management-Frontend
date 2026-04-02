@@ -1,124 +1,140 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Room Type Detail — Hotel Management</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { font-family: "Cormorant Garamond", "Times New Roman", serif; }
-    h1,h2,h3 { font-family: "Playfair Display", "Times New Roman", serif; }
-  </style>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Room Type Detail | LuxStay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <style>
+        body { margin: 0; min-height: 100vh; background: linear-gradient(180deg, #2a1a10, #1b120a, #120b07); color: #f8f2e6; font-family: "DM Sans", Arial, sans-serif; }
+        h1, h2, h3, .serif { font-family: "Playfair Display", "Times New Roman", serif; }
+        .shell { padding: 1.5rem; }
+        .nav { display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1.2rem; border-radius: 1.25rem; background: linear-gradient(90deg, #4a3220, rgba(58, 38, 24, 0.92), #4a3220); border: 1px solid rgba(241, 217, 179, 0.1); box-shadow: 0 24px 60px rgba(0,0,0,0.35); }
+        .brand { text-decoration: none; color: #f8f2e6; font-size: 1.9rem; line-height: 1; }
+        .brand span { color: #f1d9b3; }
+        .crumbs { margin-left: auto; display: flex; gap: 0.5rem; flex-wrap: wrap; color: rgba(241, 217, 179, 0.75); font-size: 0.85rem; }
+        .crumbs a { color: inherit; text-decoration: none; }
+        .crumbs a:hover { color: #f8f2e6; }
+        .page { max-width: 1120px; margin: 1.5rem auto 0; }
+        .hero { border-radius: 1.5rem; background: linear-gradient(90deg, #4a3220, rgba(58, 38, 24, 0.92), #1a110a); border: 1px solid rgba(241, 217, 179, 0.15); box-shadow: 0 24px 60px rgba(0,0,0,0.35); padding: 1.5rem; }
+        .hero-grid { display: grid; gap: 1.5rem; grid-template-columns: 280px 1fr; }
+        .hero-image { min-height: 220px; border-radius: 1rem; background-image: linear-gradient(180deg, rgba(12,8,4,0.2), rgba(12,8,4,0.6)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900&auto=format&fit=crop'); background-size: cover; background-position: center; box-shadow: 0 18px 40px rgba(0,0,0,0.35); }
+        .eyebrow { text-transform: uppercase; letter-spacing: 0.2em; color: rgba(241, 217, 179, 0.8); font-size: 0.72rem; }
+        .hero h1 { margin: 0.5rem 0 0; font-size: clamp(2rem, 5vw, 3rem); }
+        .hero p { color: rgba(241, 217, 179, 0.85); line-height: 1.7; }
+        .stats { display: grid; gap: 1rem; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 1.5rem; }
+        .stat-label { text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.7rem; color: rgba(241, 217, 179, 0.7); }
+        .stat-value { margin-top: 0.4rem; color: #f8f2e6; font-weight: 700; }
+        .section-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 2rem 0 1rem; }
+        .section-head h2 { margin: 0; font-size: 1.6rem; }
+        .pill { display: inline-flex; align-items: center; border-radius: 999px; background: rgba(241, 217, 179, 0.2); color: #f1d9b3; padding: 0.4rem 0.8rem; font-size: 0.78rem; font-weight: 700; }
+        .table-wrap { border-radius: 1.4rem; border: 1px solid rgba(241, 217, 179, 0.18); background: linear-gradient(180deg, rgba(36,22,13,0.96), rgba(26,17,10,0.98)); box-shadow: 0 24px 60px rgba(0,0,0,0.35); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #2a1a10; color: #f1d9b3; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.18em; }
+        th, td { padding: 0.95rem 1rem; text-align: left; }
+        tbody tr { border-top: 1px solid rgba(241, 217, 179, 0.1); }
+        tbody tr:hover { background: rgba(241, 217, 179, 0.05); }
+        .empty { padding: 3rem 1rem; text-align: center; color: rgba(241, 217, 179, 0.7); }
+        .badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 0.32rem 0.8rem; font-size: 0.76rem; font-weight: 700; }
+        .available { background: rgba(46, 125, 50, 0.18); color: #b7efc1; }
+        .occupied { background: rgba(198, 40, 40, 0.18); color: #ffc0c0; }
+        @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } .stats { grid-template-columns: 1fr; } }
+    </style>
 </head>
-
-<body class="min-h-screen bg-gradient-to-b from-[#2a1a10] via-[#1b120a] to-[#120b07] text-[#f8f2e6] pb-8">
-  <div class="mx-6 my-6">
-    <div class="flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#4a3220] via-[#3a2618]/90 to-[#4a3220] p-3 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10 backdrop-blur-sm">
-      <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#f1d9b3]/25">
-        <svg width="18" height="18" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21h18M4 21V5a2 2 0 012-2h6v18M14 9h6a1 1 0 011 1v11M8 7h2M8 11h2M8 15h2M16 13h2M16 17h2"></path>
-        </svg>
-      </div>
-      <div class="flex-1"></div>
-      <a href="/roomtypes" class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/25 px-3 py-2 text-sm font-semibold text-[#f1d9b3]">
-        <svg width="14" height="14" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-        </svg>
-        Back
-      </a>
-    </div>
-
-    <div class="mt-6 flex items-center gap-2 text-sm text-[#f1d9b3]/75">
-      <a href="/" class="hover:text-[#f8f2e6]">Home</a>
-      <span>/</span>
-      <a href="/roomtypes" class="hover:text-[#f8f2e6]">Room Types</a>
-      <span>/</span>
-      <span class="font-semibold text-[#f1d9b3]" id="crumbName">Details</span>
-    </div>
-
-    <div class="mt-6 rounded-2xl bg-gradient-to-r from-[#4a3220] via-[#3a2618]/90 to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/15">
-      <div class="grid gap-6 lg:grid-cols-[280px_1fr]">
-        <div class="h-[220px] rounded-xl bg-cover bg-center shadow-[0_18px_40px_rgba(0,0,0,0.35)]"
-             style="background-image: linear-gradient(180deg, rgba(12,8,4,0.2), rgba(12,8,4,0.6)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900&auto=format&fit=crop');">
+<body>
+<div class="shell">
+    <div class="nav">
+        <a class="brand serif" href="/roomtypes">Lux<span>Stay</span></a>
+        <div class="crumbs">
+            <a href="/">Home</a>
+            <span>/</span>
+            <a href="/roomtypes">Room Types</a>
+            <span>/</span>
+            <span id="crumbName">Details</span>
         </div>
-        <div>
-          <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[#f1d9b3]/80">Room Type</div>
-          <h1 class="mt-2 text-3xl font-bold text-[#f8f2e6]" id="dcTypeName">—</h1>
-          <p class="mt-2 text-sm text-[#f1d9b3]/85" id="dcDescription">—</p>
-          <div class="mt-4 grid gap-4 sm:grid-cols-2">
-            <div>
-              <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[#f1d9b3]/70">Max Occupancy</div>
-              <div class="mt-1 text-base font-semibold text-[#f8f2e6]" id="dcMaxOcc">—</div>
+    </div>
+
+    <main class="page">
+        <section class="hero">
+            <div class="hero-grid">
+                <div class="hero-image"></div>
+                <div>
+                    <div class="eyebrow">Room Type</div>
+                    <h1 id="dcTypeName">-</h1>
+                    <p id="dcDescription">-</p>
+                    <div class="stats">
+                        <div>
+                            <div class="stat-label">Max Occupancy</div>
+                            <div class="stat-value" id="dcMaxOcc">-</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">Price / Night</div>
+                            <div class="stat-value" id="dcPrice">-</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">ID</div>
+                            <div class="stat-value" id="dcId">-</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div>
-              <div class="text-xs font-semibold uppercase tracking-[0.2em] text-[#f1d9b3]/70">Price / Night</div>
-              <div class="mt-1 font-mono text-base text-[#f1d9b3]" id="dcPrice">—</div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <h2>Rooms</h2>
+                <span class="pill" th:text="${rooms != null ? rooms.size() : 0} + ' linked'">0 linked</span>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Room Number</th>
+                        <th>Availability</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${rooms == null || rooms.isEmpty()}">
+                        <td colspan="3" class="empty">No rooms found for this room type.</td>
+                    </tr>
+                    <tr th:each="room, iter : ${rooms}">
+                        <td th:text="${iter.count}">1</td>
+                        <td th:text="${room.roomNumber}">101</td>
+                        <td>
+                            <span th:if="${room.isAvailable}" class="badge available">Available</span>
+                            <span th:unless="${room.isAvailable}" class="badge occupied">Not Available</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
 
-    <div class="mt-8">
-      <div class="flex items-center justify-between gap-4">
-        <h2 class="text-xl font-bold text-[#f8f2e6]">Rooms
-          <span class="ml-2 rounded-full bg-[#f1d9b3]/20 px-3 py-1 text-xs font-semibold text-[#f1d9b3]" th:text="${rooms != null ? rooms.size() : 0}">0</span>
-        </h2>
-      </div>
-
-      <div class="mt-4 rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d]/95 to-[#1a110a]/95 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10">
-        <div class="overflow-x-auto">
-          <table class="w-full border-collapse">
-            <thead>
-              <tr class="bg-[#2a1a10] text-[#f1d9b3] text-xs uppercase tracking-[0.18em]">
-                <th class="px-4 py-3 text-left w-[60px]">#</th>
-                <th class="px-4 py-3 text-left">Room Number</th>
-                <th class="px-4 py-3 text-left w-[180px]">Availability</th>
-              </tr>
-            </thead>
-            <tbody class="text-sm text-[#f8f2e6]">
-              <tr th:if="${rooms == null || rooms.isEmpty()}">
-                <td colspan="3">
-                  <div class="flex flex-col items-center justify-center gap-3 py-16 text-[#f1d9b3]/70">
-                    <div class="text-4xl">🛏️</div>
-                    <p>No rooms found for this room type.</p>
-                  </div>
-                </td>
-              </tr>
-              <tr th:each="room, iter : ${rooms}" class="border-b border-[#f1d9b3]/10 hover:bg-[#f1d9b3]/5">
-                <td class="px-4 py-3 text-xs text-[#f1d9b3]/60" th:text="${iter.count}">1</td>
-                <td class="px-4 py-3 font-mono font-semibold" th:text="${room.roomNumber}">101</td>
-                <td class="px-4 py-3">
-                  <span th:if="${room.isAvailable}" class="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-300">✓ Available</span>
-                  <span th:unless="${room.isAvailable}" class="inline-flex items-center gap-2 rounded-full border border-red-400/30 bg-red-400/10 px-3 py-1 text-xs font-semibold text-red-300">✗ Not Available</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script th:inline="javascript">
+<script th:inline="javascript">
     const ROOM_TYPE = /*[[${roomType}]]*/ {};
-    let roomTypeData = ROOM_TYPE;
-    document.addEventListener('DOMContentLoaded', () => {
-      renderDetailCard(roomTypeData);
-    });
-    function fmtPrice(v) { return '₹ ' + Number(v).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-    function renderDetailCard(rt) {
-      document.title = `${rt.typeName} — Hotel Management`;
-      const crumb=document.getElementById('crumbName');
-      if(crumb){crumb.textContent=rt.typeName||'Room Type';}
-      document.getElementById('dcTypeName').textContent = rt.typeName || '—';
-      document.getElementById('dcDescription').textContent = rt.description || 'No description provided.';
-      document.getElementById('dcMaxOcc').textContent = `${rt.maxOccupancy} guest${rt.maxOccupancy > 1 ? 's' : ''}`;
-      document.getElementById('dcPrice').textContent = fmtPrice(rt.pricePerNight);
+
+    function formatPrice(value) {
+        return '$' + Number(value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
-  </script>
+
+    function renderDetailCard(roomType) {
+        const name = roomType.typeName || 'Room Type';
+        document.title = `${name} | LuxStay`;
+        document.getElementById('crumbName').textContent = name;
+        document.getElementById('dcTypeName').textContent = name;
+        document.getElementById('dcDescription').textContent = roomType.description || 'No description provided.';
+        document.getElementById('dcMaxOcc').textContent = `${roomType.maxOccupancy || 0} guest${Number(roomType.maxOccupancy) > 1 ? 's' : ''}`;
+        document.getElementById('dcPrice').textContent = formatPrice(roomType.pricePerNight);
+        const resolvedId = roomType.resolvedId || roomType.roomTypeId || roomType._id;
+        document.getElementById('dcId').textContent = resolvedId ? `#${resolvedId}` : '-';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => renderDetailCard(ROOM_TYPE || {}));
+</script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 package com.example.Hotel_Management_Frontend.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,14 @@ public class RoomTypeService {
 
     public String getAllRoomTypes(int size) {
         return rt.getForObject(baseUrl + "/roomtypes?size=" + size, String.class);
+    }
+
+    public List<RoomType> getAllRoomTypes() {
+        RoomTypeResponse response = getRoomTypes(1000);
+        if (response == null || response.getEmbedded() == null || response.getEmbedded().getRoomTypes() == null) {
+            return List.of();
+        }
+        return response.getEmbedded().getRoomTypes();
     }
 
     public String getRoomTypeById(String id) {
