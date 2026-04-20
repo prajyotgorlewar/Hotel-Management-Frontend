@@ -15,8 +15,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.Hotel_Management_Frontend.dto.HotelResponse;
+import com.example.Hotel_Management_Frontend.service.HotelService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -28,11 +34,59 @@ public class ReviewController {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
           //  .registeredModules(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+    private final HotelService hotelService;
 
-    @Value("${backend.base-url:http://172.16.160.110:8081}")
+    @Value("${backend.base-url}")
     private String backendUrl;
 
     private static final int PAGE_SIZE = 6;
+
+    public ReviewController(HotelService hotelService) {
+        this.hotelService = hotelService;
+    }
+
+    @GetMapping("/list")
+    public String listHotelsForReviews(
+            @RequestParam(name = "name", defaultValue = "") String name,
+            @RequestParam(name = "city", defaultValue = "") String city,
+            @RequestParam(name = "amenity", defaultValue = "") String amenity,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "4") int size,
+            Model model) {
+
+        String resolvedName = name;
+        String resolvedAmenity = amenity;
+
+        if (!name.isEmpty() && amenity.isEmpty()) {
+            String matched = hotelService.getAllAmenityNames().stream()
+                    .filter(a -> a.equalsIgnoreCase(name.trim()))
+                    .findFirst().orElse("");
+            if (!matched.isEmpty()) {
+                resolvedAmenity = matched;
+                resolvedName = "";
+            }
+        }
+
+        HotelResponse response = hotelService.getHotels(page, size, resolvedName, city, resolvedAmenity);
+
+        model.addAttribute("hotels", response != null && response.getEmbedded() != null
+                ? response.getEmbedded().getHotels()
+                : Collections.emptyList());
+        model.addAttribute("totalPages", response != null && response.getPage() != null
+                ? response.getPage().getTotalPages()
+                : 1);
+        model.addAttribute("totalElements", response != null && response.getPage() != null
+                ? response.getPage().getTotalElements()
+                : 0);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("name", resolvedName);
+        model.addAttribute("city", city);
+        model.addAttribute("amenity", resolvedAmenity);
+        model.addAttribute("cities", hotelService.getAllCities());
+
+        return "review/hotelreviewlist";
+    }
 
     // ─────────────────────────────────────────
     // GET /reviews?hotelId=1&page=0
@@ -179,20 +233,110 @@ public class ReviewController {
             @RequestParam String review_date,
             Model model) {
 
-        String url = backendUrl + "/review";
+        String url = backendUrl + "/reviews";
+        String fallbackUrl = backendUrl + "/review";
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("comment", comment);
         body.put("rating", rating);
         body.put("review_date", review_date);
-        body.put("reservation", backendUrl + "/reservation/" + reservationId);
+        body.put("reservation", backendUrl + "/reservations/" + reservationId);
+        body.put("reservationId", reservationId);
+        body.put("reservation_id", reservationId);
 
         try {
-            restTemplate.postForObject(url, body, String.class);
+            if (!reservationExists(reservationId)) {
+                return "redirect:/reviews?hotelId=" + hotelId + "&message=Reservation+ID+not+found";
+            }
+            ResponseEntity<String> createResp;
+            try {
+                createResp = restTemplate.postForEntity(url, body, String.class);
+            } catch (Exception ex) {
+                createResp = restTemplate.postForEntity(fallbackUrl, body, String.class);
+            }
+            Integer createdId = null;
+
+            if (createResp.getHeaders().getLocation() != null) {
+                String loc = createResp.getHeaders().getLocation().toString();
+                int lastSlash = loc.lastIndexOf('/');
+                if (lastSlash > -1 && lastSlash < loc.length() - 1) {
+                    try {
+                        createdId = Integer.valueOf(loc.substring(lastSlash + 1));
+                    } catch (NumberFormatException ex) {
+                        createdId = null;
+                    }
+                }
+            }
+
+            if (createdId == null && createResp.getBody() != null && !createResp.getBody().isBlank()) {
+                try {
+                    JsonNode node = mapper.readTree(createResp.getBody());
+                    createdId = node.path("review_id").asInt(
+                            node.path("reviewId").asInt(
+                                    node.path("id").asInt(-1)));
+                    if (createdId != null && createdId < 0) {
+                        createdId = null;
+                    }
+                } catch (Exception ex) {
+                    createdId = null;
+                }
+            }
+
+            if (createdId != null) {
+                String[] reservationUris = new String[] {
+                        backendUrl + "/reservations/" + reservationId,
+                        backendUrl + "/reservation/" + reservationId,
+                        backendUrl + "/api/reservations/" + reservationId
+                };
+                String[] relationUrls = new String[] {
+                        backendUrl + "/reviews/" + createdId + "/reservation",
+                        backendUrl + "/review/" + createdId + "/reservation"
+                };
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.parseMediaType("text/uri-list"));
+
+                boolean linked = false;
+                for (String reservationUri : reservationUris) {
+                    HttpEntity<String> relEntity = new HttpEntity<>(reservationUri, headers);
+                    for (String relationUrl : relationUrls) {
+                        try {
+                            restTemplate.put(relationUrl, relEntity);
+                            linked = true;
+                            break;
+                        } catch (Exception ex) {
+                            // try next relation/uri variant
+                        }
+                    }
+                    if (linked) {
+                        break;
+                    }
+                }
+            }
             return "redirect:/reviews?hotelId=" + hotelId + "&message=Review+submitted+successfully";
         } catch (Exception e) {
             return "redirect:/reviews?hotelId=" + hotelId + "&message=Error+submitting+review";
         }
+    }
+
+    private boolean reservationExists(Integer reservationId) {
+        if (reservationId == null) {
+            return false;
+        }
+        String[] urls = new String[] {
+                backendUrl + "/reservations/" + reservationId,
+                backendUrl + "/reservation/" + reservationId,
+                backendUrl + "/api/reservations/" + reservationId
+        };
+        for (String url : urls) {
+            try {
+                restTemplate.getForObject(url, String.class);
+                return true;
+            } catch (Exception ex) {
+                // try next
+            }
+        }
+        return false;
     }
 
     // ─────────────────────────────────────────

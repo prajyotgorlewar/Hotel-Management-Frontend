@@ -3,105 +3,295 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: "Cormorant Garamond", "Times New Roman", serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: "Playfair Display", "Times New Roman", serif;
+        }
+    </style>
 </head>
 
-<body style="font-family: Arial; margin:20px;">
+<body class="min-h-screen bg-gradient-to-b from-[#2a1a10] via-[#1b120a] to-[#120b07] text-[#f8f2e6] pb-6 pt-24">
+    <div class="w-full">
+        <div class="mx-6 mt-6">
+            <div
+                class="fixed inset-x-6 top-6 z-50 flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#4a3220] via-[#3a2618]/90 to-[#4a3220] p-3 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10 backdrop-blur-sm">
+                <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#f1d9b3]/25">
+                    <svg width="18" height="18" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3M4 11h16M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                </div>
+                <div class="flex-1"></div>
+                <a href="/" class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/25 px-3 py-2 text-sm font-semibold text-[#f1d9b3]">
+                    <svg width="14" height="14" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
+                    </svg>
+                    Back
+                </a>
+            </div>
 
-    <h2>Reservations</h2>
+            <div class="mx-0">
+                <div class="flex items-center gap-2 text-sm text-[#f1d9b3]/75">
+                    <a href="/" class="hover:text-[#f8f2e6]">Home</a>
+                    <span>/</span>
+                    <span class="font-semibold text-[#f1d9b3]">Reservations</span>
+                </div>
 
-    <!-- 🔥 SEARCH FORM -->
-    <form method="get" action="/reservations" onsubmit="return validateSearch()"
-        style="margin-bottom:20px; display:flex; flex-wrap:wrap; gap:10px;">
+                <div class="mt-2 flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold text-[#f8f2e6]">Reservations</h1>
+                        <p class="text-base text-[#f1d9b3]/85">Track guest stays and booking dates</p>
+                    </div>
+                    <button id="openAddReservation"
+                        class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-base font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 5v14m7-7H5"></path>
+                        </svg>
+                        Add Reservation
+                    </button>
+                </div>
 
-        <input type="text" id="guestName" name="guestName" placeholder="Guest Name" th:value="${guestName}"
-            style="padding:8px; border:1px solid #ccc; border-radius:5px;">
+                <div class="mt-4 rounded-2xl border border-[#f1d9b3]/20 bg-[#1a110a]/70 p-4">
+                    <form method="get" action="/reservations" onsubmit="return validateSearch()"
+                        class="flex flex-wrap items-center gap-3">
+                        <input type="text" id="guestName" name="guestName" placeholder="Guest Name"
+                            th:value="${guestName}"
+                            class="min-w-[170px] rounded-full bg-[#3a2618]/60 px-4 py-2 text-sm text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                        <input type="text" id="email" name="email" placeholder="Email" th:value="${email}"
+                            class="min-w-[170px] rounded-full bg-[#3a2618]/60 px-4 py-2 text-sm text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                        <label class="text-sm text-[#f1d9b3]/80">Check-in Date</label>
+                        <input type="date" id="checkIn" name="checkIn" th:value="${checkIn}"
+                            class="rounded-full bg-[#3a2618]/60 px-4 py-2 text-sm text-[#f8f2e6] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                        <label class="text-sm text-[#f1d9b3]/80">Check-out Date</label>
+                        <input type="date" id="checkOut" name="checkOut" th:value="${checkOut}"
+                            class="rounded-full bg-[#3a2618]/60 px-4 py-2 text-sm text-[#f8f2e6] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                        <button type="submit"
+                            class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-sm font-semibold text-[#4a2c12]">
+                            Search
+                        </button>
+                        <a href="/reservations"
+                            class="inline-flex items-center rounded-full border border-[#f1d9b3]/30 px-4 py-2 text-sm font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10">
+                            Clear
+                        </a>
+                    </form>
+                    <p class="mt-3 text-xs text-[#f1d9b3]/60">Use only one field OR check-in + check-out together.</p>
+                </div>
 
-        <input type="text" id="email" name="email" placeholder="Email" th:value="${email}"
-            style="padding:8px; border:1px solid #ccc; border-radius:5px;">
+                <div class="mt-6 rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d]/95 to-[#1a110a]/95 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10">
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse text-base">
+                            <thead>
+                                <tr class="bg-[#2a1a10] text-[#f1d9b3] text-sm uppercase tracking-[0.18em]">
+                                    <th class="px-4 py-3 text-left">S.No</th>
+                                    <th class="px-4 py-3 text-left">Guest Name</th>
+                                    <th class="px-4 py-3 text-left">Email</th>
+                                    <th class="px-4 py-3 text-left">Check-In</th>
+                                    <th class="px-4 py-3 text-left">Check-Out</th>
+                                    <th class="px-4 py-3 text-left">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody th:with="safePageSize=${pageSize != null ? pageSize : 5}">
+                                <tr th:each="res, iter : ${reservations}"
+                                    th:onclick="'location.href=\'/reservations/' + ${res.id} + '/details\''"
+                                    class="cursor-pointer border-b border-[#f1d9b3]/10 hover:bg-[#f1d9b3]/5">
+                                    <td class="px-4 py-3 text-[#f1d9b3]/70 font-mono"
+                                        th:text="${currentPage * safePageSize + iter.index + 1}"></td>
+                                    <td class="px-4 py-3 font-semibold text-[#f8f2e6]" th:text="${res.guestName}"></td>
+                                    <td class="px-4 py-3 text-[#f1d9b3]/70" th:text="${res.guestEmail}"></td>
+                                    <td class="px-4 py-3 text-[#f1d9b3]/70" th:text="${res.checkInDate}"></td>
+                                    <td class="px-4 py-3 text-[#f1d9b3]/70" th:text="${res.checkOutDate}"></td>
+                                    <td class="px-4 py-3">
+                                        <form th:action="@{/reservations/delete/{id}(id=${res.id})}" method="post"
+                                            onclick="event.stopPropagation();"
+                                            onsubmit="return confirm('Are you sure you want to delete this reservation?')">
+                                            <button type="submit"
+                                                class="inline-flex items-center gap-2 rounded-full border border-red-300/30 bg-[#1f140b]/60 px-3 py-1 text-xs font-semibold text-[#ffb5b5] hover:bg-red-400/10">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr th:if="${reservations == null or #lists.isEmpty(reservations)}">
+                                    <td colspan="6" class="px-4 py-10 text-center text-[#f1d9b3]/70">No reservations found.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-        <input type="date" id="checkIn" name="checkIn" th:value="${checkIn}"
-            style="padding:8px; border:1px solid #ccc; border-radius:5px;">
+                <div id="addReservationModal"
+                    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm px-4">
+                    <div
+                        class="w-full max-w-2xl rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d] to-[#1a110a] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs tracking-[0.25em] text-[#f1d9b3]/70 uppercase">Hotel Management</p>
+                                <h2 class="mt-2 text-2xl font-bold text-[#f8f2e6]">Add Reservation</h2>
+                                <div class="mt-3 h-px w-16 bg-[#f1d9b3]/40"></div>
+                            </div>
+                            <button id="closeAddReservation"
+                                class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#f1d9b3]/30 text-[#f1d9b3] hover:bg-[#f1d9b3]/15">
+                                ✕
+                            </button>
+                        </div>
 
-        <input type="date" id="checkOut" name="checkOut" th:value="${checkOut}"
-            style="padding:8px; border:1px solid #ccc; border-radius:5px;">
+                        <form id="reservationForm" th:action="@{/reservations/add}" method="post" class="mt-5 space-y-4"
+                            novalidate>
+                            <div>
+                                <label class="text-sm text-[#f1d9b3]/75">Guest Name</label>
+                                <input type="text" id="addGuestName" name="guestName"
+                                    placeholder="Enter guest name"
+                                    class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-3 text-sm text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                                <span class="err-msg" id="addGuestName-err">Name must be at least 2 words with only
+                                    letters (e.g. John Smith)</span>
+                            </div>
 
-        <button type="submit"
-            style="padding:8px 15px; background:#007bff; color:white; border:none; border-radius:5px;">
-            Search
-        </button>
+                            <div>
+                                <label class="text-sm text-[#f1d9b3]/75">Email</label>
+                                <input type="email" id="addGuestEmail" name="guestEmail"
+                                    placeholder="Enter email address"
+                                    class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-3 text-sm text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                                <span class="err-msg" id="addGuestEmail-err">Please enter a valid email address (e.g.
+                                    name@example.com)</span>
+                            </div>
 
-        <a href="/reservations"
-            style="padding:8px 15px; background:gray; color:white; text-decoration:none; border-radius:5px;">
-            Clear
-        </a>
+                            <div>
+                                <label class="text-sm text-[#f1d9b3]/75">Phone</label>
+                                <input type="text" id="addGuestPhone" name="guestPhone"
+                                    placeholder="Enter 10-digit phone number" maxlength="10"
+                                    class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-3 text-sm text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                                <span class="err-msg" id="addGuestPhone-err">Phone number must be exactly 10 digits
+                                    (numbers only)</span>
+                            </div>
 
-    </form>
+                            <div class="grid gap-4 md:grid-cols-2">
+                                <div>
+                                    <label class="text-sm text-[#f1d9b3]/75">Check-In</label>
+                                    <input type="date" id="addCheckInDate" name="checkInDate"
+                                        class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-3 text-sm text-[#f8f2e6] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                                    <span class="err-msg" id="addCheckInDate-err">Check-in date cannot be in the past</span>
+                                </div>
+                                <div>
+                                    <label class="text-sm text-[#f1d9b3]/75">Check-Out</label>
+                                    <input type="date" id="addCheckOutDate" name="checkOutDate"
+                                        class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-3 text-sm text-[#f8f2e6] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                                    <span class="err-msg" id="addCheckOutDate-err">Check-out must be after check-in
+                                        date</span>
+                                </div>
+                            </div>
 
-    <p style="color:gray; font-size:12px;">
-        * Only one field allowed OR check-in + check-out together
-    </p>
+                            <div class="flex items-center justify-end gap-3 pt-2">
+                                <button type="button" id="cancelAddReservation"
+                                    class="rounded-full border border-[#f1d9b3]/30 px-4 py-2 text-sm font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10">
+                                    Cancel
+                                </button>
+                                <button type="submit" id="submitAddReservation"
+                                    class="rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-sm font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                                    Add Reservation
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
-    <!-- 🔥 TABLE -->
-    <table border="1" width="100%" cellpadding="10" cellspacing="0">
+                <div id="toast"
+                    class="pointer-events-none hidden fixed inset-0 z-[60] flex items-start justify-center pt-20">
+                    <div class="absolute inset-0 bg-black/35 backdrop-blur-sm"></div>
+                    <div
+                        class="relative flex items-center gap-3 rounded-xl border border-[#f1d9b3]/25 bg-gradient-to-r from-[#4a3220]/95 via-[#3a2618]/95 to-[#4a3220]/95 px-6 py-4 text-[#f8f2e6] shadow-[0_18px_50px_rgba(0,0,0,0.4)]">
+                        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500/90">
+                            <svg width="16" height="16" fill="none" stroke="#ffffff" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div class="text-sm font-semibold" id="toastMessage">Success</div>
+                    </div>
+                </div>
 
-        <thead style="background:#f2f2f2;">
-            <tr>
-                <th>ID</th>
-                <th>Guest Name</th>
-                <th>Email</th>
-                <th>Check-In</th>
-                <th>Check-Out</th>
-            </tr>
-        </thead>
+                <div th:with="safePageSize=${pageSize != null ? pageSize : 5}, safeTotalPages=${totalPages != null ? totalPages : 1}"
+                    class="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-[#f1d9b3]/20 pt-4 text-sm text-[#f1d9b3]/85">
 
-        <tbody>
-            <tr th:each="res : ${reservations}" th:onclick="'location.href=\'/reservations/' + ${res.id} + '/details\''"
-                style="cursor:pointer;">
+                    <!-- Left: results meta -->
+                    <div>
+                        Showing
+                        <span th:text="${currentPage * safePageSize + 1}">1</span>–<span
+                            th:text="${(currentPage * safePageSize + reservations.size())}">4</span>
+                        of
+                        <span th:text="${totalElements}">49</span> reservations
+                    </div>
 
-                <td th:text="${res.id}"></td>
-                <td th:text="${res.guestName}"></td>
-                <td th:text="${res.guestEmail}"></td>
-                <td th:text="${res.checkInDate}"></td>
-                <td th:text="${res.checkOutDate}"></td>
+                    <!-- Right: pagination buttons -->
+                    <div class="flex items-center gap-2">
 
-            </tr>
-        </tbody>
+                        <!-- Prev -->
+                        <a th:if="${currentPage > 0}"
+                            th:href="@{/reservations(page=${currentPage - 1}, size=${safePageSize}, guestName=${guestName}, email=${email}, checkIn=${checkIn}, checkOut=${checkOut})}"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#f1d9b3]/25 bg-[#1f140b]/60 text-[#f1d9b3] hover:bg-[#f1d9b3]/20">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </a>
+                        <span th:if="${currentPage == 0}"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#f1d9b3]/10 bg-[#1f140b]/30 text-[#f1d9b3]/30 cursor-not-allowed">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </span>
 
-    </table>
+                        <!-- Page number buttons — show at most 5 around current -->
+                        <th:block
+                            th:with="start=${T(java.lang.Math).max(0, currentPage - 2)}, end=${T(java.lang.Math).min(safeTotalPages - 1, currentPage + 2)}">
+                            <a th:each="i : ${#numbers.sequence(start, end)}"
+                                th:href="@{/reservations(page=${i}, size=${safePageSize}, guestName=${guestName}, email=${email}, checkIn=${checkIn}, checkOut=${checkOut})}"
+                                th:text="${i + 1}"
+                                th:classappend="${i == currentPage} ? 'bg-[#f1d9b3]/90 text-[#4a2c12] font-bold' : 'bg-[#1f140b]/60 text-[#f1d9b3] hover:bg-[#f1d9b3]/20'"
+                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#f1d9b3]/25 text-sm">
+                            </a>
+                        </th:block>
 
-    <!-- 🔥 PAGINATION -->
-    <div style="margin-top:20px; text-align:center;">
+                        <!-- Next -->
+                        <a th:if="${currentPage < safeTotalPages - 1}"
+                            th:href="@{/reservations(page=${currentPage + 1}, size=${safePageSize}, guestName=${guestName}, email=${email}, checkIn=${checkIn}, checkOut=${checkOut})}"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#f1d9b3]/25 bg-[#1f140b]/60 text-[#f1d9b3] hover:bg-[#f1d9b3]/20">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                        <span th:if="${currentPage >= safeTotalPages - 1}"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#f1d9b3]/10 bg-[#1f140b]/30 text-[#f1d9b3]/30 cursor-not-allowed">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </span>
 
-        <!-- Previous -->
-        <a th:if="${currentPage > 0}" th:href="@{/reservations(
-            page=${currentPage - 1},
-            guestName=${guestName},
-            email=${email},
-            checkIn=${checkIn},
-            checkOut=${checkOut}
-       )}" style="margin-right:10px;">
-            ⬅ Previous
-        </a>
-
-        <span>
-            Page <span th:text="${currentPage + 1}"></span>
-        </span>
-
-        <!-- Next -->
-        <a th:href="@{/reservations(
-            page=${currentPage + 1},
-            guestName=${guestName},
-            email=${email},
-            checkIn=${checkIn},
-            checkOut=${checkOut}
-       )}" style="margin-left:10px;">
-            Next ➡
-        </a>
-
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- 🔥 VALIDATION SCRIPT -->
     <script>
         function validateSearch() {
             const name = document.getElementById("guestName").value.trim();
@@ -110,96 +300,343 @@
             const checkOut = document.getElementById("checkOut").value;
 
             let count = 0;
-
             if (name) count++;
             if (email) count++;
             if (checkIn) count++;
             if (checkOut) count++;
 
-            // ❌ More than 1 field but not valid combo
             if (count > 1) {
                 if (!(checkIn && checkOut && count === 2)) {
                     alert("Use only ONE field OR check-in + check-out together");
                     return false;
                 }
             }
-
             return true;
+        }
+
+        const addReservationModal = document.getElementById('addReservationModal');
+        const openAddReservation = document.getElementById('openAddReservation');
+        const closeAddReservation = document.getElementById('closeAddReservation');
+        const cancelAddReservation = document.getElementById('cancelAddReservation');
+
+        openAddReservation?.addEventListener('click', () => {
+            addReservationModal.classList.remove('hidden');
+        });
+
+        closeAddReservation?.addEventListener('click', () => {
+            addReservationModal.classList.add('hidden');
+        });
+
+        cancelAddReservation?.addEventListener('click', () => {
+            addReservationModal.classList.add('hidden');
+        });
+
+        addReservationModal?.addEventListener('click', (event) => {
+            if (event.target === addReservationModal) {
+                addReservationModal.classList.add('hidden');
+            }
+        });
+
+        function getTodayStr() {
+            const d = new Date();
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+
+        function setFieldState(input, errEl, isValid, msg = null) {
+            input.classList.remove('valid', 'error');
+            errEl.classList.remove('visible');
+            if (isValid) {
+                input.classList.add('valid');
+            } else {
+                input.classList.add('error');
+                if (msg) errEl.textContent = msg;
+                errEl.classList.add('visible');
+            }
+        }
+
+        function clearFieldState(input, errEl) {
+            input.classList.remove('valid', 'error');
+            errEl.classList.remove('visible');
+        }
+
+        function validateName() {
+            const input = document.getElementById('addGuestName');
+            const errEl = document.getElementById('addGuestName-err');
+            const val = input.value.trim();
+            const nameParts = val.split(/\s+/).filter(p => p.length > 0);
+            const onlyLetters = /^[A-Za-z\s]+$/.test(val);
+
+            if (!val) {
+                setFieldState(input, errEl, false, 'Guest name is required');
+                return false;
+            }
+            if (!onlyLetters) {
+                setFieldState(input, errEl, false, 'Name must contain letters only (no numbers or symbols)');
+                return false;
+            }
+            if (nameParts.length < 2) {
+                setFieldState(input, errEl, false, 'Please enter both first and last name (e.g. John Smith)');
+                return false;
+            }
+            if (nameParts.some(p => p.length < 2)) {
+                setFieldState(input, errEl, false, 'Each part of the name must be at least 2 characters');
+                return false;
+            }
+            setFieldState(input, errEl, true);
+            return true;
+        }
+
+        function validateEmail() {
+            const input = document.getElementById('addGuestEmail');
+            const errEl = document.getElementById('addGuestEmail-err');
+            const val = input.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+            if (!val) {
+                setFieldState(input, errEl, false, 'Email address is required');
+                return false;
+            }
+            if (!emailRegex.test(val)) {
+                setFieldState(input, errEl, false, 'Please enter a valid email address (e.g. name@example.com)');
+                return false;
+            }
+            setFieldState(input, errEl, true);
+            return true;
+        }
+
+        function validatePhone() {
+            const input = document.getElementById('addGuestPhone');
+            const errEl = document.getElementById('addGuestPhone-err');
+            const val = input.value.trim();
+            const phoneRegex = /^\d{10}$/;
+
+            if (!val) {
+                setFieldState(input, errEl, false, 'Phone number is required');
+                return false;
+            }
+            if (!/^\d+$/.test(val)) {
+                setFieldState(input, errEl, false, 'Phone number must contain digits only (no spaces or dashes)');
+                return false;
+            }
+            if (!phoneRegex.test(val)) {
+                setFieldState(input, errEl, false, 'Phone number must be exactly 10 digits');
+                return false;
+            }
+            setFieldState(input, errEl, true);
+            return true;
+        }
+
+        function validateCheckIn() {
+            const input = document.getElementById('addCheckInDate');
+            const errEl = document.getElementById('addCheckInDate-err');
+            const val = input.value;
+            const today = getTodayStr();
+
+            if (!val) {
+                setFieldState(input, errEl, false, 'Check-in date is required');
+                return false;
+            }
+            if (val < today) {
+                setFieldState(input, errEl, false, 'Check-in date cannot be in the past');
+                return false;
+            }
+            setFieldState(input, errEl, true);
+            const checkOut = document.getElementById('addCheckOutDate');
+            if (checkOut.value) validateCheckOut();
+            return true;
+        }
+
+        function validateCheckOut() {
+            const checkInInput = document.getElementById('addCheckInDate');
+            const input = document.getElementById('addCheckOutDate');
+            const errEl = document.getElementById('addCheckOutDate-err');
+            const val = input.value;
+            const today = getTodayStr();
+            const checkIn = checkInInput.value;
+
+            if (!val) {
+                setFieldState(input, errEl, false, 'Check-out date is required');
+                return false;
+            }
+            if (val < today) {
+                setFieldState(input, errEl, false, 'Check-out date cannot be in the past');
+                return false;
+            }
+            if (checkIn && val <= checkIn) {
+                setFieldState(input, errEl, false, 'Check-out must be at least 1 day after check-in');
+                return false;
+            }
+            setFieldState(input, errEl, true);
+            return true;
+        }
+
+        document.getElementById('addGuestName')?.addEventListener('blur', validateName);
+        document.getElementById('addGuestEmail')?.addEventListener('blur', validateEmail);
+        document.getElementById('addGuestPhone')?.addEventListener('blur', validatePhone);
+        document.getElementById('addCheckInDate')?.addEventListener('change', validateCheckIn);
+        document.getElementById('addCheckOutDate')?.addEventListener('change', validateCheckOut);
+
+        ['addGuestName', 'addGuestEmail', 'addGuestPhone', 'addCheckInDate', 'addCheckOutDate'].forEach(id => {
+            const input = document.getElementById(id);
+            const errEl = document.getElementById(id + '-err');
+            input?.addEventListener('focus', () => {
+                if (input.classList.contains('error')) {
+                    clearFieldState(input, errEl);
+                }
+            });
+        });
+
+        document.getElementById('addGuestPhone')?.addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        });
+
+        document.getElementById('reservationForm')?.addEventListener('submit', function (e) {
+            const results = [
+                validateName(),
+                validateEmail(),
+                validatePhone(),
+                validateCheckIn(),
+                validateCheckOut()
+            ];
+
+            if (results.includes(false)) {
+                e.preventDefault();
+                const btn = document.getElementById('submitAddReservation');
+                btn?.classList.remove('shake');
+                void btn?.offsetWidth;
+                btn?.classList.add('shake');
+                btn?.addEventListener('animationend', () => btn.classList.remove('shake'), { once: true });
+
+                const firstError = document.querySelector('#addReservationModal input.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.focus();
+                }
+            }
+        });
+
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+
+        function showToast(message) {
+            if (!toast || !toastMessage) return;
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden');
+            toast.classList.add('animate-[fadeIn_0.3s_ease-out]');
+            setTimeout(() => {
+                toast.classList.add('animate-[fadeOut_0.3s_ease-in]');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                    toast.classList.remove('animate-[fadeIn_0.3s_ease-out]');
+                    toast.classList.remove('animate-[fadeOut_0.3s_ease-in]');
+                }, 300);
+            }, 1400);
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const toastType = params.get('toast');
+        if (toastType) {
+            if (toastType === 'created') showToast('Created successfully');
+            if (toastType === 'deleted') showToast('Deleted successfully');
+            params.delete('toast');
+            const newUrl = window.location.pathname + (params.toString() ? `?${params.toString()}` : '');
+            window.history.replaceState({}, '', newUrl);
         }
     </script>
 
+    <style>
+        input.valid {
+            border-color: rgba(16, 185, 129, 0.6) !important;
+        }
+
+        input.error {
+            border-color: rgba(248, 113, 113, 0.8) !important;
+            background: rgba(60, 16, 12, 0.6) !important;
+        }
+
+        .err-msg {
+            display: none;
+            color: #f87171;
+            font-size: 0.7rem;
+            letter-spacing: 0.04em;
+            margin-top: 4px;
+            padding-left: 2px;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .err-msg.visible {
+            display: flex;
+        }
+
+        .err-msg::before {
+            content: '✕';
+            font-size: 0.6rem;
+            background: rgba(220, 60, 60, 0.18);
+            color: #f87171;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+        }
+
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-6px);
+            }
+
+            40% {
+                transform: translateX(6px);
+            }
+
+            60% {
+                transform: translateX(-4px);
+            }
+
+            80% {
+                transform: translateX(4px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.35s ease;
+        }
+    </style>
 </body>
 
 </html>
-
-<!-- <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Reservations</title>
-    <link rel="stylesheet" href="/styles.css">
-</head>
-
-<body>
-
-    <nav>
-        <h2>Reservations</h2>
-        <a href="/">Back</a>
-    </nav>
-
-    <div>
-
-        <table border="1" width="100%">
-            <thead>
-                <tr>
-                    <th>SR.NO</th>
-                    <th>Guest Name</th>
-                    <th>Guest Email</th>
-                    <th>Guest Phone</th>
-                    <th>Check-In</th>
-                    <th>Check-Out</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr th:each="res : ${reservations}" th:onclick="'location.href=\'/reservations/' + ${res.id} + '\''"
-                    style="cursor:pointer">
-
-                    <td th:text="${res.id}"></td>
-                    <td th:text="${res.guestName}"></td>
-                    <td th:text="${res.guestEmail}"></td>
-                    <td th:text="${res.phone}"></td>
-                    <td th:text="${res.checkInDate}"></td>
-                    <td th:text="${res.checkOutDate}"></td>
-
-                </tr>
-            </tbody>
-        </table>
-
-    </div>
-
-    <!-- 🔥 PAGINATION -->
-    <div style="margin-top:20px; text-align:center;">
-
-        <!-- Previous -->
-        <a th:if="${currentPage > 0}" th:href="@{/reservations(page=${currentPage - 1})}">
-            ⬅ Previous
-        </a>
-
-        <!-- Current Page -->
-        <span style="margin: 0 10px;">
-            Page <span th:text="${currentPage + 1}"></span>
-        </span>
-
-        <!-- Next -->
-        <a th:href="@{/reservations(page=${currentPage + 1})}">
-            Next ➡
-        </a>
-
-    </div>
-
-</body>
-
-</html> -->
-

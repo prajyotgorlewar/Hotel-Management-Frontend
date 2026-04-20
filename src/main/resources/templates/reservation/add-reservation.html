@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Reservation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: "Cormorant Garamond", "Times New Roman", serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: "Playfair Display", "Times New Roman", serif;
+        }
+
+        input.valid {
+            border-color: rgba(16, 185, 129, 0.6) !important;
+        }
+
+        input.error {
+            border-color: rgba(248, 113, 113, 0.8) !important;
+            background: rgba(60, 16, 12, 0.6) !important;
+        }
+
+        .err-msg {
+            display: none;
+            color: #f87171;
+            font-size: 0.7rem;
+            letter-spacing: 0.04em;
+            margin-top: 4px;
+            padding-left: 2px;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .err-msg.visible {
+            display: flex;
+        }
+
+        .err-msg::before {
+            content: '✕';
+            font-size: 0.6rem;
+            background: rgba(220, 60, 60, 0.18);
+            color: #f87171;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        @keyframes shake {
+            0%,
+            100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        .shake {
+            animation: shake 0.35s ease;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-b from-[#2a1a10] via-[#1b120a] to-[#120b07] text-[#f8f2e6] pb-8">
+    <div class="mx-6 my-6">
+        <div
+            class="flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#4a3220] via-[#3a2618]/90 to-[#4a3220] p-3 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10 backdrop-blur-sm">
+            <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#f1d9b3]/25">
+                <svg width="18" height="18" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 21h18M4 21V5a2 2 0 012-2h6v18M14 9h6a1 1 0 011 1v11M8 7h2M8 11h2M8 15h2M16 13h2M16 17h2">
+                    </path>
+                </svg>
+            </div>
+            <div class="flex-1"></div>
+            <a href="/reservations"
+                class="inline-flex items-center gap-2 rounded-full bg-[#f1d9b3]/25 px-3 py-2 text-sm font-semibold text-[#f1d9b3]">
+                <svg width="14" height="14" fill="none" stroke="#f1d9b3" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Back
+            </a>
+        </div>
+
+        <div class="mt-6 flex items-center gap-2 text-sm text-[#f1d9b3]/75">
+            <a href="/" class="hover:text-[#f8f2e6]">Home</a>
+            <span>/</span>
+            <a href="/reservations" class="hover:text-[#f8f2e6]">Reservations</a>
+            <span>/</span>
+            <span class="font-semibold text-[#f1d9b3]">Add</span>
+        </div>
+
+        <div class="mt-6 max-w-2xl rounded-2xl border border-[#f1d9b3]/20 bg-gradient-to-b from-[#24160d]/95 to-[#1a110a]/95 p-6 shadow-[0_24px_60px_rgba(0,0,0,0.35)] ring-1 ring-[#f1d9b3]/10">
+            <div class="mb-6">
+                <p class="text-xs tracking-[0.25em] text-[#f1d9b3]/70 uppercase">Hotel Management</p>
+                <h2 class="mt-2 text-3xl font-bold text-[#f8f2e6]">Add Reservation</h2>
+                <div class="mt-3 h-px w-16 bg-[#f1d9b3]/40"></div>
+            </div>
+
+            <form id="reservationForm" th:action="@{/reservations/add}" method="post" class="space-y-4" novalidate>
+                <div>
+                    <label class="text-sm text-[#f1d9b3]/75">Guest Name</label>
+                    <input type="text" id="guestName" name="guestName" placeholder="Enter guest name"
+                        class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-3 text-sm text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                    <span class="err-msg" id="guestName-err">Name must be at least 2 words with only letters (e.g.
+                        John Smith)</span>
+                </div>
+
+                <div>
+                    <label class="text-sm text-[#f1d9b3]/75">Email</label>
+                    <input type="email" id="guestEmail" name="guestEmail" placeholder="Enter email address"
+                        class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-3 text-sm text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                    <span class="err-msg" id="guestEmail-err">Please enter a valid email address (e.g.
+                        name@example.com)</span>
+                </div>
+
+                <div>
+                    <label class="text-sm text-[#f1d9b3]/75">Phone</label>
+                    <input type="text" id="guestPhone" name="guestPhone" placeholder="Enter 10-digit phone number"
+                        maxlength="10"
+                        class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-3 text-sm text-[#f8f2e6] placeholder:text-[#d2b387] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                    <span class="err-msg" id="guestPhone-err">Phone number must be exactly 10 digits (numbers
+                        only)</span>
+                </div>
+
+                <div class="grid gap-4 md:grid-cols-2">
+                    <div>
+                        <label class="text-sm text-[#f1d9b3]/75">Check-In</label>
+                        <input type="date" id="checkInDate" name="checkInDate"
+                            class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-3 text-sm text-[#f8f2e6] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                        <span class="err-msg" id="checkInDate-err">Check-in date cannot be in the past</span>
+                    </div>
+                    <div>
+                        <label class="text-sm text-[#f1d9b3]/75">Check-Out</label>
+                        <input type="date" id="checkOutDate" name="checkOutDate"
+                            class="mt-2 w-full rounded-xl bg-[#3a2618]/60 px-4 py-3 text-sm text-[#f8f2e6] focus:outline-none focus:ring-2 focus:ring-[#f1d9b3]/40">
+                        <span class="err-msg" id="checkOutDate-err">Check-out must be after check-in date</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <a href="/reservations"
+                        class="rounded-full border border-[#f1d9b3]/30 px-4 py-2 text-sm font-semibold text-[#f1d9b3] hover:bg-[#f1d9b3]/10">
+                        Cancel
+                    </a>
+                    <button type="submit" id="submitBtn"
+                        class="rounded-full bg-[#f1d9b3]/90 px-4 py-2 text-sm font-semibold text-[#4a2c12] shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                        Add Reservation
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function getTodayStr() {
+            const d = new Date();
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+
+        function setFieldState(input, errEl, isValid, msg = null) {
+            input.classList.remove('valid', 'error');
+            errEl.classList.remove('visible');
+            if (isValid) {
+                input.classList.add('valid');
+            } else {
+                input.classList.add('error');
+                if (msg) errEl.textContent = msg;
+                errEl.classList.add('visible');
+            }
+        }
+
+        function clearFieldState(input, errEl) {
+            input.classList.remove('valid', 'error');
+            errEl.classList.remove('visible');
+        }
+
+        function validateName() {
+            const input = document.getElementById('guestName');
+            const errEl = document.getElementById('guestName-err');
+            const val = input.value.trim();
+            const nameParts = val.split(/\s+/).filter(p => p.length > 0);
+            const onlyLetters = /^[A-Za-z\s]+$/.test(val);
+
+            if (!val) {
+                setFieldState(input, errEl, false, 'Guest name is required');
+                return false;
+            }
+            if (!onlyLetters) {
+                setFieldState(input, errEl, false, 'Name must contain letters only (no numbers or symbols)');
+                return false;
+            }
+            if (nameParts.length < 2) {
+                setFieldState(input, errEl, false, 'Please enter both first and last name (e.g. John Smith)');
+                return false;
+            }
+            if (nameParts.some(p => p.length < 2)) {
+                setFieldState(input, errEl, false, 'Each part of the name must be at least 2 characters');
+                return false;
+            }
+            setFieldState(input, errEl, true);
+            return true;
+        }
+
+        function validateEmail() {
+            const input = document.getElementById('guestEmail');
+            const errEl = document.getElementById('guestEmail-err');
+            const val = input.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+            if (!val) {
+                setFieldState(input, errEl, false, 'Email address is required');
+                return false;
+            }
+            if (!emailRegex.test(val)) {
+                setFieldState(input, errEl, false, 'Please enter a valid email address (e.g. name@example.com)');
+                return false;
+            }
+            setFieldState(input, errEl, true);
+            return true;
+        }
+
+        function validatePhone() {
+            const input = document.getElementById('guestPhone');
+            const errEl = document.getElementById('guestPhone-err');
+            const val = input.value.trim();
+            const phoneRegex = /^\d{10}$/;
+
+            if (!val) {
+                setFieldState(input, errEl, false, 'Phone number is required');
+                return false;
+            }
+            if (!/^\d+$/.test(val)) {
+                setFieldState(input, errEl, false, 'Phone number must contain digits only (no spaces or dashes)');
+                return false;
+            }
+            if (!phoneRegex.test(val)) {
+                setFieldState(input, errEl, false, 'Phone number must be exactly 10 digits');
+                return false;
+            }
+            setFieldState(input, errEl, true);
+            return true;
+        }
+
+        function validateCheckIn() {
+            const input = document.getElementById('checkInDate');
+            const errEl = document.getElementById('checkInDate-err');
+            const val = input.value;
+            const today = getTodayStr();
+
+            if (!val) {
+                setFieldState(input, errEl, false, 'Check-in date is required');
+                return false;
+            }
+            if (val < today) {
+                setFieldState(input, errEl, false, 'Check-in date cannot be in the past');
+                return false;
+            }
+            setFieldState(input, errEl, true);
+            const checkOut = document.getElementById('checkOutDate');
+            if (checkOut.value) validateCheckOut();
+            return true;
+        }
+
+        function validateCheckOut() {
+            const checkInInput = document.getElementById('checkInDate');
+            const input = document.getElementById('checkOutDate');
+            const errEl = document.getElementById('checkOutDate-err');
+            const val = input.value;
+            const today = getTodayStr();
+            const checkIn = checkInInput.value;
+
+            if (!val) {
+                setFieldState(input, errEl, false, 'Check-out date is required');
+                return false;
+            }
+            if (val < today) {
+                setFieldState(input, errEl, false, 'Check-out date cannot be in the past');
+                return false;
+            }
+            if (checkIn && val <= checkIn) {
+                setFieldState(input, errEl, false, 'Check-out must be at least 1 day after check-in');
+                return false;
+            }
+            setFieldState(input, errEl, true);
+            return true;
+        }
+
+        document.getElementById('guestName').addEventListener('blur', validateName);
+        document.getElementById('guestEmail').addEventListener('blur', validateEmail);
+        document.getElementById('guestPhone').addEventListener('blur', validatePhone);
+        document.getElementById('checkInDate').addEventListener('change', validateCheckIn);
+        document.getElementById('checkOutDate').addEventListener('change', validateCheckOut);
+
+        ['guestName', 'guestEmail', 'guestPhone', 'checkInDate', 'checkOutDate'].forEach(id => {
+            const input = document.getElementById(id);
+            const errEl = document.getElementById(id + '-err');
+            input.addEventListener('focus', () => {
+                if (input.classList.contains('error')) {
+                    clearFieldState(input, errEl);
+                }
+            });
+        });
+
+        document.getElementById('guestPhone').addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        });
+
+        document.getElementById('reservationForm').addEventListener('submit', function (e) {
+            const results = [
+                validateName(),
+                validateEmail(),
+                validatePhone(),
+                validateCheckIn(),
+                validateCheckOut()
+            ];
+
+            if (results.includes(false)) {
+                e.preventDefault();
+                const btn = document.getElementById('submitBtn');
+                btn.classList.remove('shake');
+                void btn.offsetWidth;
+                btn.classList.add('shake');
+                btn.addEventListener('animationend', () => btn.classList.remove('shake'), { once: true });
+
+                const firstError = document.querySelector('input.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.focus();
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
